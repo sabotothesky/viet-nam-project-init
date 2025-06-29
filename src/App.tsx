@@ -17,7 +17,7 @@ import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { AuthCallbackPage } from './pages/AuthCallbackPage';
 
 // Main Pages
-import { Index } from './pages/Index';
+import Index from './pages/Index';
 import { Dashboard } from './pages/Dashboard';
 import { ProfilePage } from './pages/ProfilePage';
 import { ChallengesPage } from './pages/ChallengesPage';
