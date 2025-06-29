@@ -1,0 +1,529 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Gaming Social Theme Colors */
+    /* Primary Colors */
+    --primary-blue: #1E40AF;
+    --primary-purple: #7C3AED;
+    --primary-green: #059669;
+    
+    /* Social Media Colors */
+    --like-red: #FF3040;
+    --share-blue: #1DA1F2;
+    --comment-gray: #6B7280;
+    
+    /* Gaming Colors */
+    --gold: #F59E0B;
+    --silver: #9CA3AF;
+    --bronze: #D97706;
+    
+    /* Backgrounds */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F9FAFB;
+    --bg-tertiary: #F3F4F6;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .safe-area-padding-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-padding-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  a, button, input, select, textarea {
+    touch-action: manipulation;
+  }
+}
+
+/* Billiards-themed custom styles */
+@layer components {
+  /* ... keep existing code (billiards styles) */
+  
+  /* Gaming Social Theme Typography */
+  .heading-primary {
+    font-weight: 800;
+    font-size: 1.875rem;
+    line-height: 1.2;
+  }
+
+  .heading-secondary {
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .post-text {
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .username {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  /* Gaming Social Theme Utility Classes */
+  .text-primary-blue {
+    color: var(--primary-blue);
+  }
+
+  .text-primary-purple {
+    color: var(--primary-purple);
+  }
+
+  .text-primary-green {
+    color: var(--primary-green);
+  }
+
+  .text-like-red {
+    color: var(--like-red);
+  }
+
+  .text-share-blue {
+    color: var(--share-blue);
+  }
+
+  .text-comment-gray {
+    color: var(--comment-gray);
+  }
+
+  .text-gold {
+    color: var(--gold);
+  }
+
+  .text-silver {
+    color: var(--silver);
+  }
+
+  .text-bronze {
+    color: var(--bronze);
+  }
+
+  .bg-primary-blue {
+    background-color: var(--primary-blue);
+  }
+
+  .bg-primary-purple {
+    background-color: var(--primary-purple);
+  }
+
+  .bg-primary-green {
+    background-color: var(--primary-green);
+  }
+
+  .bg-like-red {
+    background-color: var(--like-red);
+  }
+
+  .bg-share-blue {
+    background-color: var(--share-blue);
+  }
+
+  .bg-comment-gray {
+    background-color: var(--comment-gray);
+  }
+
+  .bg-gold {
+    background-color: var(--gold);
+  }
+
+  .bg-silver {
+    background-color: var(--silver);
+  }
+
+  .bg-bronze {
+    background-color: var(--bronze);
+  }
+
+  .bg-primary {
+    background-color: var(--bg-primary);
+  }
+
+  .bg-secondary {
+    background-color: var(--bg-secondary);
+  }
+
+  .bg-tertiary {
+    background-color: var(--bg-tertiary);
+  }
+
+  .billiards-bg {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5f2d 100%);
+  }
+  
+  .felt-texture {
+    background: linear-gradient(135deg, #1a4d3a 0%, #2d6a4f 50%, #1a4d3a 100%);
+    position: relative;
+  }
+  
+  .felt-texture::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(255,255,255,0.02) 1px, transparent 1px),
+      radial-gradient(circle at 75% 75%, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.3;
+  }
+  
+  .gold-glow {
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+    color: #ffd700;
+  }
+  
+  .white-glow {
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff;
+    color: #ffffff;
+  }
+  
+  .card-billiards {
+    background: rgba(45, 106, 79, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(255, 215, 0, 0.05);
+    backdrop-filter: blur(10px);
+  }
+  
+  .btn-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e  100%);
+    color: #1a4d3a;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-gold:hover {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    transform: translateY(-2px);
+  }
+  
+  .pocket-shadow {
+    box-shadow: 
+      inset 0 4px 8px rgba(0, 0, 0, 0.6),
+      0 2px 4px rgba(255, 215, 0, 0.1);
+  }
+  
+  .cue-pattern {
+    background-image: 
+      linear-gradient(45deg, rgba(255, 215, 0, 0.1) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(255, 215, 0, 0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(255, 215, 0, 0.1) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(255, 215, 0, 0.1) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  
+  /* Mobile-first touch optimizations */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Smooth mobile transitions */
+  .mobile-transition {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Active state for mobile buttons */
+  .mobile-button {
+    @apply transition-all duration-200 active:scale-95;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Mobile card styles */
+  .mobile-card {
+    @apply bg-white rounded-xl shadow-sm border p-4 mb-3 mobile-transition;
+  }
+
+  /* Mobile form styles */
+  .mobile-input {
+    @apply w-full h-12 px-4 border border-gray-300 rounded-lg text-base;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .mobile-button-primary {
+    @apply w-full h-12 bg-blue-600 text-white rounded-lg font-medium text-base mobile-button;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+
+  /* Horizontal scroll container */
+  .horizontal-scroll {
+    @apply overflow-x-auto pb-2;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .horizontal-scroll::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Mobile-specific responsive utilities */
+@media (max-width: 768px) {
+  .container {
+    @apply px-4;
+  }
+  
+  /* Ensure minimum touch targets */
+  button, a, input, select {
+    min-height: 44px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    @apply max-w-2xl mx-auto px-6;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .container {
+    @apply max-w-4xl mx-auto px-8;
+  }
+}
+
+/* New social gaming styles */
+@layer components {
+  /* Existing styles remain... */
+  
+  /* Social Media Feed Styles */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-x: scroll;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Swipe card animations */
+  .swipe-card {
+    transition: transform 0.3s ease-out;
+  }
+  
+  .swipe-card.swipe-left {
+    transform: translateX(-100vw) rotate(-30deg);
+  }
+  
+  .swipe-card.swipe-right {
+    transform: translateX(100vw) rotate(30deg);
+  }
+  
+  .swipe-card.swipe-up {
+    transform: translateY(-100vh) scale(1.1);
+  }
+  
+  /* Line clamp utility */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Gradient text utility */
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Enhanced mobile card styles */
+  .social-card {
+    @apply bg-white rounded-xl shadow-sm border mobile-transition hover:shadow-md;
+  }
+  
+  /* Story circle styles */
+  .story-circle {
+    @apply w-16 h-16 rounded-full p-1;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  }
+  
+  .story-circle.viewed {
+    @apply bg-gray-300;
+  }
+  
+  /* Match modal styles */
+  .match-modal {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  /* Action button styles */
+  .action-button {
+    @apply shadow-2xl transition-all duration-200 active:scale-95;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Improved touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better spacing for mobile */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+  
+  /* Optimized card layouts */
+  .mobile-card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Animation improvements */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
