@@ -24,7 +24,6 @@ export const useRealtimeSubscriptions = (
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
-
     if (!user?.id) return;
 
     // Create a single channel for all subscriptions
