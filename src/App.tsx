@@ -5,44 +5,44 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Toaster } from './components/ui/toaster';
 
 // Layout Components
-import { AuthLayout } from './components/AuthLayout';
-import { DashboardLayout } from './components/DashboardLayout';
-import { AdminLayout } from './components/AdminLayout';
+import AuthLayout from './components/AuthLayout';
+import DashboardLayout from './components/DashboardLayout';
+import AdminLayout from './components/AdminLayout';
 
 // Auth Pages
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { AuthCallbackPage } from './pages/AuthCallbackPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 // Main Pages
 import Index from './pages/Index';
-import { Dashboard } from './pages/Dashboard';
-import { ProfilePage } from './pages/ProfilePage';
-import { ChallengesPage } from './pages/ChallengesPage';
-import { TournamentsPage } from './pages/TournamentsPage';
-import { DiscoveryPage } from './pages/DiscoveryPage';
-import { ChatPage } from './pages/ChatPage';
-import { WalletPage } from './pages/WalletPage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
-import { LiveStreamPage } from './pages/LiveStreamPage';
-import { SecurityPage } from './pages/SecurityPage';
+import Dashboard from './pages/Dashboard';
+import ProfilePage from './pages/ProfilePage';
+import ChallengesPage from './pages/ChallengesPage';
+import TournamentsPage from './pages/TournamentsPage';
+import DiscoveryPage from './pages/DiscoveryPage';
+import ChatPage from './pages/ChatPage';
+import WalletPage from './pages/WalletPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import LiveStreamPage from './pages/LiveStreamPage';
+import SecurityPage from './pages/SecurityPage';
 
 // Admin Pages
-import { AdminDashboard } from './pages/admin/AdminDashboard';
-import { AdminUsers } from './pages/admin/AdminUsers';
-import { AdminTournaments } from './pages/admin/AdminTournaments';
-import { AdminTransactions } from './pages/admin/AdminTransactions';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminTournaments from './pages/admin/AdminTournaments';
+import AdminTransactions from './pages/admin/AdminTransactions';
 
 // Other Pages
-import { AboutPage } from './pages/AboutPage';
-import { BlogPage } from './pages/BlogPage';
-import { FAQPage } from './pages/FAQPage';
-import { HelpPage } from './pages/HelpPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { TermsPage } from './pages/TermsPage';
-import { NotFound } from './pages/NotFound';
+import AboutPage from './pages/AboutPage';
+import BlogPage from './pages/BlogPage';
+import FAQPage from './pages/FAQPage';
+import HelpPage from './pages/HelpPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import NotFound from './pages/NotFound';
 
 // PWA Components
 import { PWAInstallPrompt } from './components/pwa/PWAInstallPrompt';
@@ -52,13 +52,21 @@ import { OfflineIndicator } from './components/pwa/OfflineIndicator';
 import { RealtimeNotificationBanner } from './components/notifications/RealtimeNotificationBanner';
 
 function App() {
+  const handlePWAInstall = () => {
+    console.log('PWA installed successfully');
+  };
+
+  const handlePWADismiss = () => {
+    console.log('PWA install dismissed');
+  };
+
   return (
     <ErrorBoundary>
       <AuthProvider>
         <Router>
           <div className="min-h-screen bg-background">
             {/* PWA Components */}
-            <PWAInstallPrompt />
+            <PWAInstallPrompt onInstall={handlePWAInstall} onDismiss={handlePWADismiss} />
             <OfflineIndicator />
             
             {/* Real-time Notifications */}

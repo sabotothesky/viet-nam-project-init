@@ -1,250 +1,206 @@
-# 🏊‍♂️ Sabo Pool Arena Hub
+# 🎱 SABO Pool Arena Hub
 
-A comprehensive pool arena management system with VNPAY payment integration, tournament management, and social features.
+A comprehensive pool arena management system with VNPAY payment integration, built with React, TypeScript, and modern web technologies.
 
 ## 🚀 Features
 
-### 🎯 Core Features
-- **User Management** - Registration, authentication, profiles
-- **Tournament System** - Create, manage, and participate in tournaments
-- **ELO Rating System** - Advanced player ranking and matchmaking
-- **Challenge System** - Player challenges and match scheduling
-- **Payment Integration** - VNPAY payment gateway for memberships and tournaments
-- **Social Features** - Posts, comments, messaging, notifications
-- **Club Management** - Club creation, membership, leaderboards
-- **Live Streaming** - Real-time match streaming capabilities
-- **Analytics Dashboard** - Comprehensive statistics and insights
-
-### 💳 Payment Features
-- **VNPAY Integration** - Complete payment gateway integration
-- **Multiple Payment Methods** - Credit cards, bank transfers
-- **Membership Plans** - Premium subscriptions and upgrades
-- **Tournament Entry Fees** - Secure payment processing
-- **Refund System** - Automated refund processing
-
-### 📱 Mobile-First Design
-- **Responsive UI** - Works perfectly on all devices
-- **PWA Support** - Progressive Web App capabilities
-- **Offline Mode** - Basic functionality without internet
-- **Push Notifications** - Real-time updates and alerts
+- **🏆 Tournament Management** - Create and manage pool tournaments
+- **💰 Payment Integration** - VNPAY payment gateway integration
+- **📊 ELO Ranking System** - Advanced player ranking algorithm
+- **👥 User Management** - Complete user profiles and authentication
+- **📱 PWA Support** - Progressive Web App capabilities
+- **🎨 Modern UI/UX** - Beautiful, responsive design with Tailwind CSS
+- **🔔 Real-time Notifications** - Live updates and notifications
+- **📈 Analytics Dashboard** - Comprehensive statistics and insights
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React 18** - Modern React with hooks
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/ui** - Beautiful component library
-- **React Router** - Client-side routing
-- **React Query** - Server state management
-- **Framer Motion** - Smooth animations
-
-### Backend
-- **Node.js** - Server runtime
-- **Express.js** - Web framework
-- **Supabase** - Database and authentication
-- **VNPAY API** - Payment processing
-- **Socket.io** - Real-time communication
-
-### Database
-- **PostgreSQL** - Primary database
-- **Redis** - Caching and sessions
-- **Supabase** - Real-time subscriptions
+- **Frontend:** React 18, TypeScript, Vite
+- **Styling:** Tailwind CSS, Radix UI
+- **State Management:** React Query, React Hook Form
+- **Backend:** Supabase, Express.js
+- **Payment:** VNPAY Integration
+- **Deployment:** Loveable, Vercel
+- **Code Quality:** ESLint, Prettier, Husky
 
 ## 📦 Installation
 
 ### Prerequisites
 - Node.js 18+ 
-- npm or yarn
+- npm 8+
 - Git
 
-### Quick Start
-
-1. **Clone the repository**
+### Setup
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/sabo-pool-arena-hub.git
 cd sabo-pool-arena-hub
-```
 
-2. **Install dependencies**
-```bash
+# Install dependencies
 npm install
-```
 
-3. **Set up environment variables**
-```bash
+# Copy environment variables
 cp .env.example .env
-```
 
-Edit `.env` with your configuration:
-```env
-# VNPAY Configuration
-VNP_TMN_CODE=your_tmn_code
-VNP_HASH_SECRET=your_hash_secret
-VNP_RETURN_URL=https://your-domain.com/api/webhooks/vnpay-return
-VNP_PAYMENT_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-VNP_IPN_URL=https://your-domain.com/api/webhooks/vnpay-ipn
-
-# Database
-DATABASE_URL=your_supabase_url
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Server
-PORT=3000
-NODE_ENV=development
-```
-
-4. **Start development server**
-```bash
+# Start development server
 npm run dev
 ```
 
-5. **Open your browser**
-```
-http://localhost:3000
-```
+## 🔧 Development
 
-## 🧪 Testing
-
-### Run VNPAY Payment Tests
+### Available Scripts
 ```bash
-node test-vnpay.js
+# Development
+npm run dev              # Start development server
+npm run build           # Build for production
+npm run preview         # Preview production build
+
+# Code Quality
+npm run lint            # Run ESLint
+npm run lint:fix        # Fix ESLint issues
+npm run format          # Format code with Prettier
+npm run format:check    # Check code formatting
+npm run type-check      # Run TypeScript type checking
+
+# Testing
+npm test                # Run tests
+npm run test:watch      # Run tests in watch mode
+
+# Database
+npm run db:push         # Push database changes
+npm run db:reset        # Reset database
 ```
 
-### Start Demo Server
-```bash
-node demo-server.js
-```
+### Code Quality Tools
+- **ESLint** - Code linting with TypeScript support
+- **Prettier** - Code formatting
+- **Husky** - Git hooks for pre-commit checks
+- **lint-staged** - Run linters on staged files
 
-### Test Card Details (VCB Bank)
-- **Card Number:** `4524 0418 7644 5035`
-- **Name:** `VÕ LONG SANG`
-- **Expiry:** `10/27`
-- **OTP:** `160922`
+### Pre-commit Hooks
+The project uses Husky to run automatic checks before commits:
+- ESLint fixes
+- Prettier formatting
+- Type checking
+
+## 🌐 Deployment
+
+### Loveable Deployment
+1. Push code to GitHub
+2. Connect repository to Loveable
+3. Configure environment variables
+4. Deploy
+
+### Environment Variables
+```env
+# VNPAY Configuration
+VNP_TMN_CODE=your_terminal_id
+VNP_HASH_SECRET=your_secret_key
+VNP_RETURN_URL=your_return_url
+VNP_PAYMENT_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+
+# Supabase Configuration
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Server Configuration
+NODE_ENV=production
+PORT=3000
+```
 
 ## 📁 Project Structure
 
 ```
-sabo-pool-arena-hub/
-├── src/
-│   ├── components/          # React components
-│   │   ├── ui/             # UI components
-│   │   ├── auth/           # Authentication components
-│   │   ├── tournament/     # Tournament components
-│   │   ├── payment/        # Payment components
-│   │   └── ...
-│   ├── hooks/              # Custom React hooks
-│   ├── pages/              # Page components
-│   ├── utils/              # Utility functions
-│   ├── types/              # TypeScript types
-│   └── integrations/       # Third-party integrations
-│       └── vnpay/          # VNPAY payment gateway
-├── supabase/               # Database migrations
-├── public/                 # Static assets
-├── scripts/                # Build and deployment scripts
-└── docs/                   # Documentation
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components
+│   ├── auth/           # Authentication components
+│   ├── tournament/     # Tournament components
+│   └── ...
+├── pages/              # Page components
+├── hooks/              # Custom React hooks
+├── utils/              # Utility functions
+├── types/              # TypeScript type definitions
+├── integrations/       # External service integrations
+└── main.tsx           # Application entry point
 ```
-
-## 🔧 Configuration
-
-### VNPAY Payment Gateway
-The project includes a complete VNPAY payment integration:
-
-- **Payment Creation** - Generate payment URLs
-- **Return Handling** - Process payment returns
-- **IPN Processing** - Server-to-server notifications
-- **Hash Verification** - Secure payment validation
-- **Error Handling** - Comprehensive error management
-
-### Environment Variables
-Key environment variables for production:
-
-```env
-# Production VNPAY
-VNP_TMN_CODE=your_production_tmn_code
-VNP_HASH_SECRET=your_production_hash_secret
-VNP_PAYMENT_URL=https://pay.vnpay.vn/vpcpay.html
-
-# Production URLs
-VNP_RETURN_URL=https://your-domain.com/api/webhooks/vnpay-return
-VNP_IPN_URL=https://your-domain.com/api/webhooks/vnpay-ipn
-```
-
-## 🚀 Deployment
-
-### Deploy to Loveable
-
-1. **Push to GitHub**
-```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-2. **Connect to Loveable**
-- Go to [Loveable.dev](https://loveable.dev)
-- Connect your GitHub repository
-- Configure environment variables
-- Deploy
-
-### Manual Deployment
-
-1. **Build the project**
-```bash
-npm run build
-```
-
-2. **Start production server**
-```bash
-npm start
-```
-
-## 📊 API Endpoints
-
-### VNPAY Payment API
-- `POST /api/payments/create-vnpay` - Create payment
-- `GET /api/webhooks/vnpay-return` - Payment return
-- `GET /api/webhooks/vnpay-ipn` - IPN notification
-- `GET /api/payments/vnpay-status/:orderId` - Check status
-
-### User API
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update profile
-
-### Tournament API
-- `GET /api/tournaments` - List tournaments
-- `POST /api/tournaments` - Create tournament
-- `GET /api/tournaments/:id` - Get tournament details
-- `POST /api/tournaments/:id/join` - Join tournament
 
 ## 🤝 Contributing
 
+### Development Workflow
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Make your changes
+4. Run code quality checks (`npm run lint && npm run format`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## 📝 License
+### Code Standards
+- Follow TypeScript best practices
+- Use ESLint and Prettier for code formatting
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+
+## 📋 CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration:
+
+### Automated Checks
+- **Linting** - ESLint with TypeScript support
+- **Formatting** - Prettier code formatting
+- **Type Checking** - TypeScript compilation
+- **Testing** - Unit and integration tests
+- **Build** - Production build verification
+- **Security** - Dependency vulnerability scanning
+
+### Deployment
+- **Preview** - Automatic deployment for pull requests
+- **Production** - Automatic deployment for main branch
+
+## 🔒 Security
+
+- Input validation and sanitization
+- CORS configuration
+- Rate limiting
+- Security headers
+- Dependency vulnerability scanning
+- Regular security updates via Dependabot
+
+## 📊 Performance
+
+- Code splitting and lazy loading
+- Image optimization
+- Bundle size optimization
+- Caching strategies
+- PWA capabilities for offline support
+
+## 🐛 Bug Reports
+
+Please use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md) when reporting issues.
+
+## 💡 Feature Requests
+
+Please use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md) when suggesting new features.
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 👥 Team
 
-- **Documentation:** [Wiki](https://github.com/yourusername/sabo-pool-arena-hub/wiki)
-- **Issues:** [GitHub Issues](https://github.com/yourusername/sabo-pool-arena-hub/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourusername/sabo-pool-arena-hub/discussions)
+- **Lead Developer** - [Your Name](https://github.com/yourusername)
+- **UI/UX Designer** - [Designer Name](https://github.com/designerusername)
+- **Backend Developer** - [Backend Dev](https://github.com/backendusername)
 
 ## 🙏 Acknowledgments
 
-- VNPAY for payment gateway integration
+- VNPAY for payment integration
 - Supabase for backend services
-- Shadcn/ui for beautiful components
-- React community for amazing tools
+- Tailwind CSS for styling
+- Radix UI for accessible components
 
 ---
 
-**Made with ❤️ for the pool community**
+**Made with ❤️ by the SABO Pool Arena Team**
