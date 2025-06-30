@@ -9,7 +9,7 @@ export interface RankRequest {
   updated_at: string;
   approved_by?: string;
   approved_at?: string;
-  
+
   // Joined data
   user?: {
     id: string;
@@ -21,13 +21,13 @@ export interface RankRequest {
       elo: number;
     };
   };
-  
+
   club?: {
     id: string;
     name: string;
     address: string;
   };
-  
+
   approver?: {
     id: string;
     email: string;
@@ -63,4 +63,4 @@ export interface RankRequestFilters {
   user_id?: string;
   date_from?: string;
   date_to?: string;
-} 
+}

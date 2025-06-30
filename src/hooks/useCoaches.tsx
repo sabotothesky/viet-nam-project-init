@@ -82,7 +82,9 @@ export const useCoaches = () => {
     }
   };
 
-  const bookSession = async (sessionData: Omit<CoachingSession, 'id' | 'student_id' | 'created_at'>) => {
+  const bookSession = async (
+    sessionData: Omit<CoachingSession, 'id' | 'student_id' | 'created_at'>
+  ) => {
     if (!user) throw new Error('User not authenticated');
 
     try {
@@ -90,18 +92,20 @@ export const useCoaches = () => {
         .from('coaching_sessions')
         .insert({
           ...sessionData,
-          student_id: user.id
+          student_id: user.id,
         })
         .select()
         .single();
 
       if (error) throw error;
-      
+
       // Refresh sessions
       await fetchMySessions();
       return data;
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to book session');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to book session'
+      );
     }
   };
 
@@ -122,6 +126,6 @@ export const useCoaches = () => {
     error,
     bookSession,
     refreshCoaches: fetchCoaches,
-    refreshSessions: fetchMySessions
+    refreshSessions: fetchMySessions,
   };
 };

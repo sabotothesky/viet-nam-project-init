@@ -1,9 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import UserAvatar from './UserAvatar';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,18 +35,21 @@ interface ChallengeResponseModalProps {
   }>;
   isOpen: boolean;
   onClose: () => void;
-  onRespond: (status: 'accepted' | 'declined', proposalData?: {
-    clubId: string;
-    datetime: string;
-  }) => void;
+  onRespond: (
+    status: 'accepted' | 'declined',
+    proposalData?: {
+      clubId: string;
+      datetime: string;
+    }
+  ) => void;
 }
 
-const ChallengeResponseModal = ({ 
-  challenge, 
-  suggestedClubs: propSuggestedClubs, 
-  isOpen, 
-  onClose, 
-  onRespond 
+const ChallengeResponseModal = ({
+  challenge,
+  suggestedClubs: propSuggestedClubs,
+  isOpen,
+  onClose,
+  onRespond,
 }: ChallengeResponseModalProps) => {
   const [selectedClub, setSelectedClub] = useState<string>('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
@@ -68,7 +75,7 @@ const ChallengeResponseModal = ({
         .order('monthly_payment', { ascending: false })
         .order('priority_score', { ascending: false })
         .limit(5);
-      
+
       setSuggestedClubs(clubs || []);
       if (clubs?.length > 0) {
         setSelectedClub(clubs[0].id);
@@ -83,28 +90,28 @@ const ChallengeResponseModal = ({
   const getAvailableTimeSlots = () => {
     const slots = [];
     const today = new Date();
-    
+
     for (let i = 1; i <= 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      
+
       ['14:00', '16:00', '18:00', '20:00'].forEach(time => {
         const datetime = new Date(date);
         const [hours, minutes] = time.split(':');
         datetime.setHours(parseInt(hours), parseInt(minutes));
-        
+
         slots.push({
           value: datetime.toISOString().slice(0, 16),
-          label: date.toLocaleDateString('vi-VN', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric' 
+          label: date.toLocaleDateString('vi-VN', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
           }),
-          time: time
+          time: time,
         });
       });
     }
-    
+
     return slots.slice(0, 8);
   };
 
@@ -112,53 +119,59 @@ const ChallengeResponseModal = ({
     if (selectedClub && selectedDateTime) {
       onRespond('accepted', {
         clubId: selectedClub,
-        datetime: selectedDateTime
+        datetime: selectedDateTime,
       });
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className='sm:max-w-lg max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Phản hồi thách đấu</DialogTitle>
         </DialogHeader>
-        
-        <div className="space-y-6">
+
+        <div className='space-y-6'>
           {/* Challenge Info */}
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="flex items-center space-x-3 mb-3">
-              <UserAvatar 
+          <div className='bg-blue-50 rounded-lg p-4'>
+            <div className='flex items-center space-x-3 mb-3'>
+              <UserAvatar
                 user={{
                   name: challenge.challenger.full_name,
                   avatar: challenge.challenger.avatar_url || '/placeholder.svg',
-                  rank: challenge.challenger.current_rank
-                }} 
-                size="md"
+                  rank: challenge.challenger.current_rank,
+                }}
+                size='md'
               />
               <div>
-                <h3 className="font-semibold">{challenge.challenger.full_name}</h3>
-                <p className="text-sm text-gray-600">{challenge.challenger.current_rank}</p>
+                <h3 className='font-semibold'>
+                  {challenge.challenger.full_name}
+                </h3>
+                <p className='text-sm text-gray-600'>
+                  {challenge.challenger.current_rank}
+                </p>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-3">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Mức cược:</span>
-                <span className="font-bold text-blue-600">{challenge.bet_points} điểm</span>
+            <div className='bg-white rounded-lg p-3'>
+              <div className='flex justify-between items-center mb-2'>
+                <span className='text-sm text-gray-600'>Mức cược:</span>
+                <span className='font-bold text-blue-600'>
+                  {challenge.bet_points} điểm
+                </span>
               </div>
               {challenge.message && (
                 <div>
-                  <span className="text-sm text-gray-600">Lời nhắn:</span>
-                  <p className="text-sm mt-1 italic">"{challenge.message}"</p>
+                  <span className='text-sm text-gray-600'>Lời nhắn:</span>
+                  <p className='text-sm mt-1 italic'>"{challenge.message}"</p>
                 </div>
               )}
             </div>
           </div>
-          
+
           {/* Club Selection */}
           <div>
-            <h3 className="font-semibold mb-3">Chọn CLB diễn ra trận đấu</h3>
-            <div className="space-y-3 max-h-48 overflow-y-auto">
+            <h3 className='font-semibold mb-3'>Chọn CLB diễn ra trận đấu</h3>
+            <div className='space-y-3 max-h-48 overflow-y-auto'>
               {suggestedClubs.map(club => (
                 <div
                   key={club.id}
@@ -169,23 +182,23 @@ const ChallengeResponseModal = ({
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold">{club.name}</h4>
-                    <div className="flex items-center space-x-2">
+                  <div className='flex items-center justify-between mb-2'>
+                    <h4 className='font-semibold'>{club.name}</h4>
+                    <div className='flex items-center space-x-2'>
                       {club.is_sabo_owned && (
-                        <Badge className="bg-yellow-500 text-yellow-900 text-xs font-bold">
+                        <Badge className='bg-yellow-500 text-yellow-900 text-xs font-bold'>
                           SABO
                         </Badge>
                       )}
                       {club.monthly_payment > 0 && (
-                        <Badge className="bg-green-500 text-green-900 text-xs">
+                        <Badge className='bg-green-500 text-green-900 text-xs'>
                           Premium
                         </Badge>
                       )}
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{club.address}</p>
-                  <div className="flex items-center space-x-4 text-xs text-gray-500">
+                  <p className='text-sm text-gray-600 mb-2'>{club.address}</p>
+                  <div className='flex items-center space-x-4 text-xs text-gray-500'>
                     {club.phone && <span>📞 {club.phone}</span>}
                     <span>🎱 {club.available_tables} bàn</span>
                   </div>
@@ -193,47 +206,49 @@ const ChallengeResponseModal = ({
               ))}
             </div>
           </div>
-          
+
           {/* DateTime Selection */}
           <div>
-            <h3 className="font-semibold mb-3">Đề xuất thời gian</h3>
-            <div className="grid grid-cols-2 gap-3 mb-3">
+            <h3 className='font-semibold mb-3'>Đề xuất thời gian</h3>
+            <div className='grid grid-cols-2 gap-3 mb-3'>
               {getAvailableTimeSlots().map(slot => (
                 <Button
                   key={slot.value}
-                  variant={selectedDateTime === slot.value ? "default" : "outline"}
+                  variant={
+                    selectedDateTime === slot.value ? 'default' : 'outline'
+                  }
                   onClick={() => setSelectedDateTime(slot.value)}
-                  className="p-3 h-auto text-left"
+                  className='p-3 h-auto text-left'
                 >
                   <div>
-                    <div className="font-semibold text-sm">{slot.label}</div>
-                    <div className="text-xs opacity-80">{slot.time}</div>
+                    <div className='font-semibold text-sm'>{slot.label}</div>
+                    <div className='text-xs opacity-80'>{slot.time}</div>
                   </div>
                 </Button>
               ))}
             </div>
             <Input
-              type="datetime-local"
+              type='datetime-local'
               value={selectedDateTime}
-              onChange={(e) => setSelectedDateTime(e.target.value)}
+              onChange={e => setSelectedDateTime(e.target.value)}
               min={new Date().toISOString().slice(0, 16)}
-              className="w-full"
+              className='w-full'
             />
           </div>
-          
+
           {/* Action Buttons */}
-          <div className="flex space-x-3">
+          <div className='flex space-x-3'>
             <Button
               onClick={() => onRespond('declined')}
-              variant="destructive"
-              className="flex-1"
+              variant='destructive'
+              className='flex-1'
             >
               Từ chối ❌
             </Button>
             <Button
               onClick={handleAccept}
               disabled={!selectedClub || !selectedDateTime}
-              className="flex-1 bg-green-500 hover:bg-green-600"
+              className='flex-1 bg-green-500 hover:bg-green-600'
             >
               Chấp nhận ✅
             </Button>

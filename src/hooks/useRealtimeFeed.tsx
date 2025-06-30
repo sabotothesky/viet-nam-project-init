@@ -39,18 +39,19 @@ export const useRealtimeFeed = () => {
           id: '1',
           name: 'Nguyễn Văn A',
           avatar: '/placeholder.svg',
-          rank: 'A+'
+          rank: 'A+',
         },
         type: 'match_result',
-        content: 'Vừa có trận đấu tuyệt vời! Đối thủ rất mạnh nhưng mình đã chiến thắng 🎱',
+        content:
+          'Vừa có trận đấu tuyệt vời! Đối thủ rất mạnh nhưng mình đã chiến thắng 🎱',
         stats: {
           score: '8-6',
-          opponent: 'Trần Văn B'
+          opponent: 'Trần Văn B',
         },
         timestamp: '2 giờ trước',
         likes: 24,
         comments: 5,
-        isLiked: false
+        isLiked: false,
       },
       {
         id: '2',
@@ -58,17 +59,18 @@ export const useRealtimeFeed = () => {
           id: '2',
           name: 'Lê Thị C',
           avatar: '/placeholder.svg',
-          rank: 'B+'
+          rank: 'B+',
         },
         type: 'achievement',
-        content: 'Cuối cùng cũng mở khóa được thành tích "Streak Master"! Cảm ơn mọi người đã ủng hộ 🔥',
+        content:
+          'Cuối cùng cũng mở khóa được thành tích "Streak Master"! Cảm ơn mọi người đã ủng hộ 🔥',
         stats: {
-          achievement: '10 trận thắng liên tiếp'
+          achievement: '10 trận thắng liên tiếp',
         },
         timestamp: '4 giờ trước',
         likes: 56,
         comments: 12,
-        isLiked: true
+        isLiked: true,
       },
       {
         id: '3',
@@ -76,15 +78,16 @@ export const useRealtimeFeed = () => {
           id: '3',
           name: 'Phạm Đức D',
           avatar: '/placeholder.svg',
-          rank: 'A'
+          rank: 'A',
         },
         type: 'tournament_win',
-        content: 'Vô địch giải đấu hàng tuần! Cám ơn tất cả mọi người đã cổ vũ 👑',
+        content:
+          'Vô địch giải đấu hàng tuần! Cám ơn tất cả mọi người đã cổ vũ 👑',
         timestamp: '6 giờ trước',
         likes: 89,
         comments: 23,
-        isLiked: false
-      }
+        isLiked: false,
+      },
     ];
     setFeedPosts(mockPosts);
   }, []);
@@ -94,21 +97,22 @@ export const useRealtimeFeed = () => {
     if (!user) return;
 
     console.log('Setting up real-time feed subscription...');
-    
+
     const channel = supabase
       .channel('feed-updates')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'posts' 
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'posts',
         },
-        (payload) => {
+        payload => {
           console.log('Feed update received:', payload);
           handleFeedUpdate(payload);
         }
       )
-      .on('system', {}, (status) => {
+      .on('system', {}, status => {
         console.log('Feed connection status:', status);
         setIsConnected(status.status === 'ok');
       })
@@ -122,7 +126,7 @@ export const useRealtimeFeed = () => {
 
   const handleFeedUpdate = (payload: any) => {
     console.log('Processing feed update:', payload);
-    
+
     // Handle different types of updates
     switch (payload.eventType) {
       case 'INSERT':
@@ -141,7 +145,11 @@ export const useRealtimeFeed = () => {
     setFeedPosts(posts =>
       posts.map(post =>
         post.id === postId
-          ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+            }
           : post
       )
     );
@@ -160,11 +168,13 @@ export const useRealtimeFeed = () => {
       navigator.share({
         title: 'Sabo Pool Arena - Bài viết thú vị',
         text: 'Xem bài viết này trên Sabo Pool Arena',
-        url: `${window.location.origin}/feed/post/${postId}`
+        url: `${window.location.origin}/feed/post/${postId}`,
       });
     } else {
       // Fallback: copy link to clipboard
-      navigator.clipboard.writeText(`${window.location.origin}/feed/post/${postId}`);
+      navigator.clipboard.writeText(
+        `${window.location.origin}/feed/post/${postId}`
+      );
       alert('Đã sao chép link vào clipboard!');
     }
   };
@@ -184,9 +194,9 @@ export const useRealtimeFeed = () => {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
-      
+
       if (error) throw error;
-      
+
       if (newPosts) {
         // Convert database posts to FeedPost format
         const convertedPosts: FeedPost[] = newPosts.map(post => ({
@@ -195,7 +205,7 @@ export const useRealtimeFeed = () => {
             id: post.author_id || 'unknown',
             name: post.title || 'Unknown User',
             avatar: post.featured_image || '/placeholder.svg',
-            rank: 'B' // Default rank
+            rank: 'B', // Default rank
           },
           type: 'match_result', // Default type
           content: post.content || post.excerpt || '',
@@ -203,12 +213,14 @@ export const useRealtimeFeed = () => {
           timestamp: post.created_at,
           likes: 0,
           comments: 0,
-          isLiked: false
+          isLiked: false,
         }));
 
         setFeedPosts(prevPosts => {
           const existingIds = new Set(prevPosts.map(p => p.id));
-          const uniqueNewPosts = convertedPosts.filter(p => !existingIds.has(p.id));
+          const uniqueNewPosts = convertedPosts.filter(
+            p => !existingIds.has(p.id)
+          );
           return [...uniqueNewPosts, ...prevPosts];
         });
       }
@@ -224,6 +236,6 @@ export const useRealtimeFeed = () => {
     handleComment,
     handleShare,
     handleChallenge,
-    refreshFeed
+    refreshFeed,
   };
 };

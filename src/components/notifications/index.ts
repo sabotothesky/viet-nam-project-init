@@ -1,2 +1,2 @@
 export { NotificationCenter } from './NotificationCenter';
-export { RealtimeNotificationBanner } from './RealtimeNotificationBanner'; 
+export { RealtimeNotificationBanner } from './RealtimeNotificationBanner';

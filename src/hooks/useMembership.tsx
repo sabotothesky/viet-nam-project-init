@@ -45,7 +45,7 @@ export const useMembership = () => {
     queryKey: ['membership', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       const { data, error } = await supabase
         .from('memberships')
         .select('*')
@@ -64,7 +64,7 @@ export const useMembership = () => {
     queryKey: ['club-registration', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       const { data, error } = await supabase
         .from('club_registrations')
         .select('*')
@@ -79,7 +79,12 @@ export const useMembership = () => {
 
   // Create or update club registration
   const createClubRegistration = useMutation({
-    mutationFn: async (registrationData: Omit<ClubRegistration, 'id' | 'user_id' | 'status' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (
+      registrationData: Omit<
+        ClubRegistration,
+        'id' | 'user_id' | 'status' | 'created_at' | 'updated_at'
+      >
+    ) => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
@@ -97,7 +102,9 @@ export const useMembership = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['club-registration'] });
-      toast.success('Đăng ký CLB thành công! Chúng tôi sẽ xem xét trong 1-3 ngày làm việc.');
+      toast.success(
+        'Đăng ký CLB thành công! Chúng tôi sẽ xem xét trong 1-3 ngày làm việc.'
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Có lỗi xảy ra khi đăng ký CLB');

@@ -4,16 +4,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  LayoutDashboard, 
-  User, 
-  Crown, 
-  Trophy, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  User,
+  Crown,
+  Trophy,
+  Settings,
+  LogOut,
   ChevronDown,
   Menu,
-  X
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,7 +33,7 @@ const Header = () => {
   }, [user]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
       }
@@ -47,10 +47,12 @@ const Header = () => {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select(`
+        .select(
+          `
           *,
           clubs(name)
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .single();
 
@@ -89,27 +91,31 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className='bg-white shadow-sm border-b sticky top-0 z-40'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex justify-between items-center h-16'>
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
+          <div className='flex items-center'>
+            <Link to='/' className='flex items-center space-x-2'>
+              <div className='w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center'>
+                <span className='text-white font-bold text-sm'>S</span>
               </div>
-              <span className="text-xl font-bold text-gray-900 hidden sm:block">SABO POOL ARENA</span>
-              <span className="text-xl font-bold text-gray-900 sm:hidden">SABO</span>
+              <span className='text-xl font-bold text-gray-900 hidden sm:block'>
+                SABO POOL ARENA
+              </span>
+              <span className='text-xl font-bold text-gray-900 sm:hidden'>
+                SABO
+              </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
+          <nav className='hidden md:flex space-x-8'>
+            {navItems.map(item => (
               <Link
                 key={item.name}
                 to={item.href}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+                className='text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors'
               >
                 {item.name}
               </Link>
@@ -117,99 +123,104 @@ const Header = () => {
           </nav>
 
           {/* User Menu or Auth Buttons */}
-          <div className="flex items-center space-x-4">
+          <div className='flex items-center space-x-4'>
             {user ? (
-              <div className="relative" ref={userMenuRef}>
+              <div className='relative' ref={userMenuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  className='flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors'
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className='h-8 w-8'>
                     <AvatarImage src={userProfile?.avatar_url} />
                     <AvatarFallback>
-                      {userProfile?.full_name?.charAt(0) || user.email?.charAt(0)?.toUpperCase() || 'U'}
+                      {userProfile?.full_name?.charAt(0) ||
+                        user.email?.charAt(0)?.toUpperCase() ||
+                        'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className='hidden md:block text-left'>
+                    <p className='text-sm font-medium text-gray-900'>
                       {userProfile?.full_name || 'User'}
                     </p>
-                    <p className="text-xs text-gray-500">
-                      {userProfile?.current_rank || 'K1'} • {userProfile?.role === 'premium' ? 'Premium' : 'Free'}
+                    <p className='text-xs text-gray-500'>
+                      {userProfile?.current_rank || 'K1'} •{' '}
+                      {userProfile?.role === 'premium' ? 'Premium' : 'Free'}
                     </p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-500 hidden md:block" />
+                  <ChevronDown className='w-4 h-4 text-gray-500 hidden md:block' />
                 </button>
 
                 {/* Dropdown Menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="py-1">
+                  <div className='absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50'>
+                    <div className='py-1'>
                       {/* User Info */}
-                      <div className="px-4 py-3 border-b">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className='px-4 py-3 border-b'>
+                        <p className='text-sm font-medium text-gray-900'>
                           {userProfile?.full_name || 'User'}
                         </p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                        <div className="flex items-center mt-1 space-x-2">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <p className='text-sm text-gray-500'>{user.email}</p>
+                        <div className='flex items-center mt-1 space-x-2'>
+                          <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
                             {userProfile?.current_rank || 'K1'}
                           </span>
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            {userProfile?.role === 'premium' ? 'Premium' : 'Free'}
+                          <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
+                            {userProfile?.role === 'premium'
+                              ? 'Premium'
+                              : 'Free'}
                           </span>
                         </div>
                       </div>
 
                       {/* Menu Items */}
-                      <Link 
-                        to="/dashboard" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <Link
+                        to='/dashboard'
+                        className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <LayoutDashboard className="w-4 h-4 mr-3" />
+                        <LayoutDashboard className='w-4 h-4 mr-3' />
                         Dashboard
                       </Link>
-                      <Link 
-                        to="/profile" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <Link
+                        to='/profile'
+                        className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <User className="w-4 h-4 mr-3" />
+                        <User className='w-4 h-4 mr-3' />
                         Hồ sơ cá nhân
                       </Link>
-                      <Link 
-                        to="/membership" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <Link
+                        to='/membership'
+                        className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Crown className="w-4 h-4 mr-3" />
+                        <Crown className='w-4 h-4 mr-3' />
                         Gói hội viên
                       </Link>
-                      <Link 
-                        to="/matches" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <Link
+                        to='/matches'
+                        className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Trophy className="w-4 h-4 mr-3" />
+                        <Trophy className='w-4 h-4 mr-3' />
                         Lịch sử trận đấu
                       </Link>
-                      <Link 
-                        to="/settings" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      <Link
+                        to='/settings'
+                        className='flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <Settings className="w-4 h-4 mr-3" />
+                        <Settings className='w-4 h-4 mr-3' />
                         Cài đặt
                       </Link>
-                      
-                      <div className="border-t">
+
+                      <div className='border-t'>
                         <button
                           onClick={handleLogout}
                           disabled={loading}
-                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                          className='flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50'
                         >
-                          <LogOut className="w-4 h-4 mr-3" />
+                          <LogOut className='w-4 h-4 mr-3' />
                           {loading ? 'Đang đăng xuất...' : 'Đăng xuất'}
                         </button>
                       </div>
@@ -218,16 +229,14 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-3">
-                <Link to="/login">
-                  <Button variant="ghost" size="sm">
+              <div className='flex items-center space-x-3'>
+                <Link to='/login'>
+                  <Button variant='ghost' size='sm'>
                     Đăng nhập
                   </Button>
                 </Link>
-                <Link to="/register">
-                  <Button size="sm">
-                    Đăng ký
-                  </Button>
+                <Link to='/register'>
+                  <Button size='sm'>Đăng ký</Button>
                 </Link>
               </div>
             )}
@@ -235,22 +244,26 @@ const Header = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+              className='md:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100'
             >
-              {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {showMobileMenu ? (
+                <X className='h-6 w-6' />
+              ) : (
+                <Menu className='h-6 w-6' />
+              )}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {showMobileMenu && (
-          <div className="md:hidden border-t">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navItems.map((item) => (
+          <div className='md:hidden border-t'>
+            <div className='px-2 pt-2 pb-3 space-y-1'>
+              {navItems.map(item => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md"
+                  className='block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-md'
                   onClick={() => setShowMobileMenu(false)}
                 >
                   {item.name}

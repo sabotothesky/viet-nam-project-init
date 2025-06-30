@@ -39,13 +39,15 @@ export const useContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('posts')
-        .select(`
+        .select(
+          `
           *,
           author_profile:profiles!posts_author_id_fkey(full_name, avatar_url)
-        `)
+        `
+        )
         .eq('status', 'published')
         .order('published_at', { ascending: false });
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -59,7 +61,7 @@ export const useContent = () => {
         .select('*')
         .eq('status', 'active')
         .order('order_index');
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -72,14 +74,16 @@ export const useContent = () => {
         .from('rules')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data || [];
     },
   });
 
   const createPost = useMutation({
-    mutationFn: async (postData: Omit<Post, 'id' | 'created_at' | 'updated_at' | 'view_count'>) => {
+    mutationFn: async (
+      postData: Omit<Post, 'id' | 'created_at' | 'updated_at' | 'view_count'>
+    ) => {
       const { data, error } = await supabase
         .from('posts')
         .insert(postData)
@@ -93,7 +97,7 @@ export const useContent = () => {
       toast.success('Bài viết đã được tạo!');
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error creating post:', error);
       toast.error('Có lỗi xảy ra khi tạo bài viết');
     },
@@ -102,7 +106,7 @@ export const useContent = () => {
   const incrementViewCount = useMutation({
     mutationFn: async (postId: string) => {
       const { error } = await supabase.rpc('increment_post_views', {
-        post_id: postId
+        post_id: postId,
       });
 
       if (error) throw error;

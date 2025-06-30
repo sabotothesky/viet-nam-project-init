@@ -115,17 +115,19 @@ export const useProfile = (userId?: string) => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch user profile
-  const fetchProfile = useCallback(async (targetUserId?: string) => {
-    const id = targetUserId || userId || user?.id;
-    if (!id) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
+  const fetchProfile = useCallback(
+    async (targetUserId?: string) => {
+      const id = targetUserId || userId || user?.id;
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .select(
+            `
           *,
           clubs (
             id,
@@ -142,107 +144,127 @@ export const useProfile = (userId?: string) => {
             name,
             address
           )
-        `)
-        .eq('user_id', id)
-        .single();
+        `
+          )
+          .eq('user_id', id)
+          .single();
 
-      if (error) throw error;
-      setProfile(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải thông tin hồ sơ');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, user?.id]);
+        if (error) throw error;
+        setProfile(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể tải thông tin hồ sơ'
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId, user?.id]
+  );
 
   // Update profile
-  const updateProfile = useCallback(async (data: UpdateProfileData) => {
-    if (!profile) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('user_id', profile.id)
-        .select()
-        .single();
+  const updateProfile = useCallback(
+    async (data: UpdateProfileData) => {
+      if (!profile) return;
 
-      if (error) throw error;
-      setProfile(data);
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast.success('Cập nhật thông tin thành công!');
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể cập nhật hồ sơ');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [profile, queryClient]);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .update(data)
+          .eq('user_id', profile.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setProfile(data);
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+        toast.success('Cập nhật thông tin thành công!');
+        return data;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể cập nhật hồ sơ'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [profile, queryClient]
+  );
 
   // Upload avatar
-  const uploadAvatar = useCallback(async (file: File) => {
-    if (!profile) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ avatar_url: URL.createObjectURL(file) })
-        .eq('user_id', profile.id)
-        .select()
-        .single();
+  const uploadAvatar = useCallback(
+    async (file: File) => {
+      if (!profile) return;
 
-      if (error) throw error;
-      setProfile(data);
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast.success('Cập nhật ảnh đại diện thành công!');
-      return data.avatar_url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải lên ảnh đại diện');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [profile, queryClient]);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({ avatar_url: URL.createObjectURL(file) })
+          .eq('user_id', profile.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setProfile(data);
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+        toast.success('Cập nhật ảnh đại diện thành công!');
+        return data.avatar_url;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể tải lên ảnh đại diện'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [profile, queryClient]
+  );
 
   // Upload cover photo
-  const uploadCoverPhoto = useCallback(async (file: File) => {
-    if (!profile) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ cover_photo_url: URL.createObjectURL(file) })
-        .eq('user_id', profile.id)
-        .select()
-        .single();
+  const uploadCoverPhoto = useCallback(
+    async (file: File) => {
+      if (!profile) return;
 
-      if (error) throw error;
-      setProfile(data);
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast.success('Cập nhật ảnh bìa thành công!');
-      return data.cover_photo_url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải lên ảnh bìa');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [profile, queryClient]);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({ cover_photo_url: URL.createObjectURL(file) })
+          .eq('user_id', profile.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setProfile(data);
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
+        toast.success('Cập nhật ảnh bìa thành công!');
+        return data.cover_photo_url;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể tải lên ảnh bìa'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [profile, queryClient]
+  );
 
   // Get profile statistics
   const getProfileStats = useCallback(() => {
     if (!profile) return null;
-    
+
     return {
       total_matches: profile.total_matches,
       win_rate: profile.win_rate,
@@ -252,23 +274,29 @@ export const useProfile = (userId?: string) => {
       tournaments_played: profile.stats.total_tournaments,
       tournaments_won: profile.stats.tournament_wins,
       current_streak: profile.stats.current_streak,
-      longest_streak: profile.stats.longest_streak
+      longest_streak: profile.stats.longest_streak,
     };
   }, [profile]);
 
   // Get recent achievements
-  const getRecentAchievements = useCallback((limit: number = 5) => {
-    if (!profile) return [];
-    
-    return profile.achievements
-      .sort((a, b) => b.earned_at.getTime() - a.earned_at.getTime())
-      .slice(0, limit);
-  }, [profile]);
+  const getRecentAchievements = useCallback(
+    (limit: number = 5) => {
+      if (!profile) return [];
+
+      return profile.achievements
+        .sort((a, b) => b.earned_at.getTime() - a.earned_at.getTime())
+        .slice(0, limit);
+    },
+    [profile]
+  );
 
   // Check if user can edit profile
-  const canEditProfile = useCallback((targetUserId?: string) => {
-    return userId === (targetUserId || userId);
-  }, [userId]);
+  const canEditProfile = useCallback(
+    (targetUserId?: string) => {
+      return userId === (targetUserId || userId);
+    },
+    [userId]
+  );
 
   useEffect(() => {
     fetchProfile();
@@ -284,6 +312,6 @@ export const useProfile = (userId?: string) => {
     uploadCoverPhoto,
     getProfileStats,
     getRecentAchievements,
-    canEditProfile
+    canEditProfile,
   };
 };

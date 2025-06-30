@@ -2,7 +2,11 @@ export interface Tournament {
   id: string;
   name: string;
   description?: string;
-  tournament_type: 'single_elimination' | 'double_elimination' | 'round_robin' | 'swiss';
+  tournament_type:
+    | 'single_elimination'
+    | 'double_elimination'
+    | 'round_robin'
+    | 'swiss';
   game_format: '8_ball' | '9_ball' | '10_ball' | 'straight_pool';
   max_participants: number;
   current_participants: number;
@@ -17,7 +21,13 @@ export interface Tournament {
   first_prize: number;
   second_prize: number;
   third_prize: number;
-  status: 'upcoming' | 'registration_open' | 'registration_closed' | 'ongoing' | 'completed' | 'cancelled';
+  status:
+    | 'upcoming'
+    | 'registration_open'
+    | 'registration_closed'
+    | 'ongoing'
+    | 'completed'
+    | 'cancelled';
   rules?: string;
   contact_info?: any;
   banner_image?: string;
@@ -205,10 +215,10 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
       third: 700,
       fourth: 500,
       top8: 250,
-      participation: 100
+      participation: 100,
     },
     entry_fee_range: { min: 500000, max: 2000000 },
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   },
   {
     id: '2',
@@ -221,10 +231,10 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
       third: 650,
       fourth: 450,
       top8: 200,
-      participation: 100
+      participation: 100,
     },
     entry_fee_range: { min: 200000, max: 800000 },
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   },
   {
     id: '3',
@@ -237,10 +247,10 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
       third: 600,
       fourth: 400,
       top8: 150,
-      participation: 100
+      participation: 100,
     },
     entry_fee_range: { min: 100000, max: 500000 },
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   },
   {
     id: '4',
@@ -253,11 +263,11 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
       third: 600,
       fourth: 400,
       top8: 150,
-      participation: 100
+      participation: 100,
     },
     entry_fee_range: { min: 50000, max: 200000 },
-    created_at: new Date().toISOString()
-  }
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export interface TournamentFilters {
@@ -281,4 +291,4 @@ export interface ClubStandingFilters {
     min: number;
     max: number;
   };
-} 
+}

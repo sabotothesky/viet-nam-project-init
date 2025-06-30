@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -36,7 +35,7 @@ export const useReferrals = () => {
     totalReferrals: 0,
     successfulReferrals: 0,
     pendingRewards: 0,
-    totalEarned: 0
+    totalEarned: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,18 +64,20 @@ export const useReferrals = () => {
 
       // Create new referral code
       const newCode = generateReferralCode(user.id);
-      const { error: createError } = await supabase
-        .from('referrals')
-        .insert([{
+      const { error: createError } = await supabase.from('referrals').insert([
+        {
           referrer_id: user.id,
           referral_code: newCode,
-          status: 'active'
-        }]);
+          status: 'active',
+        },
+      ]);
 
       if (createError) throw createError;
       setMyReferralCode(newCode);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch referral code');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch referral code'
+      );
     }
   };
 
@@ -95,17 +96,22 @@ export const useReferrals = () => {
 
       // Calculate stats
       const totalReferrals = data?.length || 0;
-      const successfulReferrals = data?.filter(r => r.status === 'completed').length || 0;
-      const pendingRewards = data?.filter(r => r.status === 'completed' && !r.rewarded_at).length || 0;
+      const successfulReferrals =
+        data?.filter(r => r.status === 'completed').length || 0;
+      const pendingRewards =
+        data?.filter(r => r.status === 'completed' && !r.rewarded_at).length ||
+        0;
 
       setStats(prev => ({
         ...prev,
         totalReferrals,
         successfulReferrals,
-        pendingRewards
+        pendingRewards,
       }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch referrals');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch referrals'
+      );
     }
   };
 
@@ -123,7 +129,8 @@ export const useReferrals = () => {
       setRewards(data || []);
 
       // Calculate total earned
-      const totalEarned = data?.reduce((sum, reward) => sum + reward.reward_value, 0) || 0;
+      const totalEarned =
+        data?.reduce((sum, reward) => sum + reward.reward_value, 0) || 0;
       setStats(prev => ({ ...prev, totalEarned }));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch rewards');
@@ -149,7 +156,7 @@ export const useReferrals = () => {
         .update({
           referred_id: newUserId,
           status: 'completed',
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
         })
         .eq('id', referral.id);
 
@@ -163,7 +170,9 @@ export const useReferrals = () => {
           reward_type: 'free_month',
           reward_value: 99000,
           description: 'Tặng 1 tháng Premium miễn phí',
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          expires_at: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toISOString(),
         },
         {
           user_id: newUserId,
@@ -171,8 +180,10 @@ export const useReferrals = () => {
           reward_type: 'discount',
           reward_value: 49500,
           description: 'Giảm 50% tháng đầu Premium',
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        }
+          expires_at: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        },
       ];
 
       const { error: rewardError } = await supabase
@@ -183,7 +194,9 @@ export const useReferrals = () => {
 
       return { success: true };
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to process referral');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to process referral'
+      );
     }
   };
 
@@ -203,7 +216,9 @@ export const useReferrals = () => {
       await fetchRewards();
       return { success: true };
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to claim reward');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to claim reward'
+      );
     }
   };
 
@@ -213,7 +228,7 @@ export const useReferrals = () => {
       await Promise.all([
         fetchOrCreateReferralCode(),
         fetchReferrals(),
-        fetchRewards()
+        fetchRewards(),
       ]);
       setLoading(false);
     };
@@ -230,6 +245,6 @@ export const useReferrals = () => {
     error,
     processReferral,
     claimReward,
-    refreshData: () => Promise.all([fetchReferrals(), fetchRewards()])
+    refreshData: () => Promise.all([fetchReferrals(), fetchRewards()]),
   };
 };

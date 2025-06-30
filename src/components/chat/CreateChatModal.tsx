@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Search, 
-  Users, 
-  User, 
-  Plus,
-  Check,
-  X
-} from 'lucide-react';
+import { Search, Users, User, Plus, Check, X } from 'lucide-react';
 
 interface User {
   id: string;
@@ -32,7 +30,7 @@ interface CreateChatModalProps {
 export const CreateChatModal: React.FC<CreateChatModalProps> = ({
   isOpen,
   onClose,
-  onChatCreated
+  onChatCreated,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -52,7 +50,7 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       setUsers([
         {
           id: '1',
@@ -60,7 +58,7 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           avatar_url: '/avatars/player2.jpg',
           rank: 'B+',
           is_online: true,
-          last_seen: new Date()
+          last_seen: new Date(),
         },
         {
           id: '2',
@@ -68,7 +66,7 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           avatar_url: '/avatars/pool_master.jpg',
           rank: 'A',
           is_online: false,
-          last_seen: new Date(Date.now() - 1000 * 60 * 30)
+          last_seen: new Date(Date.now() - 1000 * 60 * 30),
         },
         {
           id: '3',
@@ -76,7 +74,7 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           avatar_url: '/avatars/champion.jpg',
           rank: 'G',
           is_online: true,
-          last_seen: new Date()
+          last_seen: new Date(),
         },
         {
           id: '4',
@@ -84,7 +82,7 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           avatar_url: '/avatars/newbie.jpg',
           rank: 'C',
           is_online: false,
-          last_seen: new Date(Date.now() - 1000 * 60 * 60)
+          last_seen: new Date(Date.now() - 1000 * 60 * 60),
         },
         {
           id: '5',
@@ -92,8 +90,8 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           avatar_url: '/avatars/veteran.jpg',
           rank: 'A+',
           is_online: true,
-          last_seen: new Date()
-        }
+          last_seen: new Date(),
+        },
       ]);
     } catch (error) {
       console.error('Failed to fetch users:', error);
@@ -121,11 +119,11 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
 
   const handleCreateChat = async () => {
     if (selectedUsers.length === 0) return;
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const chatId = `chat_${Date.now()}`;
       onChatCreated(chatId);
       handleClose();
@@ -152,24 +150,27 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className='max-w-md'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Plus className='h-5 w-5' />
             Tạo cuộc trò chuyện mới
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="space-y-6">
+
+        <div className='space-y-6'>
           {/* Chat Type Selection */}
-          <Tabs value={chatType} onValueChange={(value) => setChatType(value as 'direct' | 'group')}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="direct" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
+          <Tabs
+            value={chatType}
+            onValueChange={value => setChatType(value as 'direct' | 'group')}
+          >
+            <TabsList className='grid w-full grid-cols-2'>
+              <TabsTrigger value='direct' className='flex items-center gap-2'>
+                <User className='h-4 w-4' />
                 Tin nhắn riêng
               </TabsTrigger>
-              <TabsTrigger value="group" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
+              <TabsTrigger value='group' className='flex items-center gap-2'>
+                <Users className='h-4 w-4' />
                 Nhóm chat
               </TabsTrigger>
             </TabsList>
@@ -178,13 +179,13 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           {/* Group Name Input */}
           {chatType === 'group' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 Tên nhóm
               </label>
               <Input
-                placeholder="Nhập tên nhóm..."
+                placeholder='Nhập tên nhóm...'
                 value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
+                onChange={e => setGroupName(e.target.value)}
               />
             </div>
           )}
@@ -192,27 +193,34 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           {/* Selected Users */}
           {selectedUsers.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
                 {chatType === 'direct' ? 'Người được chọn:' : 'Thành viên:'}
               </label>
-              <div className="space-y-2">
-                {selectedUsers.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
+              <div className='space-y-2'>
+                {selectedUsers.map(user => (
+                  <div
+                    key={user.id}
+                    className='flex items-center justify-between p-2 bg-gray-50 rounded-lg'
+                  >
+                    <div className='flex items-center gap-2'>
+                      <Avatar className='h-6 w-6'>
                         <AvatarImage src={user.avatar_url} />
                         <AvatarFallback>{user.username[0]}</AvatarFallback>
                       </Avatar>
-                      <span className="text-sm font-medium">{user.username}</span>
-                      <Badge variant="outline" className="text-xs">{user.rank}</Badge>
+                      <span className='text-sm font-medium'>
+                        {user.username}
+                      </span>
+                      <Badge variant='outline' className='text-xs'>
+                        {user.rank}
+                      </Badge>
                     </div>
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant='ghost'
+                      size='sm'
                       onClick={() => handleUserSelect(user)}
-                      className="h-6 w-6 p-0"
+                      className='h-6 w-6 p-0'
                     >
-                      <X className="h-3 w-3" />
+                      <X className='h-3 w-3' />
                     </Button>
                   </div>
                 ))}
@@ -222,26 +230,26 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
 
           {/* User Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className='block text-sm font-medium text-gray-700 mb-2'>
               Tìm kiếm người dùng
             </label>
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <div className='relative mb-3'>
+              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
               <Input
-                placeholder="Tìm kiếm theo tên..."
+                placeholder='Tìm kiếm theo tên...'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                onChange={e => setSearchTerm(e.target.value)}
+                className='pl-10'
               />
             </div>
-            
+
             {isLoading ? (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+              <div className='flex items-center justify-center py-4'>
+                <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500'></div>
               </div>
             ) : (
-              <div className="max-h-48 overflow-y-auto space-y-2">
-                {filteredUsers.map((user) => {
+              <div className='max-h-48 overflow-y-auto space-y-2'>
+                {filteredUsers.map(user => {
                   const isSelected = selectedUsers.some(u => u.id === user.id);
                   return (
                     <button
@@ -253,30 +261,32 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
                           : 'hover:bg-gray-50'
                       }`}
                     >
-                      <Avatar className="h-8 w-8">
+                      <Avatar className='h-8 w-8'>
                         <AvatarImage src={user.avatar_url} />
                         <AvatarFallback>{user.username[0]}</AvatarFallback>
                       </Avatar>
-                      
-                      <div className="flex-1 text-left">
-                        <div className="font-medium">{user.username}</div>
-                        <div className="text-sm text-gray-600">Hạng {user.rank}</div>
+
+                      <div className='flex-1 text-left'>
+                        <div className='font-medium'>{user.username}</div>
+                        <div className='text-sm text-gray-600'>
+                          Hạng {user.rank}
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2">
+
+                      <div className='flex items-center gap-2'>
                         {user.is_online && (
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
                         )}
                         {isSelected && (
-                          <Check className="h-4 w-4 text-blue-600" />
+                          <Check className='h-4 w-4 text-blue-600' />
                         )}
                       </div>
                     </button>
                   );
                 })}
-                
+
                 {filteredUsers.length === 0 && searchTerm && (
-                  <div className="text-center py-4 text-gray-500">
+                  <div className='text-center py-4 text-gray-500'>
                     Không tìm thấy người dùng nào
                   </div>
                 )}
@@ -285,14 +295,14 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleClose} className="flex-1">
+          <div className='flex gap-2'>
+            <Button variant='outline' onClick={handleClose} className='flex-1'>
               Hủy
             </Button>
             <Button
               onClick={handleCreateChat}
               disabled={!canCreateChat()}
-              className="flex-1"
+              className='flex-1'
             >
               Tạo cuộc trò chuyện
             </Button>
@@ -301,4 +311,4 @@ export const CreateChatModal: React.FC<CreateChatModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-}; 
+};

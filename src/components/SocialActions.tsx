@@ -14,52 +14,52 @@ interface SocialActionsProps {
   showChallenge?: boolean;
 }
 
-const SocialActions = ({ 
-  postId = '', 
-  likes, 
-  comments, 
-  isLiked, 
-  onLike, 
-  onComment, 
-  onShare, 
+const SocialActions = ({
+  postId = '',
+  likes,
+  comments,
+  isLiked,
+  onLike,
+  onComment,
+  onShare,
   onChallenge,
-  showChallenge = true 
+  showChallenge = true,
 }: SocialActionsProps) => {
   return (
-    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-      <Button 
-        variant="ghost"
-        size="sm"
+    <div className='flex items-center justify-between pt-3 border-t border-gray-100'>
+      <Button
+        variant='ghost'
+        size='sm'
         onClick={() => onLike(postId)}
         className={`flex items-center space-x-2 transition-colors ${
-          isLiked 
-            ? 'text-like-red hover:text-like-red' 
+          isLiked
+            ? 'text-like-red hover:text-like-red'
             : 'text-comment-gray hover:text-like-red'
         }`}
       >
         <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-        <span className="text-sm font-medium">{likes}</span>
+        <span className='text-sm font-medium'>{likes}</span>
       </Button>
-      
-      <Button 
-        variant="ghost"
-        size="sm"
+
+      <Button
+        variant='ghost'
+        size='sm'
         onClick={() => {
           if (onComment) {
             onComment(postId);
           } else {
-            console.log('Comment functionality not implemented');
+            // ...removed console.log('Comment functionality not implemented')
           }
         }}
-        className="flex items-center space-x-2 text-comment-gray hover:text-share-blue transition-colors"
+        className='flex items-center space-x-2 text-comment-gray hover:text-share-blue transition-colors'
       >
-        <MessageCircle className="w-5 h-5" />
-        <span className="text-sm font-medium">{comments}</span>
+        <MessageCircle className='w-5 h-5' />
+        <span className='text-sm font-medium'>{comments}</span>
       </Button>
-      
-      <Button 
-        variant="ghost"
-        size="sm"
+
+      <Button
+        variant='ghost'
+        size='sm'
         onClick={() => {
           if (onShare) {
             onShare(postId);
@@ -69,35 +69,37 @@ const SocialActions = ({
               navigator.share({
                 title: 'Sabo Pool Arena',
                 text: 'Xem bài viết này trên Sabo Pool Arena',
-                url: `${window.location.origin}/feed/post/${postId}`
+                url: `${window.location.origin}/feed/post/${postId}`,
               });
             } else {
-              navigator.clipboard.writeText(`${window.location.origin}/feed/post/${postId}`);
+              navigator.clipboard.writeText(
+                `${window.location.origin}/feed/post/${postId}`
+              );
               alert('Đã sao chép link vào clipboard!');
             }
           }
         }}
-        className="flex items-center space-x-2 text-comment-gray hover:text-primary-green transition-colors"
+        className='flex items-center space-x-2 text-comment-gray hover:text-primary-green transition-colors'
       >
-        <Share2 className="w-5 h-5" />
-        <span className="text-sm font-medium">Chia sẻ</span>
+        <Share2 className='w-5 h-5' />
+        <span className='text-sm font-medium'>Chia sẻ</span>
       </Button>
 
       {showChallenge && (
-        <Button 
-          variant="ghost"
-          size="sm"
+        <Button
+          variant='ghost'
+          size='sm'
           onClick={() => {
             if (onChallenge) {
               onChallenge(postId);
             } else {
-              console.log('Challenge functionality not implemented');
+              // ...removed console.log('Challenge functionality not implemented')
             }
           }}
-          className="flex items-center space-x-2 text-primary-blue hover:text-primary-blue/80 transition-colors font-semibold"
+          className='flex items-center space-x-2 text-primary-blue hover:text-primary-blue/80 transition-colors font-semibold'
         >
-          <Zap className="w-5 h-5" />
-          <span className="text-sm">Thách đấu</span>
+          <Zap className='w-5 h-5' />
+          <span className='text-sm'>Thách đấu</span>
         </Button>
       )}
     </div>

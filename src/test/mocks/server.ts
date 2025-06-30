@@ -61,7 +61,8 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        payment_url: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?test=1',
+        payment_url:
+          'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?test=1',
         payment_id: 'test-payment-123',
       })
     );
@@ -91,4 +92,4 @@ export const handlers = [
   }),
 ];
 
-export const server = setupServer(...handlers); 
+export const server = setupServer(...handlers);

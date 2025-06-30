@@ -37,20 +37,20 @@ export const useNotifications = (userId?: string) => {
       challenges: true,
       tournaments: true,
       achievements: true,
-      system: true
-    }
+      system: true,
+    },
   });
 
   // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock notifications
       const mockNotifications: Notification[] = [
         {
@@ -62,8 +62,8 @@ export const useNotifications = (userId?: string) => {
           read: false,
           action: {
             label: 'Xem thành tích',
-            url: '/achievements'
-          }
+            url: '/achievements',
+          },
         },
         {
           id: '2',
@@ -74,8 +74,8 @@ export const useNotifications = (userId?: string) => {
           read: false,
           action: {
             label: 'Tham gia',
-            url: '/tournaments/1'
-          }
+            url: '/tournaments/1',
+          },
         },
         {
           id: '3',
@@ -86,8 +86,8 @@ export const useNotifications = (userId?: string) => {
           read: true,
           action: {
             label: 'Xem thách đấu',
-            url: '/challenges/1'
-          }
+            url: '/challenges/1',
+          },
         },
         {
           id: '4',
@@ -95,10 +95,10 @@ export const useNotifications = (userId?: string) => {
           title: 'Kết nối mạng không ổn định',
           message: 'Vui lòng kiểm tra kết nối mạng của bạn',
           timestamp: new Date(Date.now() - 1000 * 60 * 120),
-          read: true
-        }
+          read: true,
+        },
       ];
-      
+
       setNotifications(mockNotifications);
       setUnreadCount(mockNotifications.filter(n => !n.read).length);
     } catch (error) {
@@ -113,15 +113,15 @@ export const useNotifications = (userId?: string) => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === notificationId 
+
+      setNotifications(prev =>
+        prev.map(notification =>
+          notification.id === notificationId
             ? { ...notification, read: true }
             : notification
         )
       );
-      
+
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -133,11 +133,11 @@ export const useNotifications = (userId?: string) => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setNotifications(prev => 
+
+      setNotifications(prev =>
         prev.map(notification => ({ ...notification, read: true }))
       );
-      
+
       setUnreadCount(0);
     } catch (error) {
       console.error('Failed to mark all notifications as read:', error);
@@ -145,61 +145,71 @@ export const useNotifications = (userId?: string) => {
   }, []);
 
   // Delete notification
-  const deleteNotification = useCallback(async (notificationId: string) => {
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const notification = notifications.find(n => n.id === notificationId);
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      
-      if (notification && !notification.read) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
+  const deleteNotification = useCallback(
+    async (notificationId: string) => {
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const notification = notifications.find(n => n.id === notificationId);
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+
+        if (notification && !notification.read) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        }
+      } catch (error) {
+        console.error('Failed to delete notification:', error);
       }
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-    }
-  }, [notifications]);
+    },
+    [notifications]
+  );
 
   // Update notification settings
-  const updateSettings = useCallback(async (newSettings: Partial<NotificationSettings>) => {
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setSettings(prev => ({ ...prev, ...newSettings }));
-    } catch (error) {
-      console.error('Failed to update notification settings:', error);
-    }
-  }, []);
+  const updateSettings = useCallback(
+    async (newSettings: Partial<NotificationSettings>) => {
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        setSettings(prev => ({ ...prev, ...newSettings }));
+      } catch (error) {
+        console.error('Failed to update notification settings:', error);
+      }
+    },
+    []
+  );
 
   // Send notification (for testing)
-  const sendNotification = useCallback(async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    try {
-      const newNotification: Notification = {
-        ...notification,
-        id: Date.now().toString(),
-        timestamp: new Date(),
-        read: false
-      };
-      
-      setNotifications(prev => [newNotification, ...prev]);
-      setUnreadCount(prev => prev + 1);
-    } catch (error) {
-      console.error('Failed to send notification:', error);
-    }
-  }, []);
+  const sendNotification = useCallback(
+    async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+      try {
+        const newNotification: Notification = {
+          ...notification,
+          id: Date.now().toString(),
+          timestamp: new Date(),
+          read: false,
+        };
+
+        setNotifications(prev => [newNotification, ...prev]);
+        setUnreadCount(prev => prev + 1);
+      } catch (error) {
+        console.error('Failed to send notification:', error);
+      }
+    },
+    []
+  );
 
   // Subscribe to real-time notifications
   useEffect(() => {
     if (!userId) return;
-    
+
     fetchNotifications();
-    
+
     // Simulate real-time updates
     const interval = setInterval(() => {
       // Randomly add new notifications for demo
-      if (Math.random() < 0.1) { // 10% chance every 30 seconds
+      if (Math.random() < 0.1) {
+        // 10% chance every 30 seconds
         sendNotification({
           type: 'info',
           title: 'Cập nhật hệ thống',
@@ -207,7 +217,7 @@ export const useNotifications = (userId?: string) => {
         });
       }
     }, 30000);
-    
+
     return () => clearInterval(interval);
   }, [userId, fetchNotifications, sendNotification]);
 
@@ -221,6 +231,6 @@ export const useNotifications = (userId?: string) => {
     markAllAsRead,
     deleteNotification,
     updateSettings,
-    sendNotification
+    sendNotification,
   };
 };

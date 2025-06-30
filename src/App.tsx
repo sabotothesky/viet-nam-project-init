@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Toaster } from './components/ui/toaster';
@@ -53,75 +58,81 @@ import { RealtimeNotificationBanner } from './components/notifications/RealtimeN
 
 function App() {
   const handlePWAInstall = () => {
-    console.log('PWA installed successfully');
+    // ...removed console.log('PWA installed successfully')
   };
 
   const handlePWADismiss = () => {
-    console.log('PWA install dismissed');
+    // ...removed console.log('PWA install dismissed')
   };
 
   return (
     <ErrorBoundary>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-background">
+          <div className='min-h-screen bg-background'>
             {/* PWA Components */}
-            <PWAInstallPrompt onInstall={handlePWAInstall} onDismiss={handlePWADismiss} />
+            <PWAInstallPrompt
+              onInstall={handlePWAInstall}
+              onDismiss={handlePWADismiss}
+            />
             <OfflineIndicator />
-            
+
             {/* Real-time Notifications */}
             <RealtimeNotificationBanner />
-            
+
             {/* Main App Routes */}
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/help" element={<HelpPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              
+              <Route path='/' element={<Index />} />
+              <Route path='/about' element={<AboutPage />} />
+              <Route path='/blog' element={<BlogPage />} />
+              <Route path='/faq' element={<FAQPage />} />
+              <Route path='/help' element={<HelpPage />} />
+              <Route path='/privacy' element={<PrivacyPage />} />
+              <Route path='/terms' element={<TermsPage />} />
+
               {/* Auth Routes */}
-              <Route path="/auth" element={<AuthLayout />}>
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="reset-password" element={<ResetPasswordPage />} />
-                <Route path="callback" element={<AuthCallbackPage />} />
+              <Route path='/auth' element={<AuthLayout />}>
+                <Route path='login' element={<LoginPage />} />
+                <Route path='register' element={<RegisterPage />} />
+                <Route
+                  path='forgot-password'
+                  element={<ForgotPasswordPage />}
+                />
+                <Route path='reset-password' element={<ResetPasswordPage />} />
+                <Route path='callback' element={<AuthCallbackPage />} />
               </Route>
-              
+
               {/* Protected Routes */}
-              <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path='/dashboard' element={<DashboardLayout />}>
                 <Route index element={<Dashboard />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="profile/:username" element={<ProfilePage />} />
-                <Route path="challenges" element={<ChallengesPage />} />
-                <Route path="tournaments" element={<TournamentsPage />} />
-                <Route path="discovery" element={<DiscoveryPage />} />
-                <Route path="chat" element={<ChatPage />} />
-                <Route path="wallet" element={<WalletPage />} />
-                <Route path="analytics" element={<AnalyticsPage />} />
-                <Route path="live-stream" element={<LiveStreamPage />} />
-                <Route path="security" element={<SecurityPage />} />
+                <Route path='profile' element={<ProfilePage />} />
+                <Route path='profile/:username' element={<ProfilePage />} />
+                <Route path='challenges' element={<ChallengesPage />} />
+                <Route path='tournaments' element={<TournamentsPage />} />
+                <Route path='discovery' element={<DiscoveryPage />} />
+                <Route path='chat' element={<ChatPage />} />
+                <Route path='wallet' element={<WalletPage />} />
+                <Route path='analytics' element={<AnalyticsPage />} />
+                <Route path='live-stream' element={<LiveStreamPage />} />
+                <Route path='security' element={<SecurityPage />} />
               </Route>
-              
+
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLayout />}>
+              <Route path='/admin' element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="tournaments" element={<AdminTournaments />} />
-                <Route path="transactions" element={<AdminTransactions />} />
+                <Route path='users' element={<AdminUsers />} />
+                <Route path='tournaments' element={<AdminTournaments />} />
+                <Route path='transactions' element={<AdminTransactions />} />
               </Route>
-              
+
               {/* Live Stream Route */}
-              <Route path="/live/:streamId" element={<LiveStreamPage />} />
-              
+              <Route path='/live/:streamId' element={<LiveStreamPage />} />
+
               {/* Catch all route */}
-              <Route path="*" element={<NotFound />} />
+              <Route path='*' element={<NotFound />} />
             </Routes>
-            
+
             {/* Toast Notifications */}
             <Toaster />
           </div>

@@ -4,14 +4,20 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 import { Slider } from './ui/slider';
-import { 
-  Calculator, 
-  TrendingUp, 
-  TrendingDown, 
-  Trophy, 
-  Zap, 
+import {
+  Calculator,
+  TrendingUp,
+  TrendingDown,
+  Trophy,
+  Zap,
   Star,
   Target,
   Users,
@@ -22,12 +28,12 @@ import {
   TrendingUpIcon,
   TrendingDownIcon,
   Shield,
-  Flame
+  Flame,
 } from 'lucide-react';
-import { 
-  calculateEloRating, 
-  getDynamicKFactor, 
-  getExpectedScore, 
+import {
+  calculateEloRating,
+  getDynamicKFactor,
+  getExpectedScore,
   predictMatchResult,
   getRankFromRating,
   getRatingFromRank,
@@ -39,7 +45,7 @@ import {
   type PlayerStats,
   type EloResult,
   type EloConfig,
-  DEFAULT_ELO_CONFIG
+  DEFAULT_ELO_CONFIG,
 } from '../utils/eloCalculator';
 
 interface EloCalculatorProps {
@@ -58,7 +64,7 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
     average_opponent_rating: 1480,
     rating_volatility: 45,
     recent_form: 25,
-    consistency_score: 75
+    consistency_score: 75,
   });
 
   const [player2, setPlayer2] = useState<PlayerStats>({
@@ -72,7 +78,7 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
     average_opponent_rating: 1580,
     rating_volatility: 60,
     recent_form: -10,
-    consistency_score: 60
+    consistency_score: 60,
   });
 
   const [match, setMatch] = useState<EloMatch>({
@@ -89,7 +95,7 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
     tournament_tier: 'local',
     challenge_bet: 0,
     quality_score: 5,
-    upset_factor: 0
+    upset_factor: 0,
   });
 
   const [config, setConfig] = useState<EloConfig>(DEFAULT_ELO_CONFIG);
@@ -106,7 +112,7 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
 
   const predictMatch = () => {
     const predictionResult = predictMatchResult(
-      player1.current_rating, 
+      player1.current_rating,
       player2.current_rating,
       player1,
       player2
@@ -115,12 +121,16 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
   };
 
   const getRankColor = (rating: number) => {
-    if (rating >= 2800) return 'bg-purple-100 text-purple-800 border-purple-200';
-    if (rating >= 2600) return 'bg-purple-100 text-purple-800 border-purple-200';
+    if (rating >= 2800)
+      return 'bg-purple-100 text-purple-800 border-purple-200';
+    if (rating >= 2600)
+      return 'bg-purple-100 text-purple-800 border-purple-200';
     if (rating >= 2400) return 'bg-red-100 text-red-800 border-red-200';
     if (rating >= 2200) return 'bg-red-100 text-red-800 border-red-200';
-    if (rating >= 2000) return 'bg-orange-100 text-orange-800 border-orange-200';
-    if (rating >= 1800) return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (rating >= 2000)
+      return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (rating >= 1800)
+      return 'bg-orange-100 text-orange-800 border-orange-200';
     if (rating >= 1600) return 'bg-blue-100 text-blue-800 border-blue-200';
     if (rating >= 1400) return 'bg-blue-100 text-blue-800 border-blue-200';
     if (rating >= 1200) return 'bg-green-100 text-green-800 border-green-200';
@@ -135,19 +145,19 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
     const rank = getRankFromRating(rating);
     const names: { [key: string]: string } = {
       'S+': 'Legendary',
-      'S': 'Master',
+      S: 'Master',
       'G+': 'Elite',
-      'G': 'Expert',
+      G: 'Expert',
       'A+': 'Advanced',
-      'A': 'Intermediate+',
+      A: 'Intermediate+',
       'B+': 'Intermediate',
-      'B': 'Beginner+',
+      B: 'Beginner+',
       'C+': 'Beginner',
-      'C': 'Novice+',
+      C: 'Novice+',
       'D+': 'Novice',
-      'D': 'Rookie+',
+      D: 'Rookie+',
       'E+': 'Rookie',
-      'E': 'Newcomer'
+      E: 'Newcomer',
     };
     return `${rank} (${names[rank]})`;
   };
@@ -178,74 +188,91 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
     <div className={`space-y-6 ${className}`}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <Calculator className='h-5 w-5' />
             Enhanced ELO Calculator v2.0
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className='space-y-6'>
           {/* Advanced Settings Toggle */}
-          <div className="flex justify-between items-center">
-            <Button 
+          <div className='flex justify-between items-center'>
+            <Button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
             >
-              <BarChart3 className="h-4 w-4 mr-2" />
+              <BarChart3 className='h-4 w-4 mr-2' />
               {showAdvanced ? 'Hide Advanced Settings' : 'Advanced Settings'}
             </Button>
           </div>
 
           {/* Advanced Configuration */}
           {showAdvanced && (
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className='border-blue-200 bg-blue-50'>
               <CardHeader>
-                <CardTitle className="text-blue-800 text-lg">ELO Configuration</CardTitle>
+                <CardTitle className='text-blue-800 text-lg'>
+                  ELO Configuration
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className='space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
                     <Label>Base K-Factor: {config.baseKFactor}</Label>
                     <Slider
                       value={[config.baseKFactor]}
-                      onValueChange={([value]) => setConfig({...config, baseKFactor: value})}
+                      onValueChange={([value]) =>
+                        setConfig({ ...config, baseKFactor: value })
+                      }
                       max={50}
                       min={20}
                       step={1}
-                      className="mt-2"
+                      className='mt-2'
                     />
                   </div>
                   <div>
-                    <Label>Tournament Multiplier: {config.tournamentMultiplier}</Label>
+                    <Label>
+                      Tournament Multiplier: {config.tournamentMultiplier}
+                    </Label>
                     <Slider
                       value={[config.tournamentMultiplier * 10]}
-                      onValueChange={([value]) => setConfig({...config, tournamentMultiplier: value / 10})}
+                      onValueChange={([value]) =>
+                        setConfig({
+                          ...config,
+                          tournamentMultiplier: value / 10,
+                        })
+                      }
                       max={30}
                       min={10}
                       step={1}
-                      className="mt-2"
+                      className='mt-2'
                     />
                   </div>
                   <div>
                     <Label>Upset Multiplier: {config.upsetMultiplier}</Label>
                     <Slider
                       value={[config.upsetMultiplier * 10]}
-                      onValueChange={([value]) => setConfig({...config, upsetMultiplier: value / 10})}
+                      onValueChange={([value]) =>
+                        setConfig({ ...config, upsetMultiplier: value / 10 })
+                      }
                       max={20}
                       min={10}
                       step={1}
-                      className="mt-2"
+                      className='mt-2'
                     />
                   </div>
                   <div>
-                    <Label>Quality Match Bonus: {config.qualityMatchBonus * 100}%</Label>
+                    <Label>
+                      Quality Match Bonus: {config.qualityMatchBonus * 100}%
+                    </Label>
                     <Slider
                       value={[config.qualityMatchBonus * 100]}
-                      onValueChange={([value]) => setConfig({...config, qualityMatchBonus: value / 100})}
+                      onValueChange={([value]) =>
+                        setConfig({ ...config, qualityMatchBonus: value / 100 })
+                      }
                       max={30}
                       min={5}
                       step={1}
-                      className="mt-2"
+                      className='mt-2'
                     />
                   </div>
                 </div>
@@ -254,206 +281,268 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
           )}
 
           {/* Player Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             {/* Player 1 */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                <Users className="h-4 w-4" />
+            <div className='space-y-4'>
+              <h3 className='font-medium text-gray-900 flex items-center gap-2'>
+                <Users className='h-4 w-4' />
                 Player 1
               </h3>
-              <div className="space-y-3">
+              <div className='space-y-3'>
                 <div>
-                  <Label htmlFor="p1-rating">Current Rating</Label>
+                  <Label htmlFor='p1-rating'>Current Rating</Label>
                   <Input
-                    id="p1-rating"
-                    type="number"
+                    id='p1-rating'
+                    type='number'
                     value={player1.current_rating}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      current_rating: parseInt(e.target.value) || 1500
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        current_rating: parseInt(e.target.value) || 1500,
+                      })
+                    }
                   />
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className='flex items-center gap-2 mt-1'>
                     <Badge className={getRankColor(player1.current_rating)}>
                       {getRankName(player1.current_rating)}
                     </Badge>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p1-matches">Matches Played</Label>
+                  <Label htmlFor='p1-matches'>Matches Played</Label>
                   <Input
-                    id="p1-matches"
-                    type="number"
+                    id='p1-matches'
+                    type='number'
                     value={player1.matches_played}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      matches_played: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        matches_played: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className='text-sm text-gray-500 mt-1'>
                     K-factor: {getDynamicKFactor(player1, match, config)}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p1-streak">Current Streak</Label>
+                  <Label htmlFor='p1-streak'>Current Streak</Label>
                   <Input
-                    id="p1-streak"
-                    type="number"
+                    id='p1-streak'
+                    type='number'
                     value={player1.current_streak}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      current_streak: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        current_streak: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="p1-form">Recent Form (-100 to 100)</Label>
+                  <Label htmlFor='p1-form'>Recent Form (-100 to 100)</Label>
                   <Input
-                    id="p1-form"
-                    type="number"
+                    id='p1-form'
+                    type='number'
                     value={player1.recent_form}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      recent_form: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        recent_form: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getFormColor(player1.recent_form || 0)}`}>
-                    {player1.recent_form > 0 ? '🔥 Hot' : player1.recent_form < 0 ? '❄️ Cold' : '➡️ Stable'}
+                  <div
+                    className={`text-sm mt-1 ${getFormColor(player1.recent_form || 0)}`}
+                  >
+                    {player1.recent_form > 0
+                      ? '🔥 Hot'
+                      : player1.recent_form < 0
+                        ? '❄️ Cold'
+                        : '➡️ Stable'}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p1-consistency">Consistency Score (0-100)</Label>
+                  <Label htmlFor='p1-consistency'>
+                    Consistency Score (0-100)
+                  </Label>
                   <Input
-                    id="p1-consistency"
-                    type="number"
+                    id='p1-consistency'
+                    type='number'
                     value={player1.consistency_score}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      consistency_score: parseInt(e.target.value) || 50
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        consistency_score: parseInt(e.target.value) || 50,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getConsistencyColor(player1.consistency_score || 50)}`}>
-                    {player1.consistency_score > 80 ? '🛡️ Very Stable' : 
-                     player1.consistency_score > 60 ? '📊 Stable' : 
-                     player1.consistency_score > 40 ? '📈 Variable' : '📉 Volatile'}
+                  <div
+                    className={`text-sm mt-1 ${getConsistencyColor(player1.consistency_score || 50)}`}
+                  >
+                    {player1.consistency_score > 80
+                      ? '🛡️ Very Stable'
+                      : player1.consistency_score > 60
+                        ? '📊 Stable'
+                        : player1.consistency_score > 40
+                          ? '📈 Variable'
+                          : '📉 Volatile'}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p1-volatility">Rating Volatility</Label>
+                  <Label htmlFor='p1-volatility'>Rating Volatility</Label>
                   <Input
-                    id="p1-volatility"
-                    type="number"
+                    id='p1-volatility'
+                    type='number'
                     value={player1.rating_volatility}
-                    onChange={(e) => setPlayer1({
-                      ...player1,
-                      rating_volatility: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer1({
+                        ...player1,
+                        rating_volatility: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getVolatilityColor(player1.rating_volatility || 0)}`}>
-                    {player1.rating_volatility < 30 ? '📊 Low Volatility' : 
-                     player1.rating_volatility < 60 ? '📈 Medium Volatility' : '📉 High Volatility'}
+                  <div
+                    className={`text-sm mt-1 ${getVolatilityColor(player1.rating_volatility || 0)}`}
+                  >
+                    {player1.rating_volatility < 30
+                      ? '📊 Low Volatility'
+                      : player1.rating_volatility < 60
+                        ? '📈 Medium Volatility'
+                        : '📉 High Volatility'}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Player 2 */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                <Users className="h-4 w-4" />
+            <div className='space-y-4'>
+              <h3 className='font-medium text-gray-900 flex items-center gap-2'>
+                <Users className='h-4 w-4' />
                 Player 2
               </h3>
-              <div className="space-y-3">
+              <div className='space-y-3'>
                 <div>
-                  <Label htmlFor="p2-rating">Current Rating</Label>
+                  <Label htmlFor='p2-rating'>Current Rating</Label>
                   <Input
-                    id="p2-rating"
-                    type="number"
+                    id='p2-rating'
+                    type='number'
                     value={player2.current_rating}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      current_rating: parseInt(e.target.value) || 1600
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        current_rating: parseInt(e.target.value) || 1600,
+                      })
+                    }
                   />
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className='flex items-center gap-2 mt-1'>
                     <Badge className={getRankColor(player2.current_rating)}>
                       {getRankName(player2.current_rating)}
                     </Badge>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p2-matches">Matches Played</Label>
+                  <Label htmlFor='p2-matches'>Matches Played</Label>
                   <Input
-                    id="p2-matches"
-                    type="number"
+                    id='p2-matches'
+                    type='number'
                     value={player2.matches_played}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      matches_played: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        matches_played: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className="text-sm text-gray-500 mt-1">
+                  <div className='text-sm text-gray-500 mt-1'>
                     K-factor: {getDynamicKFactor(player2, match, config)}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p2-streak">Current Streak</Label>
+                  <Label htmlFor='p2-streak'>Current Streak</Label>
                   <Input
-                    id="p2-streak"
-                    type="number"
+                    id='p2-streak'
+                    type='number'
                     value={player2.current_streak}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      current_streak: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        current_streak: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="p2-form">Recent Form (-100 to 100)</Label>
+                  <Label htmlFor='p2-form'>Recent Form (-100 to 100)</Label>
                   <Input
-                    id="p2-form"
-                    type="number"
+                    id='p2-form'
+                    type='number'
                     value={player2.recent_form}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      recent_form: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        recent_form: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getFormColor(player2.recent_form || 0)}`}>
-                    {player2.recent_form > 0 ? '🔥 Hot' : player2.recent_form < 0 ? '❄️ Cold' : '➡️ Stable'}
+                  <div
+                    className={`text-sm mt-1 ${getFormColor(player2.recent_form || 0)}`}
+                  >
+                    {player2.recent_form > 0
+                      ? '🔥 Hot'
+                      : player2.recent_form < 0
+                        ? '❄️ Cold'
+                        : '➡️ Stable'}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p2-consistency">Consistency Score (0-100)</Label>
+                  <Label htmlFor='p2-consistency'>
+                    Consistency Score (0-100)
+                  </Label>
                   <Input
-                    id="p2-consistency"
-                    type="number"
+                    id='p2-consistency'
+                    type='number'
                     value={player2.consistency_score}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      consistency_score: parseInt(e.target.value) || 50
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        consistency_score: parseInt(e.target.value) || 50,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getConsistencyColor(player2.consistency_score || 50)}`}>
-                    {player2.consistency_score > 80 ? '🛡️ Very Stable' : 
-                     player2.consistency_score > 60 ? '📊 Stable' : 
-                     player2.consistency_score > 40 ? '📈 Variable' : '📉 Volatile'}
+                  <div
+                    className={`text-sm mt-1 ${getConsistencyColor(player2.consistency_score || 50)}`}
+                  >
+                    {player2.consistency_score > 80
+                      ? '🛡️ Very Stable'
+                      : player2.consistency_score > 60
+                        ? '📊 Stable'
+                        : player2.consistency_score > 40
+                          ? '📈 Variable'
+                          : '📉 Volatile'}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="p2-volatility">Rating Volatility</Label>
+                  <Label htmlFor='p2-volatility'>Rating Volatility</Label>
                   <Input
-                    id="p2-volatility"
-                    type="number"
+                    id='p2-volatility'
+                    type='number'
                     value={player2.rating_volatility}
-                    onChange={(e) => setPlayer2({
-                      ...player2,
-                      rating_volatility: parseInt(e.target.value) || 0
-                    })}
+                    onChange={e =>
+                      setPlayer2({
+                        ...player2,
+                        rating_volatility: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
-                  <div className={`text-sm mt-1 ${getVolatilityColor(player2.rating_volatility || 0)}`}>
-                    {player2.rating_volatility < 30 ? '📊 Low Volatility' : 
-                     player2.rating_volatility < 60 ? '📈 Medium Volatility' : '📉 High Volatility'}
+                  <div
+                    className={`text-sm mt-1 ${getVolatilityColor(player2.rating_volatility || 0)}`}
+                  >
+                    {player2.rating_volatility < 30
+                      ? '📊 Low Volatility'
+                      : player2.rating_volatility < 60
+                        ? '📈 Medium Volatility'
+                        : '📉 High Volatility'}
                   </div>
                 </div>
               </div>
@@ -461,24 +550,26 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
           </div>
 
           {/* Match Settings */}
-          <Card className="border-green-200 bg-green-50">
+          <Card className='border-green-200 bg-green-50'>
             <CardHeader>
-              <CardTitle className="text-green-800">Match Settings</CardTitle>
+              <CardTitle className='text-green-800'>Match Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className='space-y-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
                   <Label>Winner</Label>
                   <Select
                     value={match.winner_id}
-                    onValueChange={(value) => setMatch({...match, winner_id: value})}
+                    onValueChange={value =>
+                      setMatch({ ...match, winner_id: value })
+                    }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select winner" />
+                      <SelectValue placeholder='Select winner' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">Player 1</SelectItem>
-                      <SelectItem value="2">Player 2</SelectItem>
+                      <SelectItem value='1'>Player 1</SelectItem>
+                      <SelectItem value='2'>Player 2</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -486,16 +577,18 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
                   <Label>Match Type</Label>
                   <Select
                     value={match.match_type}
-                    onValueChange={(value: any) => setMatch({...match, match_type: value})}
+                    onValueChange={(value: any) =>
+                      setMatch({ ...match, match_type: value })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="regular">Regular Match</SelectItem>
-                      <SelectItem value="tournament">Tournament</SelectItem>
-                      <SelectItem value="challenge">Challenge</SelectItem>
-                      <SelectItem value="quick">Quick Match</SelectItem>
+                      <SelectItem value='regular'>Regular Match</SelectItem>
+                      <SelectItem value='tournament'>Tournament</SelectItem>
+                      <SelectItem value='challenge'>Challenge</SelectItem>
+                      <SelectItem value='quick'>Quick Match</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -504,16 +597,20 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
                     <Label>Tournament Tier</Label>
                     <Select
                       value={match.tournament_tier}
-                      onValueChange={(value: any) => setMatch({...match, tournament_tier: value})}
+                      onValueChange={(value: any) =>
+                        setMatch({ ...match, tournament_tier: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="local">Local</SelectItem>
-                        <SelectItem value="regional">Regional</SelectItem>
-                        <SelectItem value="national">National</SelectItem>
-                        <SelectItem value="international">International</SelectItem>
+                        <SelectItem value='local'>Local</SelectItem>
+                        <SelectItem value='regional'>Regional</SelectItem>
+                        <SelectItem value='national'>National</SelectItem>
+                        <SelectItem value='international'>
+                          International
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -522,127 +619,150 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
                   <div>
                     <Label>Challenge Bet Amount</Label>
                     <Input
-                      type="number"
+                      type='number'
                       value={match.challenge_bet}
-                      onChange={(e) => setMatch({...match, challenge_bet: parseInt(e.target.value) || 0})}
-                      placeholder="Enter bet amount"
+                      onChange={e =>
+                        setMatch({
+                          ...match,
+                          challenge_bet: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      placeholder='Enter bet amount'
                     />
                   </div>
                 )}
                 <div>
                   <Label>Quality Score (1-10)</Label>
                   <Input
-                    type="number"
+                    type='number'
                     value={match.quality_score}
-                    onChange={(e) => setMatch({...match, quality_score: parseInt(e.target.value) || 5})}
-                    min="1"
-                    max="10"
+                    onChange={e =>
+                      setMatch({
+                        ...match,
+                        quality_score: parseInt(e.target.value) || 5,
+                      })
+                    }
+                    min='1'
+                    max='10'
                   />
                 </div>
                 <div>
                   <Label>Upset Factor (0-5)</Label>
                   <Input
-                    type="number"
+                    type='number'
                     value={match.upset_factor}
-                    onChange={(e) => setMatch({...match, upset_factor: parseInt(e.target.value) || 0})}
-                    min="0"
-                    max="5"
+                    onChange={e =>
+                      setMatch({
+                        ...match,
+                        upset_factor: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    min='0'
+                    max='5'
                   />
                 </div>
               </div>
-              <div className="flex gap-2">
-                <div className="flex items-center space-x-2">
+              <div className='flex gap-2'>
+                <div className='flex items-center space-x-2'>
                   <input
-                    type="checkbox"
-                    id="tournament"
+                    type='checkbox'
+                    id='tournament'
                     checked={match.is_tournament}
-                    onChange={(e) => setMatch({...match, is_tournament: e.target.checked})}
+                    onChange={e =>
+                      setMatch({ ...match, is_tournament: e.target.checked })
+                    }
                   />
-                  <Label htmlFor="tournament">Tournament Match</Label>
+                  <Label htmlFor='tournament'>Tournament Match</Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className='flex items-center space-x-2'>
                   <input
-                    type="checkbox"
-                    id="streak-bonus"
+                    type='checkbox'
+                    id='streak-bonus'
                     checked={match.is_streak_bonus}
-                    onChange={(e) => setMatch({...match, is_streak_bonus: e.target.checked})}
+                    onChange={e =>
+                      setMatch({ ...match, is_streak_bonus: e.target.checked })
+                    }
                   />
-                  <Label htmlFor="streak-bonus">Streak Bonus</Label>
+                  <Label htmlFor='streak-bonus'>Streak Bonus</Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className='flex items-center space-x-2'>
                   <input
-                    type="checkbox"
-                    id="quality-match"
+                    type='checkbox'
+                    id='quality-match'
                     checked={match.is_quality_match}
-                    onChange={(e) => setMatch({...match, is_quality_match: e.target.checked})}
+                    onChange={e =>
+                      setMatch({ ...match, is_quality_match: e.target.checked })
+                    }
                   />
-                  <Label htmlFor="quality-match">Quality Match</Label>
+                  <Label htmlFor='quality-match'>Quality Match</Label>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
-            <Button onClick={predictMatch} variant="outline">
-              <Target className="h-4 w-4 mr-2" />
+          <div className='flex gap-4'>
+            <Button onClick={predictMatch} variant='outline'>
+              <Target className='h-4 w-4 mr-2' />
               Predict Match
             </Button>
             <Button onClick={calculateResult} disabled={!match.winner_id}>
-              <Calculator className="h-4 w-4 mr-2" />
+              <Calculator className='h-4 w-4 mr-2' />
               Calculate ELO
             </Button>
           </div>
 
           {/* Prediction Results */}
           {prediction && (
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className='border-blue-200 bg-blue-50'>
               <CardHeader>
-                <CardTitle className="text-blue-800 flex items-center gap-2">
-                  <Target className="h-5 w-5" />
+                <CardTitle className='text-blue-800 flex items-center gap-2'>
+                  <Target className='h-5 w-5' />
                   Match Prediction
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-center'>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className='text-2xl font-bold text-blue-600'>
                       {prediction.player1WinProbability}%
                     </div>
-                    <div className="text-sm text-gray-600">Player 1 Win</div>
+                    <div className='text-sm text-gray-600'>Player 1 Win</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className='text-2xl font-bold text-blue-600'>
                       {prediction.expectedScore}
                     </div>
-                    <div className="text-sm text-gray-600">Expected Score</div>
+                    <div className='text-sm text-gray-600'>Expected Score</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className='text-2xl font-bold text-blue-600'>
                       {prediction.player2WinProbability}%
                     </div>
-                    <div className="text-sm text-gray-600">Player 2 Win</div>
+                    <div className='text-sm text-gray-600'>Player 2 Win</div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-center">
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-center'>
                   <div>
-                    <div className="text-lg font-semibold text-blue-600">
+                    <div className='text-lg font-semibold text-blue-600'>
                       {prediction.confidence}%
                     </div>
-                    <div className="text-sm text-gray-600">Confidence</div>
+                    <div className='text-sm text-gray-600'>Confidence</div>
                   </div>
                   <div>
-                    <div className="text-lg font-semibold text-blue-600">
+                    <div className='text-lg font-semibold text-blue-600'>
                       {prediction.upsetPotential}%
                     </div>
-                    <div className="text-sm text-gray-600">Upset Potential</div>
+                    <div className='text-sm text-gray-600'>Upset Potential</div>
                   </div>
                   {prediction.recommendedBet && (
                     <div>
-                      <div className="text-lg font-semibold text-blue-600">
+                      <div className='text-lg font-semibold text-blue-600'>
                         {prediction.recommendedBet}
                       </div>
-                      <div className="text-sm text-gray-600">Recommended Bet</div>
+                      <div className='text-sm text-gray-600'>
+                        Recommended Bet
+                      </div>
                     </div>
                   )}
                 </div>
@@ -652,98 +772,132 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
 
           {/* ELO Results */}
           {result && (
-            <Card className="border-green-200 bg-green-50">
+            <Card className='border-green-200 bg-green-50'>
               <CardHeader>
-                <CardTitle className="text-green-800 flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
+                <CardTitle className='text-green-800 flex items-center gap-2'>
+                  <Calculator className='h-5 w-5' />
                   ELO Calculation Results
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   {/* Player 1 Results */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-green-800">Player 1 Results</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
+                  <div className='space-y-3'>
+                    <h4 className='font-medium text-green-800'>
+                      Player 1 Results
+                    </h4>
+                    <div className='space-y-2'>
+                      <div className='flex justify-between'>
                         <span>New Rating:</span>
-                        <span className="font-semibold">{result.player1_new_rating}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Rating Change:</span>
-                        <span className={`font-semibold ${result.player1_rating_change > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {result.player1_rating_change > 0 ? '+' : ''}{result.player1_rating_change}
+                        <span className='font-semibold'>
+                          {result.player1_new_rating}
                         </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
+                        <span>Rating Change:</span>
+                        <span
+                          className={`font-semibold ${result.player1_rating_change > 0 ? 'text-green-600' : 'text-red-600'}`}
+                        >
+                          {result.player1_rating_change > 0 ? '+' : ''}
+                          {result.player1_rating_change}
+                        </span>
+                      </div>
+                      <div className='flex justify-between'>
                         <span>K-Factor:</span>
-                        <span className="font-semibold">{result.k_factor_player1}</span>
+                        <span className='font-semibold'>
+                          {result.k_factor_player1}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Bonus:</span>
-                        <span className="font-semibold text-green-600">+{result.bonus_player1}</span>
+                        <span className='font-semibold text-green-600'>
+                          +{result.bonus_player1}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Volatility:</span>
-                        <span className="font-semibold">{result.volatility_player1}</span>
+                        <span className='font-semibold'>
+                          {result.volatility_player1}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Expected Score:</span>
-                        <span className="font-semibold">{(result.player1_expected_score * 100).toFixed(1)}%</span>
+                        <span className='font-semibold'>
+                          {(result.player1_expected_score * 100).toFixed(1)}%
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Player 2 Results */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-green-800">Player 2 Results</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
+                  <div className='space-y-3'>
+                    <h4 className='font-medium text-green-800'>
+                      Player 2 Results
+                    </h4>
+                    <div className='space-y-2'>
+                      <div className='flex justify-between'>
                         <span>New Rating:</span>
-                        <span className="font-semibold">{result.player2_new_rating}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Rating Change:</span>
-                        <span className={`font-semibold ${result.player2_rating_change > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {result.player2_rating_change > 0 ? '+' : ''}{result.player2_rating_change}
+                        <span className='font-semibold'>
+                          {result.player2_new_rating}
                         </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
+                        <span>Rating Change:</span>
+                        <span
+                          className={`font-semibold ${result.player2_rating_change > 0 ? 'text-green-600' : 'text-red-600'}`}
+                        >
+                          {result.player2_rating_change > 0 ? '+' : ''}
+                          {result.player2_rating_change}
+                        </span>
+                      </div>
+                      <div className='flex justify-between'>
                         <span>K-Factor:</span>
-                        <span className="font-semibold">{result.k_factor_player2}</span>
+                        <span className='font-semibold'>
+                          {result.k_factor_player2}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Bonus:</span>
-                        <span className="font-semibold text-green-600">+{result.bonus_player2}</span>
+                        <span className='font-semibold text-green-600'>
+                          +{result.bonus_player2}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Volatility:</span>
-                        <span className="font-semibold">{result.volatility_player2}</span>
+                        <span className='font-semibold'>
+                          {result.volatility_player2}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className='flex justify-between'>
                         <span>Expected Score:</span>
-                        <span className="font-semibold">{(result.player2_expected_score * 100).toFixed(1)}%</span>
+                        <span className='font-semibold'>
+                          {(result.player2_expected_score * 100).toFixed(1)}%
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Match Quality and Confidence */}
-                <div className="mt-6 pt-4 border-t border-green-200">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className='mt-6 pt-4 border-t border-green-200'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
-                      <div className="flex items-center gap-2 text-green-800">
-                        <Star className="h-4 w-4" />
-                        <span className="font-medium">Match Quality Score</span>
+                      <div className='flex items-center gap-2 text-green-800'>
+                        <Star className='h-4 w-4' />
+                        <span className='font-medium'>Match Quality Score</span>
                       </div>
-                      <div className="text-2xl font-bold text-green-600">{result.match_quality_score}/10</div>
+                      <div className='text-2xl font-bold text-green-600'>
+                        {result.match_quality_score}/10
+                      </div>
                     </div>
                     <div>
-                      <div className="flex items-center gap-2 text-green-800">
-                        <Shield className="h-4 w-4" />
-                        <span className="font-medium">Confidence Interval</span>
+                      <div className='flex items-center gap-2 text-green-800'>
+                        <Shield className='h-4 w-4' />
+                        <span className='font-medium'>Confidence Interval</span>
                       </div>
-                      <div className="text-2xl font-bold text-green-600">{(result.confidence_interval * 100).toFixed(0)}%</div>
+                      <div className='text-2xl font-bold text-green-600'>
+                        {(result.confidence_interval * 100).toFixed(0)}%
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -754,4 +908,4 @@ export const EloCalculator: React.FC<EloCalculatorProps> = ({ className }) => {
       </Card>
     </div>
   );
-}; 
+};

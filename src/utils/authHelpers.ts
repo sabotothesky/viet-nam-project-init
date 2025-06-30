@@ -1,10 +1,9 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const handleAuthError = (error: any) => {
   console.error('Auth error:', error);
-  
+
   switch (error?.message) {
     case 'Invalid login credentials':
       toast.error('Email hoặc mật khẩu không đúng');
@@ -25,24 +24,27 @@ export const handleAuthError = (error: any) => {
 
 export const validateJWTToken = async () => {
   try {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
     if (error) {
       console.error('JWT validation error:', error);
       return false;
     }
-    
+
     if (!session?.access_token) {
       console.warn('No access token found');
       return false;
     }
-    
+
     // Check if token is expired
     if (session.expires_at && session.expires_at < Date.now() / 1000) {
       console.warn('Token expired');
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.error('JWT validation failed:', error);
@@ -53,12 +55,12 @@ export const validateJWTToken = async () => {
 export const refreshAuthSession = async () => {
   try {
     const { data, error } = await supabase.auth.refreshSession();
-    
+
     if (error) {
       console.error('Session refresh failed:', error);
       return false;
     }
-    
+
     return !!data.session;
   } catch (error) {
     console.error('Session refresh error:', error);
@@ -68,7 +70,7 @@ export const refreshAuthSession = async () => {
 
 export const configureOAuthRedirects = () => {
   const redirectUrl = `${window.location.origin}/`;
-  
+
   return {
     google: {
       provider: 'google' as const,

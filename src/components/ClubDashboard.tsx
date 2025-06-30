@@ -18,69 +18,64 @@ const ClubDashboard = ({ onUpdate }: ClubDashboardProps) => {
   const isClubOwner = user?.id && profile?.clbVerified;
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Quản lý CLB</h2>
-        <p className="text-gray-600">
-          {isClubOwner 
+        <h2 className='text-2xl font-bold text-gray-900'>Quản lý CLB</h2>
+        <p className='text-gray-600'>
+          {isClubOwner
             ? 'Quản lý thông tin CLB và xử lý yêu cầu rank từ người dùng'
-            : 'Đăng ký và quản lý thông tin CLB của bạn'
-          }
+            : 'Đăng ký và quản lý thông tin CLB của bạn'}
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-          <TabsTrigger value="profile" className="flex items-center gap-2">
-            <Building className="w-4 h-4" />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
+        <TabsList className='grid w-full grid-cols-2 lg:grid-cols-4'>
+          <TabsTrigger value='profile' className='flex items-center gap-2'>
+            <Building className='w-4 h-4' />
             Hồ sơ CLB
           </TabsTrigger>
           {isClubOwner && (
-            <TabsTrigger value="rank-requests" className="flex items-center gap-2">
-              <Trophy className="w-4 h-4" />
+            <TabsTrigger
+              value='rank-requests'
+              className='flex items-center gap-2'
+            >
+              <Trophy className='w-4 h-4' />
               Yêu cầu Rank
             </TabsTrigger>
           )}
-          <TabsTrigger value="members" className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
+          <TabsTrigger value='members' className='flex items-center gap-2'>
+            <Users className='w-4 h-4' />
             Thành viên
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings className="w-4 h-4" />
+          <TabsTrigger value='settings' className='flex items-center gap-2'>
+            <Settings className='w-4 h-4' />
             Cài đặt
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile" className="space-y-6">
-          <ClubProfileTab 
-            user={user} 
-            profile={profile} 
-            onUpdate={onUpdate} 
-          />
+        <TabsContent value='profile' className='space-y-6'>
+          <ClubProfileTab user={user} profile={profile} onUpdate={onUpdate} />
         </TabsContent>
 
         {isClubOwner && (
-          <TabsContent value="rank-requests" className="space-y-6">
-            <RankRequestsTab 
-              clubId={profile?.club_id || ''} 
-              user={user} 
-            />
+          <TabsContent value='rank-requests' className='space-y-6'>
+            <RankRequestsTab clubId={profile?.club_id || ''} user={user} />
           </TabsContent>
         )}
 
-        <TabsContent value="members" className="space-y-6">
+        <TabsContent value='members' className='space-y-6'>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
+              <CardTitle className='flex items-center gap-2'>
+                <Users className='w-5 h-5' />
                 Thành viên CLB
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p className="font-medium">Tính năng đang phát triển</p>
-                <p className="text-sm mt-1">
+              <div className='text-center py-8 text-gray-500'>
+                <Users className='h-12 w-12 mx-auto mb-4 text-gray-400' />
+                <p className='font-medium'>Tính năng đang phát triển</p>
+                <p className='text-sm mt-1'>
                   Quản lý thành viên CLB sẽ có sẵn trong phiên bản tiếp theo
                 </p>
               </div>
@@ -88,19 +83,19 @@ const ClubDashboard = ({ onUpdate }: ClubDashboardProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
+        <TabsContent value='settings' className='space-y-6'>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
+              <CardTitle className='flex items-center gap-2'>
+                <Settings className='w-5 h-5' />
                 Cài đặt CLB
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                <Settings className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p className="font-medium">Tính năng đang phát triển</p>
-                <p className="text-sm mt-1">
+              <div className='text-center py-8 text-gray-500'>
+                <Settings className='h-12 w-12 mx-auto mb-4 text-gray-400' />
+                <p className='font-medium'>Tính năng đang phát triển</p>
+                <p className='text-sm mt-1'>
                   Cài đặt CLB sẽ có sẵn trong phiên bản tiếp theo
                 </p>
               </div>
@@ -112,4 +107,4 @@ const ClubDashboard = ({ onUpdate }: ClubDashboardProps) => {
   );
 };
 
-export default ClubDashboard; 
+export default ClubDashboard;

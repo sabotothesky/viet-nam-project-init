@@ -159,9 +159,12 @@ export interface Season2Stats {
 
 export const useSeason2 = (userId?: string) => {
   const [season2, setSeason2] = useState<Season2 | null>(null);
-  const [leaderboard, setLeaderboard] = useState<Season2Leaderboard | null>(null);
+  const [leaderboard, setLeaderboard] = useState<Season2Leaderboard | null>(
+    null
+  );
   const [stats, setStats] = useState<Season2Stats | null>(null);
-  const [userProgress, setUserProgress] = useState<Season2LeaderboardEntry | null>(null);
+  const [userProgress, setUserProgress] =
+    useState<Season2LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -170,15 +173,16 @@ export const useSeason2 = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock Season 2 data
       const mockSeason2: Season2 = {
         id: 'season2_2024',
         name: 'Season 2 - The Evolution',
-        description: 'Mùa giải mới với hệ thống ranking cải tiến, matchmaking thông minh và nhiều tính năng mới',
+        description:
+          'Mùa giải mới với hệ thống ranking cải tiến, matchmaking thông minh và nhiều tính năng mới',
         version: '2.0',
         start_date: new Date('2024-04-01'),
         end_date: new Date('2024-06-30'),
@@ -191,7 +195,7 @@ export const useSeason2 = (userId?: string) => {
             icon_url: '/features/smart-matchmaking.png',
             is_enabled: true,
             category: 'matchmaking',
-            priority: 'high'
+            priority: 'high',
           },
           {
             id: '2',
@@ -200,7 +204,7 @@ export const useSeason2 = (userId?: string) => {
             icon_url: '/features/enhanced-elo.png',
             is_enabled: true,
             category: 'ranking',
-            priority: 'critical'
+            priority: 'critical',
           },
           {
             id: '3',
@@ -209,7 +213,7 @@ export const useSeason2 = (userId?: string) => {
             icon_url: '/features/seasonal-rewards.png',
             is_enabled: true,
             category: 'rewards',
-            priority: 'high'
+            priority: 'high',
           },
           {
             id: '4',
@@ -218,7 +222,7 @@ export const useSeason2 = (userId?: string) => {
             icon_url: '/features/social-features.png',
             is_enabled: true,
             category: 'social',
-            priority: 'medium'
+            priority: 'medium',
           },
           {
             id: '5',
@@ -227,34 +231,34 @@ export const useSeason2 = (userId?: string) => {
             icon_url: '/features/advanced-analytics.png',
             is_enabled: true,
             category: 'analytics',
-            priority: 'medium'
-          }
+            priority: 'medium',
+          },
         ],
         rules: {
           match_types: {
             '8-ball': true,
             '9-ball': true,
             '10-ball': true,
-            'straight-pool': false
+            'straight-pool': false,
           },
           ranking_system: {
             algorithm: 'elo',
             k_factor: 32,
             volatility: 0.06,
-            confidence: 0.95
+            confidence: 0.95,
           },
           matchmaking: {
             algorithm: 'hybrid',
             max_skill_difference: 200,
             max_wait_time: 300,
-            queue_size: 50
+            queue_size: 50,
           },
           penalties: {
             no_show: 50,
             late_arrival: 25,
             unsportsmanlike: 100,
-            cheating: 500
-          }
+            cheating: 500,
+          },
         },
         rewards: {
           tiers: [
@@ -266,13 +270,13 @@ export const useSeason2 = (userId?: string) => {
                 coins: 1000,
                 experience: 500,
                 items: ['bronze_badge'],
-                badges: ['bronze_medal']
+                badges: ['bronze_medal'],
               },
               requirements: {
                 min_matches: 10,
                 min_win_rate: 0.3,
-                min_elo: 1200
-              }
+                min_elo: 1200,
+              },
             },
             {
               id: 'tier2',
@@ -282,13 +286,13 @@ export const useSeason2 = (userId?: string) => {
                 coins: 2500,
                 experience: 1000,
                 items: ['silver_badge', 'silver_frame'],
-                badges: ['silver_medal']
+                badges: ['silver_medal'],
               },
               requirements: {
                 min_matches: 25,
                 min_win_rate: 0.4,
-                min_elo: 1400
-              }
+                min_elo: 1400,
+              },
             },
             {
               id: 'tier3',
@@ -298,14 +302,14 @@ export const useSeason2 = (userId?: string) => {
                 coins: 5000,
                 experience: 2000,
                 items: ['gold_badge', 'gold_frame', 'gold_emote'],
-                badges: ['gold_medal']
+                badges: ['gold_medal'],
               },
               requirements: {
                 min_matches: 50,
                 min_win_rate: 0.5,
-                min_elo: 1600
-              }
-            }
+                min_elo: 1600,
+              },
+            },
           ],
           achievements: [
             {
@@ -315,9 +319,9 @@ export const useSeason2 = (userId?: string) => {
               icon_url: '/achievements/pioneer.png',
               category: 'special',
               points: 50,
-              requirements: { 'join_date': 1 },
+              requirements: { join_date: 1 },
               is_hidden: false,
-              rarity: 'rare'
+              rarity: 'rare',
             },
             {
               id: 'ach2',
@@ -326,10 +330,10 @@ export const useSeason2 = (userId?: string) => {
               icon_url: '/achievements/elo_climber.png',
               category: 'match',
               points: 30,
-              requirements: { 'elo_gain': 200 },
+              requirements: { elo_gain: 200 },
               is_hidden: false,
-              rarity: 'epic'
-            }
+              rarity: 'epic',
+            },
           ],
           seasonal_rewards: [
             {
@@ -340,24 +344,26 @@ export const useSeason2 = (userId?: string) => {
               type: 'title',
               value: 'Season 2 Champion',
               unlock_condition: 'Top 1 global leaderboard',
-              season_exclusive: true
-            }
-          ]
+              season_exclusive: true,
+            },
+          ],
         },
         leaderboard: {
           id: 'lb1',
           season_id: 'season2_2024',
           type: 'global',
           entries: [],
-          last_updated: new Date()
+          last_updated: new Date(),
         },
         created_at: new Date('2024-03-15'),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
-      
+
       setSeason2(mockSeason2);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải thông tin Season 2');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải thông tin Season 2'
+      );
     } finally {
       setLoading(false);
     }
@@ -368,10 +374,10 @@ export const useSeason2 = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // Mock leaderboard data
       const mockLeaderboard: Season2Leaderboard = {
         id: 'lb1',
@@ -385,7 +391,7 @@ export const useSeason2 = (userId?: string) => {
               id: '1',
               username: 'pool_master',
               avatar_url: '/avatars/pool_master.jpg',
-              rank: 'G'
+              rank: 'G',
             },
             rank: 1,
             previous_rank: 2,
@@ -405,8 +411,8 @@ export const useSeason2 = (userId?: string) => {
               consistency: 0.85,
               volatility: 0.12,
               form: 0.92,
-              potential: 0.88
-            }
+              potential: 0.88,
+            },
           },
           {
             id: '2',
@@ -415,7 +421,7 @@ export const useSeason2 = (userId?: string) => {
               id: '2',
               username: 'champion',
               avatar_url: '/avatars/champion.jpg',
-              rank: 'G'
+              rank: 'G',
             },
             rank: 2,
             previous_rank: 1,
@@ -435,16 +441,18 @@ export const useSeason2 = (userId?: string) => {
               consistency: 0.82,
               volatility: 0.15,
               form: 0.78,
-              potential: 0.85
-            }
-          }
+              potential: 0.85,
+            },
+          },
         ],
-        last_updated: new Date()
+        last_updated: new Date(),
       };
-      
+
       setLeaderboard(mockLeaderboard);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải bảng xếp hạng');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải bảng xếp hạng'
+      );
     } finally {
       setLoading(false);
     }
@@ -455,10 +463,10 @@ export const useSeason2 = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const mockStats: Season2Stats = {
         total_players: 2500,
         active_players: 1800,
@@ -468,9 +476,9 @@ export const useSeason2 = (userId?: string) => {
         average_win_rate: 0.52,
         most_popular_match_type: '8-ball',
         average_matches_per_player: 6,
-        seasonal_achievements_unlocked: 4500
+        seasonal_achievements_unlocked: 4500,
       };
-      
+
       setStats(mockStats);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể tải thống kê');
@@ -480,55 +488,62 @@ export const useSeason2 = (userId?: string) => {
   }, []);
 
   // Fetch user progress
-  const fetchUserProgress = useCallback(async (targetUserId?: string) => {
-    const id = targetUserId || userId;
-    if (!id) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      const mockUserProgress: Season2LeaderboardEntry = {
-        id: 'user_progress',
-        user_id: id,
-        user: {
-          id: id,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg',
-          rank: 'A'
-        },
-        rank: 15,
-        previous_rank: 18,
-        rank_change: 3,
-        elo_rating: 1750,
-        elo_change: 75,
-        total_matches: 28,
-        wins: 20,
-        losses: 8,
-        win_rate: 0.714,
-        current_streak: 4,
-        longest_streak: 6,
-        total_points: 85,
-        achievements_count: 4,
-        last_match_date: new Date(Date.now() - 1000 * 60 * 60 * 1),
-        performance_metrics: {
-          consistency: 0.78,
-          volatility: 0.18,
-          form: 0.85,
-          potential: 0.82
-        }
-      };
-      
-      setUserProgress(mockUserProgress);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải tiến độ người dùng');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const fetchUserProgress = useCallback(
+    async (targetUserId?: string) => {
+      const id = targetUserId || userId;
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        const mockUserProgress: Season2LeaderboardEntry = {
+          id: 'user_progress',
+          user_id: id,
+          user: {
+            id: id,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+            rank: 'A',
+          },
+          rank: 15,
+          previous_rank: 18,
+          rank_change: 3,
+          elo_rating: 1750,
+          elo_change: 75,
+          total_matches: 28,
+          wins: 20,
+          losses: 8,
+          win_rate: 0.714,
+          current_streak: 4,
+          longest_streak: 6,
+          total_points: 85,
+          achievements_count: 4,
+          last_match_date: new Date(Date.now() - 1000 * 60 * 60 * 1),
+          performance_metrics: {
+            consistency: 0.78,
+            volatility: 0.18,
+            form: 0.85,
+            potential: 0.82,
+          },
+        };
+
+        setUserProgress(mockUserProgress);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Không thể tải tiến độ người dùng'
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Get enabled features
   const getEnabledFeatures = useCallback(() => {
@@ -537,64 +552,90 @@ export const useSeason2 = (userId?: string) => {
   }, [season2]);
 
   // Get features by category
-  const getFeaturesByCategory = useCallback((category: Season2Feature['category']) => {
-    if (!season2) return [];
-    return season2.features.filter(feature => feature.category === category);
-  }, [season2]);
+  const getFeaturesByCategory = useCallback(
+    (category: Season2Feature['category']) => {
+      if (!season2) return [];
+      return season2.features.filter(feature => feature.category === category);
+    },
+    [season2]
+  );
 
   // Get current tier
-  const getCurrentTier = useCallback((eloRating: number) => {
-    if (!season2) return null;
-    
-    return season2.rewards.tiers.find(tier => 
-      eloRating >= tier.requirements.min_elo
-    );
-  }, [season2]);
+  const getCurrentTier = useCallback(
+    (eloRating: number) => {
+      if (!season2) return null;
+
+      return season2.rewards.tiers.find(
+        tier => eloRating >= tier.requirements.min_elo
+      );
+    },
+    [season2]
+  );
 
   // Get next tier
-  const getNextTier = useCallback((eloRating: number) => {
-    if (!season2) return null;
-    
-    const currentTier = getCurrentTier(eloRating);
-    if (!currentTier) return season2.rewards.tiers[0];
-    
-    const currentIndex = season2.rewards.tiers.findIndex(tier => tier.id === currentTier.id);
-    return season2.rewards.tiers[currentIndex + 1] || null;
-  }, [season2, getCurrentTier]);
+  const getNextTier = useCallback(
+    (eloRating: number) => {
+      if (!season2) return null;
+
+      const currentTier = getCurrentTier(eloRating);
+      if (!currentTier) return season2.rewards.tiers[0];
+
+      const currentIndex = season2.rewards.tiers.findIndex(
+        tier => tier.id === currentTier.id
+      );
+      return season2.rewards.tiers[currentIndex + 1] || null;
+    },
+    [season2, getCurrentTier]
+  );
 
   // Calculate progress to next tier
-  const getProgressToNextTier = useCallback((eloRating: number) => {
-    const currentTier = getCurrentTier(eloRating);
-    const nextTier = getNextTier(eloRating);
-    
-    if (!currentTier || !nextTier) return 0;
-    
-    const currentElo = currentTier.requirements.min_elo;
-    const nextElo = nextTier.requirements.min_elo;
-    const userElo = eloRating;
-    
-    return Math.min(100, Math.max(0, ((userElo - currentElo) / (nextElo - currentElo)) * 100));
-  }, [getCurrentTier, getNextTier]);
+  const getProgressToNextTier = useCallback(
+    (eloRating: number) => {
+      const currentTier = getCurrentTier(eloRating);
+      const nextTier = getNextTier(eloRating);
+
+      if (!currentTier || !nextTier) return 0;
+
+      const currentElo = currentTier.requirements.min_elo;
+      const nextElo = nextTier.requirements.min_elo;
+      const userElo = eloRating;
+
+      return Math.min(
+        100,
+        Math.max(0, ((userElo - currentElo) / (nextElo - currentElo)) * 100)
+      );
+    },
+    [getCurrentTier, getNextTier]
+  );
 
   // Get leaderboard by type
-  const getLeaderboardByType = useCallback((type: Season2Leaderboard['type']) => {
-    if (!leaderboard) return null;
-    return leaderboard.type === type ? leaderboard : null;
-  }, [leaderboard]);
+  const getLeaderboardByType = useCallback(
+    (type: Season2Leaderboard['type']) => {
+      if (!leaderboard) return null;
+      return leaderboard.type === type ? leaderboard : null;
+    },
+    [leaderboard]
+  );
 
   // Get top players
-  const getTopPlayers = useCallback((limit: number = 10) => {
-    if (!leaderboard) return [];
-    return leaderboard.entries.slice(0, limit);
-  }, [leaderboard]);
+  const getTopPlayers = useCallback(
+    (limit: number = 10) => {
+      if (!leaderboard) return [];
+      return leaderboard.entries.slice(0, limit);
+    },
+    [leaderboard]
+  );
 
   // Get user's rank
-  const getUserRank = useCallback((targetUserId?: string) => {
-    const id = targetUserId || userId;
-    if (!leaderboard || !id) return null;
-    
-    return leaderboard.entries.find(entry => entry.user_id === id);
-  }, [leaderboard, userId]);
+  const getUserRank = useCallback(
+    (targetUserId?: string) => {
+      const id = targetUserId || userId;
+      if (!leaderboard || !id) return null;
+
+      return leaderboard.entries.find(entry => entry.user_id === id);
+    },
+    [leaderboard, userId]
+  );
 
   useEffect(() => {
     fetchSeason2();
@@ -621,6 +662,6 @@ export const useSeason2 = (userId?: string) => {
     getProgressToNextTier,
     getLeaderboardByType,
     getTopPlayers,
-    getUserRank
+    getUserRank,
   };
-}; 
+};

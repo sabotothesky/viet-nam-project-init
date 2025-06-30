@@ -1,14 +1,13 @@
-
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Trophy, 
-  Building2, 
-  CreditCard, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Users,
+  Trophy,
+  Building2,
+  CreditCard,
+  BarChart3,
   Settings,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -28,20 +27,18 @@ const AdminSidebar = () => {
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-      isActive 
-        ? 'bg-blue-600 text-white' 
-        : 'text-gray-600 hover:bg-gray-100'
+      isActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
     }`;
 
   return (
-    <div className="w-64 bg-white border-r min-h-screen flex flex-col">
-      <div className="p-6 border-b">
-        <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
-        <p className="text-sm text-gray-500">SABO POOL ARENA</p>
+    <div className='w-64 bg-white border-r min-h-screen flex flex-col'>
+      <div className='p-6 border-b'>
+        <h2 className='text-xl font-bold text-gray-900'>Admin Panel</h2>
+        <p className='text-sm text-gray-500'>SABO POOL ARENA</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
-        {menuItems.map((item) => {
+      <nav className='flex-1 p-4 space-y-2'>
+        {menuItems.map(item => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -50,20 +47,20 @@ const AdminSidebar = () => {
               className={getNavLinkClass}
               end={item.path === '/admin'}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className='h-5 w-5' />
               <span>{item.label}</span>
             </NavLink>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t">
+      <div className='p-4 border-t'>
         <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 text-gray-600"
+          variant='ghost'
+          className='w-full justify-start gap-3 text-gray-600'
           onClick={signOut}
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className='h-5 w-5' />
           Đăng xuất
         </Button>
       </div>

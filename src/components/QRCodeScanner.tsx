@@ -1,10 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
 import { Badge } from './ui/badge';
 import { useQRSystem } from '../hooks/useQRSystem';
 import { useAuth } from '../hooks/useAuth';
-import { TableQRCode, QuickMatch, CreateQuickMatchRequest } from '../types/qr';
+import { TableQRCode } from '../types/qr';
 import { toast } from '../hooks/use-toast';
 
 interface QRCodeScannerProps {
@@ -16,30 +22,33 @@ interface QRCodeScannerProps {
 export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   onTableScanned,
   onPlayerScanned,
-  mode
+  mode,
 }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
   const [scannedTable, setScannedTable] = useState<TableQRCode | null>(null);
   const [showMatchForm, setShowMatchForm] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
-  const [gameType, setGameType] = useState<'8_ball' | '9_ball' | 'song_to'>('8_ball');
+  const [gameType, setGameType] = useState<'8_ball' | '9_ball' | 'song_to'>(
+    '8_ball'
+  );
   const [betPoints, setBetPoints] = useState<number>(0);
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  
-  const { scanTableQR, scanPlayerQR, createQuickMatch, loading, error } = useQRSystem();
+
+  const { scanTableQR, scanPlayerQR, createQuickMatch, loading, error } =
+    useQRSystem();
   const { user } = useAuth();
 
   // Start camera
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { facingMode: 'environment' },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
@@ -48,9 +57,10 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     } catch (err) {
       console.error('Error accessing camera:', err);
       toast({
-        title: "Lỗi camera",
-        description: "Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập.",
-        variant: "destructive"
+        title: 'Lỗi camera',
+        description:
+          'Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập.',
+        variant: 'destructive',
       });
     }
   };
@@ -85,9 +95,9 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       }
     } catch (err) {
       toast({
-        title: "Lỗi quét QR",
-        description: "QR code không hợp lệ hoặc đã hết hạn.",
-        variant: "destructive"
+        title: 'Lỗi quét QR',
+        description: 'QR code không hợp lệ hoặc đã hết hạn.',
+        variant: 'destructive',
       });
     }
   };
@@ -100,13 +110,13 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       table_id: scannedTable.id,
       player2_id: selectedPlayer,
       game_type: gameType,
-      bet_points: betPoints
+      bet_points: betPoints,
     };
 
     const match = await createQuickMatch(request);
     if (match) {
       toast({
-        title: "Tạo trận đấu thành công",
+        title: 'Tạo trận đấu thành công',
         description: `Trận đấu ${gameType} đã được tạo tại bàn ${scannedTable.table_name}`,
       });
       setShowMatchForm(false);
@@ -130,11 +140,11 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-red-600">Lỗi</CardTitle>
+          <CardTitle className='text-red-600'>Lỗi</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-600">{error}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
+          <p className='text-sm text-gray-600'>{error}</p>
+          <Button onClick={() => window.location.reload()} className='mt-4'>
             Thử lại
           </Button>
         </CardContent>
@@ -143,7 +153,7 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {/* Camera View */}
       {isScanning && (
         <Card>
@@ -154,19 +164,19 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="relative">
+            <div className='relative'>
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
-                className="w-full h-64 object-cover rounded-lg"
+                className='w-full h-64 object-cover rounded-lg'
               />
-              <div className="absolute inset-0 border-2 border-blue-500 border-dashed rounded-lg pointer-events-none" />
+              <div className='absolute inset-0 border-2 border-blue-500 border-dashed rounded-lg pointer-events-none' />
             </div>
-            <Button 
-              onClick={stopCamera} 
-              variant="outline" 
-              className="mt-4 w-full"
+            <Button
+              onClick={stopCamera}
+              variant='outline'
+              className='mt-4 w-full'
             >
               Dừng quét
             </Button>
@@ -185,20 +195,17 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
           </CardHeader>
           <CardContent>
             <input
-              type="text"
-              placeholder="Nhập QR code..."
-              className="w-full p-2 border rounded-md"
-              onKeyPress={(e) => {
+              type='text'
+              placeholder='Nhập QR code...'
+              className='w-full p-2 border rounded-md'
+              onKeyPress={e => {
                 if (e.key === 'Enter') {
                   const input = e.currentTarget as HTMLInputElement;
                   handleManualInput(input.value);
                 }
               }}
             />
-            <Button 
-              onClick={startCamera} 
-              className="mt-4 w-full"
-            >
+            <Button onClick={startCamera} className='mt-4 w-full'>
               Bật camera quét QR
             </Button>
           </CardContent>
@@ -209,32 +216,36 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       {scannedTable && mode === 'table' && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Badge variant="secondary">Bàn {scannedTable.table_number}</Badge>
+            <CardTitle className='flex items-center gap-2'>
+              <Badge variant='secondary'>Bàn {scannedTable.table_number}</Badge>
               {scannedTable.table_name}
             </CardTitle>
-            <CardDescription>
-              {scannedTable.club?.name}
-            </CardDescription>
+            <CardDescription>{scannedTable.club?.name}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <p><strong>Mã QR:</strong> {scannedTable.qr_code}</p>
-              <p><strong>Trạng thái:</strong> 
-                <Badge variant={scannedTable.is_active ? "default" : "destructive"} className="ml-2">
-                  {scannedTable.is_active ? "Hoạt động" : "Không hoạt động"}
+            <div className='space-y-2'>
+              <p>
+                <strong>Mã QR:</strong> {scannedTable.qr_code}
+              </p>
+              <p>
+                <strong>Trạng thái:</strong>
+                <Badge
+                  variant={scannedTable.is_active ? 'default' : 'destructive'}
+                  className='ml-2'
+                >
+                  {scannedTable.is_active ? 'Hoạt động' : 'Không hoạt động'}
                 </Badge>
               </p>
             </div>
-            <div className="flex gap-2 mt-4">
-              <Button 
+            <div className='flex gap-2 mt-4'>
+              <Button
                 onClick={() => setShowMatchForm(true)}
                 disabled={!scannedTable.is_active}
               >
                 Tạo trận đấu
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant='outline'
                 onClick={() => {
                   setScannedTable(null);
                   setScannedData(null);
@@ -257,45 +268,45 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className='space-y-4'>
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className='block text-sm font-medium mb-2'>
                   Loại game
                 </label>
                 <select
                   value={gameType}
-                  onChange={(e) => setGameType(e.target.value as any)}
-                  className="w-full p-2 border rounded-md"
+                  onChange={e => setGameType(e.target.value as any)}
+                  className='w-full p-2 border rounded-md'
                 >
-                  <option value="8_ball">8 Ball</option>
-                  <option value="9_ball">9 Ball</option>
-                  <option value="song_to">Song Tô</option>
+                  <option value='8_ball'>8 Ball</option>
+                  <option value='9_ball'>9 Ball</option>
+                  <option value='song_to'>Song Tô</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className='block text-sm font-medium mb-2'>
                   Điểm cược (tùy chọn)
                 </label>
                 <input
-                  type="number"
+                  type='number'
                   value={betPoints}
-                  onChange={(e) => setBetPoints(Number(e.target.value))}
-                  placeholder="0"
-                  className="w-full p-2 border rounded-md"
+                  onChange={e => setBetPoints(Number(e.target.value))}
+                  placeholder='0'
+                  className='w-full p-2 border rounded-md'
                 />
               </div>
 
-              <div className="flex gap-2">
-                <Button 
+              <div className='flex gap-2'>
+                <Button
                   onClick={handleCreateMatch}
                   disabled={loading}
-                  className="flex-1"
+                  className='flex-1'
                 >
-                  {loading ? "Đang tạo..." : "Tạo trận đấu"}
+                  {loading ? 'Đang tạo...' : 'Tạo trận đấu'}
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant='outline'
                   onClick={() => setShowMatchForm(false)}
                 >
                   Hủy
@@ -307,7 +318,7 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
       )}
 
       {/* Canvas for QR detection (hidden) */}
-      <canvas ref={canvasRef} className="hidden" />
+      <canvas ref={canvasRef} className='hidden' />
     </div>
   );
-}; 
+};

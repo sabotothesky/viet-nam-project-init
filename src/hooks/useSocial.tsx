@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -13,12 +12,14 @@ export const useSocial = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           *,
           following_profile:profiles!user_follows_following_id_fkey(full_name, current_rank, avatar_url)
-        `)
+        `
+        )
         .eq('follower_id', user?.id);
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -30,12 +31,14 @@ export const useSocial = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           *,
           follower_profile:profiles!user_follows_follower_id_fkey(full_name, current_rank, avatar_url)
-        `)
+        `
+        )
         .eq('following_id', user?.id);
-      
+
       if (error) throw error;
       return data || [];
     },
@@ -48,7 +51,7 @@ export const useSocial = () => {
         .from('user_follows')
         .insert({
           follower_id: user?.id,
-          following_id: userId
+          following_id: userId,
         })
         .select()
         .single();
@@ -60,7 +63,7 @@ export const useSocial = () => {
       toast.success('Đã theo dõi người chơi!');
       queryClient.invalidateQueries({ queryKey: ['following'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error following user:', error);
       toast.error('Có lỗi xảy ra');
     },
@@ -80,7 +83,7 @@ export const useSocial = () => {
       toast.success('Đã bỏ theo dõi!');
       queryClient.invalidateQueries({ queryKey: ['following'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error unfollowing user:', error);
       toast.error('Có lỗi xảy ra');
     },

@@ -1,8 +1,13 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Camera, Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,7 +18,11 @@ interface AvatarManagerProps {
   userDisplayName?: string;
 }
 
-const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: AvatarManagerProps) => {
+const AvatarManager = ({
+  currentAvatar,
+  onAvatarUpdate,
+  userDisplayName,
+}: AvatarManagerProps) => {
   const { user } = useAuth();
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -38,7 +47,9 @@ const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: Avata
     'https://api.dicebear.com/7.x/adventurer/svg?seed=female-player-4&backgroundColor=f0fdfa',
   ];
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -48,7 +59,8 @@ const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: Avata
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB
       toast.error('Kích thước file không được vượt quá 5MB');
       return;
     }
@@ -71,7 +83,7 @@ const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: Avata
 
       // Update user profile
       await updateUserAvatar(data.publicUrl);
-      
+
       toast.success('Cập nhật ảnh đại diện thành công!');
       setShowAvatarModal(false);
     } catch (error) {
@@ -106,62 +118,68 @@ const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: Avata
   return (
     <>
       {/* Avatar Display & Edit Button */}
-      <div className="relative inline-block">
-        <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className='relative inline-block'>
+        <div className='w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4'>
           {currentAvatar ? (
-            <img 
-              src={currentAvatar} 
-              alt="Avatar"
-              className="w-24 h-24 rounded-full object-cover"
+            <img
+              src={currentAvatar}
+              alt='Avatar'
+              className='w-24 h-24 rounded-full object-cover'
             />
           ) : (
-            <span className="text-white text-2xl font-medium">
-              {userDisplayName?.charAt(0) || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+            <span className='text-white text-2xl font-medium'>
+              {userDisplayName?.charAt(0) ||
+                user?.email?.charAt(0)?.toUpperCase() ||
+                'U'}
             </span>
           )}
         </div>
-        
+
         <Dialog open={showAvatarModal} onOpenChange={setShowAvatarModal}>
           <DialogTrigger asChild>
-            <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors">
-              <Camera className="w-4 h-4" />
+            <button className='absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors'>
+              <Camera className='w-4 h-4' />
             </button>
           </DialogTrigger>
-          
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+
+          <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
             <DialogHeader>
               <DialogTitle>Chọn ảnh đại diện</DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* Upload Section */}
               <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3">Tải ảnh từ thiết bị</h4>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                <h4 className='text-md font-medium text-gray-900 mb-3'>
+                  Tải ảnh từ thiết bị
+                </h4>
+                <div className='border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors'>
                   <input
-                    type="file"
-                    accept="image/*"
+                    type='file'
+                    accept='image/*'
                     onChange={handleFileUpload}
-                    className="hidden"
-                    id="avatar-upload"
+                    className='hidden'
+                    id='avatar-upload'
                     disabled={uploading}
                   />
                   <label
-                    htmlFor="avatar-upload"
-                    className="cursor-pointer flex flex-col items-center"
+                    htmlFor='avatar-upload'
+                    className='cursor-pointer flex flex-col items-center'
                   >
                     {uploading ? (
                       <>
-                        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-2" />
-                        <span className="text-sm text-gray-600">Đang tải lên...</span>
+                        <Loader2 className='w-8 h-8 text-blue-600 animate-spin mb-2' />
+                        <span className='text-sm text-gray-600'>
+                          Đang tải lên...
+                        </span>
                       </>
                     ) : (
                       <>
-                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-600">
+                        <Upload className='w-8 h-8 text-gray-400 mb-2' />
+                        <span className='text-sm text-gray-600'>
                           Nhấn để chọn ảnh hoặc kéo thả vào đây
                         </span>
-                        <span className="text-xs text-gray-500 mt-1">
+                        <span className='text-xs text-gray-500 mt-1'>
                           PNG, JPG, GIF tối đa 5MB
                         </span>
                       </>
@@ -172,22 +190,24 @@ const AvatarManager = ({ currentAvatar, onAvatarUpdate, userDisplayName }: Avata
 
               {/* Preset Avatars */}
               <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3">Chọn từ bộ sưu tập</h4>
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+                <h4 className='text-md font-medium text-gray-900 mb-3'>
+                  Chọn từ bộ sưu tập
+                </h4>
+                <div className='grid grid-cols-4 md:grid-cols-6 gap-3'>
                   {avatarCollection.map((avatar, index) => (
                     <button
                       key={index}
                       onClick={() => handleSelectPresetAvatar(avatar)}
                       className={`w-16 h-16 rounded-full overflow-hidden border-2 transition-all hover:scale-105 ${
-                        currentAvatar === avatar 
-                          ? 'border-blue-500 ring-2 ring-blue-200' 
+                        currentAvatar === avatar
+                          ? 'border-blue-500 ring-2 ring-blue-200'
                           : 'border-gray-200 hover:border-blue-300'
                       }`}
                     >
                       <img
                         src={avatar}
                         alt={`Avatar ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className='w-full h-full object-cover'
                       />
                     </button>
                   ))}

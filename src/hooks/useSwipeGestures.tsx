@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 
 interface SwipeGesture {
@@ -24,10 +23,10 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
   const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
 
   const swipeActions: SwipeGesture = {
-    LEFT: "Pass (bỏ qua)",
-    RIGHT: "Challenge (thách đấu)", 
-    UP: "Super Like (quan tâm đặc biệt)",
-    DOWN: "View Profile (xem hồ sơ)"
+    LEFT: 'Pass (bỏ qua)',
+    RIGHT: 'Challenge (thách đấu)',
+    UP: 'Super Like (quan tâm đặc biệt)',
+    DOWN: 'View Profile (xem hồ sơ)',
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -40,7 +39,7 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (isAnimating) return;
-    
+
     const touch = e.touches[0];
     setCurrentX(touch.clientX);
     setCurrentY(touch.clientY);
@@ -82,8 +81,8 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
   const handleSwipe = (direction: keyof SwipeGesture) => {
     setIsAnimating(true);
     setSwipeDirection(direction);
-    
-    console.log(`Swiped ${direction}: ${swipeActions[direction]}`);
+
+    // ...removed console.log(`Swiped ${direction}: ${swipeActions[direction]}`)
 
     setTimeout(() => {
       switch (direction) {
@@ -100,7 +99,7 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
           callbacks.onSwipeDown?.(id);
           break;
       }
-      
+
       setIsAnimating(false);
       setSwipeDirection(null);
     }, 300);
@@ -119,7 +118,7 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
           return 'translateY(100%)';
       }
     }
-    
+
     const deltaX = currentX - startX;
     const deltaY = currentY - startY;
     return `translate(${deltaX * 0.1}px, ${deltaY * 0.1}px)`;
@@ -133,6 +132,6 @@ export const useSwipeGestures = (id: string, callbacks: SwipeCallbacks) => {
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
-    handleSwipe
+    handleSwipe,
   };
 };

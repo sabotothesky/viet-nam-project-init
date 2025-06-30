@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       // Simulate checking authentication
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock user data for development
       const mockUser: User = {
         id: '1',
@@ -59,9 +59,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         avatar_url: '/avatars/default.jpg',
         rank: 'A+',
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
-      
+
       setUser(mockUser);
     } catch (err) {
       console.error('Auth check failed:', err);
@@ -75,10 +75,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock validation
       if (email === 'test@example.com' && password === 'password') {
         const mockUser: User = {
@@ -88,9 +88,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           avatar_url: '/avatars/default.jpg',
           rank: 'A+',
           created_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         };
-        
+
         setUser(mockUser);
         localStorage.setItem('auth_token', 'mock_token');
       } else {
@@ -108,15 +108,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock validation
       if (password.length < 6) {
         throw new Error('Mật khẩu phải có ít nhất 6 ký tự');
       }
-      
+
       const mockUser: User = {
         id: Date.now().toString(),
         email: email,
@@ -124,9 +124,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         avatar_url: '/avatars/default.jpg',
         rank: 'C',
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
-      
+
       setUser(mockUser);
       localStorage.setItem('auth_token', 'mock_token');
     } catch (err) {
@@ -140,10 +140,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     try {
       setLoading(true);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       setUser(null);
       localStorage.removeItem('auth_token');
     } catch (err) {
@@ -157,10 +157,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       if (user) {
         const updatedUser = { ...user, ...data, updated_at: new Date() };
         setUser(updatedUser);
@@ -177,10 +177,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock success
       console.log('Password reset email sent to:', email);
     } catch (err) {
@@ -199,12 +199,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signUp,
     signOut,
     updateProfile,
-    resetPassword
+    resetPassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

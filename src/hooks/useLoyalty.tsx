@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -48,14 +47,16 @@ export const useLoyalty = () => {
 
       // Calculate total points
       const total = data.reduce((sum, record) => {
-        return record.transaction_type === 'earned' 
-          ? sum + record.points 
+        return record.transaction_type === 'earned'
+          ? sum + record.points
           : sum - record.points;
       }, 0);
 
       setTotalPoints(Math.max(0, total));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch points balance');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch points balance'
+      );
     }
   };
 
@@ -73,7 +74,9 @@ export const useLoyalty = () => {
       if (error) throw error;
       setPointsHistory(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch points history');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch points history'
+      );
     }
   };
 
@@ -92,27 +95,35 @@ export const useLoyalty = () => {
     }
   };
 
-  const awardPoints = async (points: number, source: string, description: string) => {
+  const awardPoints = async (
+    points: number,
+    source: string,
+    description: string
+  ) => {
     if (!user) throw new Error('User not authenticated');
 
     try {
-      const { error } = await supabase
-        .from('loyalty_points')
-        .insert([{
+      const { error } = await supabase.from('loyalty_points').insert([
+        {
           user_id: user.id,
           points,
           transaction_type: 'earned',
           source,
           description,
-          expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year
-        }]);
+          expires_at: new Date(
+            Date.now() + 365 * 24 * 60 * 60 * 1000
+          ).toISOString(), // 1 year
+        },
+      ]);
 
       if (error) throw error;
-      
+
       // Refresh data
       await Promise.all([fetchPointsBalance(), fetchPointsHistory()]);
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to award points');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to award points'
+      );
     }
   };
 
@@ -130,13 +141,15 @@ export const useLoyalty = () => {
       // Deduct points
       const { error: deductError } = await supabase
         .from('loyalty_points')
-        .insert([{
-          user_id: user.id,
-          points: reward.points_required,
-          transaction_type: 'spent',
-          source: 'reward_redemption',
-          description: `Redeemed: ${reward.name}`
-        }]);
+        .insert([
+          {
+            user_id: user.id,
+            points: reward.points_required,
+            transaction_type: 'spent',
+            source: 'reward_redemption',
+            description: `Redeemed: ${reward.name}`,
+          },
+        ]);
 
       if (deductError) throw deductError;
 
@@ -152,14 +165,16 @@ export const useLoyalty = () => {
 
       // Refresh data
       await Promise.all([
-        fetchPointsBalance(), 
-        fetchPointsHistory(), 
-        fetchAvailableRewards()
+        fetchPointsBalance(),
+        fetchPointsHistory(),
+        fetchAvailableRewards(),
       ]);
 
       return { success: true };
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to redeem reward');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to redeem reward'
+      );
     }
   };
 
@@ -169,7 +184,7 @@ export const useLoyalty = () => {
       await Promise.all([
         fetchPointsBalance(),
         fetchPointsHistory(),
-        fetchAvailableRewards()
+        fetchAvailableRewards(),
       ]);
       setLoading(false);
     };
@@ -185,10 +200,11 @@ export const useLoyalty = () => {
     error,
     awardPoints,
     redeemReward,
-    refreshData: () => Promise.all([
-      fetchPointsBalance(),
-      fetchPointsHistory(),
-      fetchAvailableRewards()
-    ])
+    refreshData: () =>
+      Promise.all([
+        fetchPointsBalance(),
+        fetchPointsHistory(),
+        fetchAvailableRewards(),
+      ]),
   };
 };

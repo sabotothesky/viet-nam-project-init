@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -19,13 +18,13 @@ export const useRealtimeNotifications = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'notifications',
-          filter: `user_id=eq.${user.id}`
+          filter: `user_id=eq.${user.id}`,
         },
-        (payload) => {
-          console.log('New notification received:', payload);
-          
+        payload => {
+          // ...removed console.log('New notification received:', payload)
+
           const notification = payload.new;
-          
+
           // Show toast notification
           toast.info(notification.title, {
             description: notification.message,
@@ -39,11 +38,11 @@ export const useRealtimeNotifications = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'challenges',
-          filter: `challenged_id=eq.${user.id}`
+          filter: `challenged_id=eq.${user.id}`,
         },
-        (payload) => {
-          console.log('New challenge received:', payload);
-          
+        payload => {
+          // ...removed console.log('New challenge received:', payload)
+
           toast.success('Bạn có thách đấu mới! ⚡', {
             description: 'Nhấn để xem chi tiết',
             duration: 5000,
@@ -56,11 +55,11 @@ export const useRealtimeNotifications = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'challenges',
-          filter: `challenger_id=eq.${user.id}`
+          filter: `challenger_id=eq.${user.id}`,
         },
-        (payload) => {
-          console.log('Challenge status updated:', payload);
-          
+        payload => {
+          // ...removed console.log('Challenge status updated:', payload)
+
           const challenge = payload.new;
           if (challenge.status === 'accepted') {
             toast.success('Thách đấu được chấp nhận! 🎉');
@@ -69,10 +68,10 @@ export const useRealtimeNotifications = () => {
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe(status => {
         if (status === 'SUBSCRIBED') {
           setIsConnected(true);
-          console.log('Realtime notifications connected');
+          // ...removed console.log('Realtime notifications connected')
         } else if (status === 'CHANNEL_ERROR') {
           setIsConnected(false);
           console.error('Realtime notifications error');

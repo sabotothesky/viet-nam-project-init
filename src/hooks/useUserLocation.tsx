@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -30,15 +29,19 @@ export const useUserLocation = () => {
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(
-        resolve,
-        reject,
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
-      );
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      });
     });
   };
 
-  const saveUserLocation = async (latitude: number, longitude: number, address?: string) => {
+  const saveUserLocation = async (
+    latitude: number,
+    longitude: number,
+    address?: string
+  ) => {
     if (!user?.id) return;
 
     try {
@@ -49,13 +52,13 @@ export const useUserLocation = () => {
           latitude,
           longitude,
           address,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .select()
         .single();
 
       if (error) throw error;
-      
+
       // Use the data as returned from Supabase
       setUserLocation(data);
       return data;
@@ -69,15 +72,14 @@ export const useUserLocation = () => {
     try {
       setLoading(true);
       const position = await getCurrentLocation();
-      
+
       const { latitude, longitude } = position.coords;
-      
+
       // Reverse geocoding để lấy address (simplified)
       const address = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-      
+
       await saveUserLocation(latitude, longitude, address);
       toast.success('Đã cập nhật vị trí của bạn');
-      
     } catch (error) {
       console.error('Location error:', error);
       setError('Không thể lấy vị trí của bạn');
@@ -124,6 +126,6 @@ export const useUserLocation = () => {
     error,
     requestLocationPermission,
     saveUserLocation,
-    getCurrentLocation
+    getCurrentLocation,
   };
 };

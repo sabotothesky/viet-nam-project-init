@@ -3,10 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { 
+import {
   Calendar,
   MapPin,
   Users,
@@ -14,7 +20,7 @@ import {
   Trophy,
   Settings,
   Upload,
-  X
+  X,
 } from 'lucide-react';
 
 interface TournamentForm {
@@ -45,7 +51,7 @@ interface TournamentCreatorProps {
 export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   onSave,
   onCancel,
-  isLoading = false
+  isLoading = false,
 }) => {
   const [form, setForm] = useState<TournamentForm>({
     name: '',
@@ -62,7 +68,7 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
     is_public: true,
     requires_approval: false,
     rules: '',
-    contact_info: ''
+    contact_info: '',
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -72,7 +78,7 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
     { value: 'amateur', label: 'Nghiệp dư' },
     { value: 'professional', label: 'Chuyên nghiệp' },
     { value: 'championship', label: 'Vô địch' },
-    { value: 'friendly', label: 'Thân thiện' }
+    { value: 'friendly', label: 'Thân thiện' },
   ];
 
   const ranks = [
@@ -81,7 +87,7 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
     { value: 'A', label: 'Advanced (A)' },
     { value: 'B+', label: 'Intermediate+ (B+)' },
     { value: 'B', label: 'Intermediate (B)' },
-    { value: 'C', label: 'Beginner (C)' }
+    { value: 'C', label: 'Beginner (C)' },
   ];
 
   const handleInputChange = (key: keyof TournamentForm, value: any) => {
@@ -93,7 +99,7 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
       ...prev,
       eligible_ranks: prev.eligible_ranks.includes(rank)
         ? prev.eligible_ranks.filter(r => r !== rank)
-        : [...prev.eligible_ranks, rank]
+        : [...prev.eligible_ranks, rank],
     }));
   };
 
@@ -102,7 +108,7 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
     if (file) {
       setForm(prev => ({ ...prev, banner_image: file }));
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         setBannerPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
@@ -133,9 +139,20 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   const isStepValid = (step: number) => {
     switch (step) {
       case 1:
-        return form.name && form.description && form.category && form.start_date && form.end_date;
+        return (
+          form.name &&
+          form.description &&
+          form.category &&
+          form.start_date &&
+          form.end_date
+        );
       case 2:
-        return form.location && form.entry_fee >= 0 && form.prize_pool >= 0 && form.max_participants > 0;
+        return (
+          form.location &&
+          form.entry_fee >= 0 &&
+          form.prize_pool >= 0 &&
+          form.max_participants > 0
+        );
       case 3:
         return form.eligible_ranks.length > 0;
       default:
@@ -144,43 +161,43 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   };
 
   const renderStep1 = () => (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Tên giải đấu *
         </label>
         <Input
-          placeholder="Nhập tên giải đấu..."
+          placeholder='Nhập tên giải đấu...'
           value={form.name}
-          onChange={(e) => handleInputChange('name', e.target.value)}
+          onChange={e => handleInputChange('name', e.target.value)}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Mô tả *
         </label>
         <Textarea
-          placeholder="Mô tả chi tiết về giải đấu..."
+          placeholder='Mô tả chi tiết về giải đấu...'
           value={form.description}
-          onChange={(e) => handleInputChange('description', e.target.value)}
+          onChange={e => handleInputChange('description', e.target.value)}
           rows={4}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Danh mục *
         </label>
         <Select
           value={form.category}
-          onValueChange={(value) => handleInputChange('category', value)}
+          onValueChange={value => handleInputChange('category', value)}
         >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {categories.map((category) => (
+            {categories.map(category => (
               <SelectItem key={category.value} value={category.value}>
                 {category.label}
               </SelectItem>
@@ -189,65 +206,65 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Ngày bắt đầu *
           </label>
           <Input
-            type="datetime-local"
+            type='datetime-local'
             value={form.start_date}
-            onChange={(e) => handleInputChange('start_date', e.target.value)}
+            onChange={e => handleInputChange('start_date', e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Ngày kết thúc *
           </label>
           <Input
-            type="datetime-local"
+            type='datetime-local'
             value={form.end_date}
-            onChange={(e) => handleInputChange('end_date', e.target.value)}
+            onChange={e => handleInputChange('end_date', e.target.value)}
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Banner giải đấu
         </label>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+        <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 text-center'>
           {bannerPreview ? (
-            <div className="relative">
+            <div className='relative'>
               <img
                 src={bannerPreview}
-                alt="Banner preview"
-                className="max-h-32 mx-auto rounded"
+                alt='Banner preview'
+                className='max-h-32 mx-auto rounded'
               />
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={removeBanner}
-                className="absolute top-2 right-2"
+                className='absolute top-2 right-2'
               >
-                <X className="h-4 w-4" />
+                <X className='h-4 w-4' />
               </Button>
             </div>
           ) : (
             <div>
-              <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-sm text-gray-600 mb-2">
+              <Upload className='h-8 w-8 mx-auto mb-2 text-gray-400' />
+              <p className='text-sm text-gray-600 mb-2'>
                 Kéo thả hoặc click để tải ảnh banner
               </p>
               <Input
-                type="file"
-                accept="image/*"
+                type='file'
+                accept='image/*'
                 onChange={handleBannerUpload}
-                className="hidden"
-                id="banner-upload"
+                className='hidden'
+                id='banner-upload'
               />
-              <label htmlFor="banner-upload">
-                <Button variant="outline" size="sm" className="cursor-pointer">
+              <label htmlFor='banner-upload'>
+                <Button variant='outline' size='sm' className='cursor-pointer'>
                   Chọn ảnh
                 </Button>
               </label>
@@ -259,86 +276,102 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   );
 
   const renderStep2 = () => (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Địa điểm *
         </label>
         <Input
-          placeholder="Nhập địa điểm tổ chức..."
+          placeholder='Nhập địa điểm tổ chức...'
           value={form.location}
-          onChange={(e) => handleInputChange('location', e.target.value)}
+          onChange={e => handleInputChange('location', e.target.value)}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Phí tham gia (VNĐ)
           </label>
           <Input
-            type="number"
-            placeholder="0"
+            type='number'
+            placeholder='0'
             value={form.entry_fee}
-            onChange={(e) => handleInputChange('entry_fee', parseInt(e.target.value) || 0)}
+            onChange={e =>
+              handleInputChange('entry_fee', parseInt(e.target.value) || 0)
+            }
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Giải thưởng (VNĐ)
           </label>
           <Input
-            type="number"
-            placeholder="0"
+            type='number'
+            placeholder='0'
             value={form.prize_pool}
-            onChange={(e) => handleInputChange('prize_pool', parseInt(e.target.value) || 0)}
+            onChange={e =>
+              handleInputChange('prize_pool', parseInt(e.target.value) || 0)
+            }
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Số người tham gia tối đa *
           </label>
           <Input
-            type="number"
-            placeholder="32"
+            type='number'
+            placeholder='32'
             value={form.max_participants}
-            onChange={(e) => handleInputChange('max_participants', parseInt(e.target.value) || 32)}
+            onChange={e =>
+              handleInputChange(
+                'max_participants',
+                parseInt(e.target.value) || 32
+              )
+            }
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
             Số người tham gia tối thiểu
           </label>
           <Input
-            type="number"
-            placeholder="8"
+            type='number'
+            placeholder='8'
             value={form.min_participants}
-            onChange={(e) => handleInputChange('min_participants', parseInt(e.target.value) || 8)}
+            onChange={e =>
+              handleInputChange(
+                'min_participants',
+                parseInt(e.target.value) || 8
+              )
+            }
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center space-x-2">
+      <div className='space-y-2'>
+        <div className='flex items-center space-x-2'>
           <Checkbox
-            id="isPublic"
+            id='isPublic'
             checked={form.is_public}
-            onCheckedChange={(checked) => handleInputChange('is_public', checked)}
+            onCheckedChange={checked => handleInputChange('is_public', checked)}
           />
-          <label htmlFor="isPublic" className="text-sm cursor-pointer">
+          <label htmlFor='isPublic' className='text-sm cursor-pointer'>
             Công khai (ai cũng có thể xem)
           </label>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           <Checkbox
-            id="requiresApproval"
+            id='requiresApproval'
             checked={form.requires_approval}
-            onCheckedChange={(checked) => handleInputChange('requires_approval', checked)}
+            onCheckedChange={checked =>
+              handleInputChange('requires_approval', checked)
+            }
           />
-          <label htmlFor="requiresApproval" className="text-sm cursor-pointer">
+          <label htmlFor='requiresApproval' className='text-sm cursor-pointer'>
             Yêu cầu phê duyệt đăng ký
           </label>
         </div>
@@ -347,23 +380,20 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   );
 
   const renderStep3 = () => (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Hạng được phép tham gia *
         </label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {ranks.map((rank) => (
-            <div key={rank.value} className="flex items-center space-x-2">
+        <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+          {ranks.map(rank => (
+            <div key={rank.value} className='flex items-center space-x-2'>
               <Checkbox
                 id={rank.value}
                 checked={form.eligible_ranks.includes(rank.value)}
                 onCheckedChange={() => handleRankToggle(rank.value)}
               />
-              <label
-                htmlFor={rank.value}
-                className="text-sm cursor-pointer"
-              >
+              <label htmlFor={rank.value} className='text-sm cursor-pointer'>
                 {rank.label}
               </label>
             </div>
@@ -372,25 +402,25 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Luật lệ giải đấu
         </label>
         <Textarea
-          placeholder="Nhập luật lệ và quy định của giải đấu..."
+          placeholder='Nhập luật lệ và quy định của giải đấu...'
           value={form.rules}
-          onChange={(e) => handleInputChange('rules', e.target.value)}
+          onChange={e => handleInputChange('rules', e.target.value)}
           rows={4}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className='block text-sm font-medium text-gray-700 mb-2'>
           Thông tin liên hệ
         </label>
         <Input
-          placeholder="Email hoặc số điện thoại liên hệ..."
+          placeholder='Email hoặc số điện thoại liên hệ...'
           value={form.contact_info}
-          onChange={(e) => handleInputChange('contact_info', e.target.value)}
+          onChange={e => handleInputChange('contact_info', e.target.value)}
         />
       </div>
     </div>
@@ -410,56 +440,61 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className='w-full max-w-4xl mx-auto'>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Trophy className="h-5 w-5" />
+        <CardTitle className='flex items-center gap-2'>
+          <Trophy className='h-5 w-5' />
           Tạo giải đấu mới
         </CardTitle>
-        
+
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mt-4">
-          {[1, 2, 3].map((step) => (
-            <div key={step} className="flex items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                step <= currentStep
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-600'
-              }`}>
+        <div className='flex items-center justify-between mt-4'>
+          {[1, 2, 3].map(step => (
+            <div key={step} className='flex items-center'>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step <= currentStep
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-600'
+                }`}
+              >
                 {step}
               </div>
               {step < 3 && (
-                <div className={`w-16 h-1 mx-2 ${
-                  step < currentStep ? 'bg-blue-500' : 'bg-gray-200'
-                }`} />
+                <div
+                  className={`w-16 h-1 mx-2 ${
+                    step < currentStep ? 'bg-blue-500' : 'bg-gray-200'
+                  }`}
+                />
               )}
             </div>
           ))}
         </div>
-        
-        <div className="text-sm text-gray-600 mt-2">
-          Bước {currentStep}/3: {
-            currentStep === 1 ? 'Thông tin cơ bản' :
-            currentStep === 2 ? 'Chi tiết giải đấu' :
-            'Cài đặt tham gia'
-          }
+
+        <div className='text-sm text-gray-600 mt-2'>
+          Bước {currentStep}/3:{' '}
+          {currentStep === 1
+            ? 'Thông tin cơ bản'
+            : currentStep === 2
+              ? 'Chi tiết giải đấu'
+              : 'Cài đặt tham gia'}
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className='space-y-6'>
         {renderStepContent()}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between pt-6 border-t">
+        <div className='flex justify-between pt-6 border-t'>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={currentStep === 1 ? onCancel : prevStep}
             disabled={isLoading}
           >
             {currentStep === 1 ? 'Hủy' : 'Quay lại'}
           </Button>
-          
-          <div className="flex gap-2">
+
+          <div className='flex gap-2'>
             {currentStep < 3 ? (
               <Button
                 onClick={nextStep}
@@ -480,4 +515,4 @@ export const TournamentCreator: React.FC<TournamentCreatorProps> = ({
       </CardContent>
     </Card>
   );
-}; 
+};

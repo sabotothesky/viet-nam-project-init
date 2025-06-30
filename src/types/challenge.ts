@@ -9,7 +9,13 @@ export interface Challenge {
   race_to: number;
   handicap_1_rank: number;
   handicap_05_rank: number;
-  status: 'pending' | 'accepted' | 'declined' | 'ongoing' | 'completed' | 'cancelled';
+  status:
+    | 'pending'
+    | 'accepted'
+    | 'declined'
+    | 'ongoing'
+    | 'completed'
+    | 'cancelled';
   scheduled_time?: string;
   actual_start_time?: string;
   actual_end_time?: string;
@@ -71,48 +77,49 @@ export const CHALLENGE_CONFIGS = [
     race_to: 22,
     handicap_1_rank: 3.5,
     handicap_05_rank: 2.5,
-    description: 'Thách đấu cao cấp - Race to 22'
+    description: 'Thách đấu cao cấp - Race to 22',
   },
   {
     bet_range: { min: 500, max: 550 },
     race_to: 18,
     handicap_1_rank: 3,
     handicap_05_rank: 2,
-    description: 'Thách đấu trung cao - Race to 18'
+    description: 'Thách đấu trung cao - Race to 18',
   },
   {
     bet_range: { min: 400, max: 450 },
     race_to: 16,
     handicap_1_rank: 2.5,
     handicap_05_rank: 1.5,
-    description: 'Thách đấu trung cấp - Race to 16'
+    description: 'Thách đấu trung cấp - Race to 16',
   },
   {
     bet_range: { min: 300, max: 350 },
     race_to: 14,
     handicap_1_rank: 2,
     handicap_05_rank: 1.5,
-    description: 'Thách đấu trung bình - Race to 14'
+    description: 'Thách đấu trung bình - Race to 14',
   },
   {
     bet_range: { min: 200, max: 250 },
     race_to: 12,
     handicap_1_rank: 1.5,
     handicap_05_rank: 1,
-    description: 'Thách đấu cơ bản - Race to 12'
+    description: 'Thách đấu cơ bản - Race to 12',
   },
   {
     bet_range: { min: 100, max: 150 },
     race_to: 8,
     handicap_1_rank: 1,
     handicap_05_rank: 0.5,
-    description: 'Thách đấu sơ cấp - Race to 8'
-  }
+    description: 'Thách đấu sơ cấp - Race to 8',
+  },
 ];
 
 export const getChallengeConfig = (betPoints: number) => {
-  return CHALLENGE_CONFIGS.find(config => 
-    betPoints >= config.bet_range.min && betPoints <= config.bet_range.max
+  return CHALLENGE_CONFIGS.find(
+    config =>
+      betPoints >= config.bet_range.min && betPoints <= config.bet_range.max
   );
 };
 
@@ -169,4 +176,4 @@ export interface VerifyChallengeRequest {
     description?: string;
     additional_notes?: string;
   };
-} 
+}

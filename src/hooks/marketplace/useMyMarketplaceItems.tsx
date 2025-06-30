@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '../useAuth';
@@ -24,7 +23,7 @@ export const useMyMarketplaceItems = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       const enhancedMyItems: MarketplaceItem[] = (data || []).map(item => ({
         ...item,
         seller: null,
@@ -32,9 +31,9 @@ export const useMyMarketplaceItems = () => {
         shipping_available: false,
         images: item.images || [],
         views_count: item.views_count || 0,
-        favorites_count: item.favorites_count || 0
+        favorites_count: item.favorites_count || 0,
       }));
-      
+
       setMyItems(enhancedMyItems);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch my items');
@@ -43,7 +42,20 @@ export const useMyMarketplaceItems = () => {
     }
   };
 
-  const createItem = async (itemData: Omit<MarketplaceItem, 'id' | 'seller_id' | 'created_at' | 'updated_at' | 'views_count' | 'favorites_count' | 'seller' | 'marketplace_reviews' | 'shipping_available'>) => {
+  const createItem = async (
+    itemData: Omit<
+      MarketplaceItem,
+      | 'id'
+      | 'seller_id'
+      | 'created_at'
+      | 'updated_at'
+      | 'views_count'
+      | 'favorites_count'
+      | 'seller'
+      | 'marketplace_reviews'
+      | 'shipping_available'
+    >
+  ) => {
     if (!user) throw new Error('User not authenticated');
 
     try {
@@ -51,30 +63,45 @@ export const useMyMarketplaceItems = () => {
         .from('marketplace_items')
         .insert({
           ...itemData,
-          seller_id: user.id
+          seller_id: user.id,
         })
         .select()
         .single();
 
       if (error) throw error;
-      
+
       // Refresh items
       await fetchMyItems();
       return data;
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to create item');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to create item'
+      );
     }
   };
 
-  const updateItem = async (itemId: string, updates: Partial<Omit<MarketplaceItem, 'id' | 'seller_id' | 'created_at' | 'seller' | 'marketplace_reviews' | 'shipping_available'>>) => {
+  const updateItem = async (
+    itemId: string,
+    updates: Partial<
+      Omit<
+        MarketplaceItem,
+        | 'id'
+        | 'seller_id'
+        | 'created_at'
+        | 'seller'
+        | 'marketplace_reviews'
+        | 'shipping_available'
+      >
+    >
+  ) => {
     if (!user) throw new Error('User not authenticated');
 
     try {
       const { data, error } = await supabase
         .from('marketplace_items')
-        .update({ 
-          ...updates, 
-          updated_at: new Date().toISOString() 
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
         })
         .eq('id', itemId)
         .eq('seller_id', user.id)
@@ -82,12 +109,14 @@ export const useMyMarketplaceItems = () => {
         .single();
 
       if (error) throw error;
-      
+
       // Refresh items
       await fetchMyItems();
       return data;
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to update item');
+      throw new Error(
+        err instanceof Error ? err.message : 'Failed to update item'
+      );
     }
   };
 
@@ -97,6 +126,6 @@ export const useMyMarketplaceItems = () => {
     error,
     fetchMyItems,
     createItem,
-    updateItem
+    updateItem,
   };
 };

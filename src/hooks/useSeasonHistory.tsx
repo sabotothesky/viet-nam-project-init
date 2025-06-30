@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../integrations/supabase/client';
-import { 
-  SeasonHistory, 
-  SeasonStats, 
-  UserBestSeason, 
+import {
+  SeasonHistory,
+  SeasonStats,
+  UserBestSeason,
   SeasonHistoryFilters,
   SeasonHistoryResponse,
   CurrentSeason,
   SeasonProgress,
-  SeasonComparison
+  SeasonComparison,
 } from '../types/seasonHistory';
 
 export interface SeasonHistory {
@@ -75,7 +75,12 @@ export interface SeasonHistoryMatch {
 
 export interface PerformanceHighlight {
   id: string;
-  type: 'longest_streak' | 'highest_elo' | 'best_win' | 'tournament_win' | 'achievement';
+  type:
+    | 'longest_streak'
+    | 'highest_elo'
+    | 'best_win'
+    | 'tournament_win'
+    | 'achievement';
   title: string;
   description: string;
   value: number | string;
@@ -99,14 +104,14 @@ export const useSeasonHistory = (userId?: string) => {
   // Fetch season history
   const fetchSeasonHistory = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock season history data
       const mockHistory: SeasonHistory[] = [
         {
@@ -118,14 +123,14 @@ export const useSeasonHistory = (userId?: string) => {
             start_date: new Date('2023-12-01'),
             end_date: new Date('2024-02-29'),
             type: 'regular',
-            prize_pool: 8000000
+            prize_pool: 8000000,
           },
           user_id: userId,
           user: {
             id: userId,
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A+'
+            rank: 'A+',
           },
           final_rank: 3,
           total_matches: 25,
@@ -143,7 +148,7 @@ export const useSeasonHistory = (userId?: string) => {
               icon_url: '/achievements/top5.png',
               points: 20,
               earned_at: new Date('2024-02-28'),
-              category: 'tournament'
+              category: 'tournament',
             },
             {
               id: '2',
@@ -152,7 +157,7 @@ export const useSeasonHistory = (userId?: string) => {
               icon_url: '/achievements/winning_streak.png',
               points: 15,
               earned_at: new Date('2024-01-15'),
-              category: 'streak'
+              category: 'streak',
             },
             {
               id: '3',
@@ -161,8 +166,8 @@ export const useSeasonHistory = (userId?: string) => {
               icon_url: '/achievements/important_win.png',
               points: 10,
               earned_at: new Date('2024-01-20'),
-              category: 'match'
-            }
+              category: 'match',
+            },
           ],
           matches: [
             {
@@ -172,7 +177,7 @@ export const useSeasonHistory = (userId?: string) => {
                 id: '2',
                 username: 'champion',
                 avatar_url: '/avatars/champion.jpg',
-                rank: 'G'
+                rank: 'G',
               },
               result: 'win',
               score: '7-5',
@@ -181,7 +186,7 @@ export const useSeasonHistory = (userId?: string) => {
               round: 1,
               importance: 'regular',
               elo_change: 25,
-              points_earned: 3
+              points_earned: 3,
             },
             {
               id: '2',
@@ -190,7 +195,7 @@ export const useSeasonHistory = (userId?: string) => {
                 id: '3',
                 username: 'veteran',
                 avatar_url: '/avatars/veteran.jpg',
-                rank: 'A+'
+                rank: 'A+',
               },
               result: 'loss',
               score: '5-7',
@@ -199,7 +204,7 @@ export const useSeasonHistory = (userId?: string) => {
               round: 2,
               importance: 'playoff',
               elo_change: -15,
-              points_earned: 1
+              points_earned: 1,
             },
             {
               id: '3',
@@ -208,7 +213,7 @@ export const useSeasonHistory = (userId?: string) => {
                 id: '4',
                 username: 'rising_star',
                 avatar_url: '/avatars/rising_star.jpg',
-                rank: 'A'
+                rank: 'A',
               },
               result: 'win',
               score: '7-3',
@@ -217,8 +222,8 @@ export const useSeasonHistory = (userId?: string) => {
               round: 3,
               importance: 'regular',
               elo_change: 20,
-              points_earned: 3
-            }
+              points_earned: 3,
+            },
           ],
           performance_highlights: [
             {
@@ -227,7 +232,7 @@ export const useSeasonHistory = (userId?: string) => {
               title: 'Chuỗi thắng dài nhất',
               description: 'Thắng liên tiếp 8 trận đấu',
               value: 8,
-              date: new Date('2024-01-15')
+              date: new Date('2024-01-15'),
             },
             {
               id: '2',
@@ -235,7 +240,7 @@ export const useSeasonHistory = (userId?: string) => {
               title: 'ELO cao nhất',
               description: 'Đạt được ELO rating cao nhất trong mùa giải',
               value: 1870,
-              date: new Date('2024-02-10')
+              date: new Date('2024-02-10'),
             },
             {
               id: '3',
@@ -243,11 +248,11 @@ export const useSeasonHistory = (userId?: string) => {
               title: 'Chiến thắng ấn tượng nhất',
               description: 'Thắng trận đấu với tỷ số 7-2',
               value: '7-2',
-              date: new Date('2024-01-25')
-            }
+              date: new Date('2024-01-25'),
+            },
           ],
           created_at: new Date('2024-03-01'),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '2',
@@ -258,14 +263,14 @@ export const useSeasonHistory = (userId?: string) => {
             start_date: new Date('2023-06-01'),
             end_date: new Date('2023-08-31'),
             type: 'championship',
-            prize_pool: 15000000
+            prize_pool: 15000000,
           },
           user_id: userId,
           user: {
             id: userId,
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A+'
+            rank: 'A+',
           },
           final_rank: 1,
           total_matches: 30,
@@ -283,7 +288,7 @@ export const useSeasonHistory = (userId?: string) => {
               icon_url: '/achievements/champion.png',
               points: 50,
               earned_at: new Date('2023-08-30'),
-              category: 'tournament'
+              category: 'tournament',
             },
             {
               id: '5',
@@ -292,8 +297,8 @@ export const useSeasonHistory = (userId?: string) => {
               icon_url: '/achievements/winning_streak.png',
               points: 20,
               earned_at: new Date('2023-07-20'),
-              category: 'streak'
-            }
+              category: 'streak',
+            },
           ],
           matches: [
             {
@@ -303,7 +308,7 @@ export const useSeasonHistory = (userId?: string) => {
                 id: '5',
                 username: 'consistent_player',
                 avatar_url: '/avatars/consistent_player.jpg',
-                rank: 'A'
+                rank: 'A',
               },
               result: 'win',
               score: '7-4',
@@ -312,7 +317,7 @@ export const useSeasonHistory = (userId?: string) => {
               round: 1,
               importance: 'regular',
               elo_change: 30,
-              points_earned: 3
+              points_earned: 3,
             },
             {
               id: '5',
@@ -321,7 +326,7 @@ export const useSeasonHistory = (userId?: string) => {
                 id: '6',
                 username: 'tournament_winner',
                 avatar_url: '/avatars/tournament_winner.jpg',
-                rank: 'G'
+                rank: 'G',
               },
               result: 'win',
               score: '7-6',
@@ -330,8 +335,8 @@ export const useSeasonHistory = (userId?: string) => {
               round: 5,
               importance: 'final',
               elo_change: 50,
-              points_earned: 5
-            }
+              points_earned: 5,
+            },
           ],
           performance_highlights: [
             {
@@ -340,7 +345,7 @@ export const useSeasonHistory = (userId?: string) => {
               title: 'Vô địch mùa giải',
               description: 'Trở thành nhà vô địch mùa giải championship',
               value: 1,
-              date: new Date('2023-08-30')
+              date: new Date('2023-08-30'),
             },
             {
               id: '5',
@@ -348,17 +353,19 @@ export const useSeasonHistory = (userId?: string) => {
               title: 'ELO cao nhất',
               description: 'Đạt được ELO rating cao nhất trong sự nghiệp',
               value: 1900,
-              date: new Date('2023-08-30')
-            }
+              date: new Date('2023-08-30'),
+            },
           ],
           created_at: new Date('2023-09-01'),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
       ];
-      
+
       setHistory(mockHistory);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải lịch sử mùa giải');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải lịch sử mùa giải'
+      );
     } finally {
       setLoading(false);
     }
@@ -380,35 +387,31 @@ export const useSeasonHistory = (userId?: string) => {
 
     // Filter by season type
     if (filters.season_type) {
-      filtered = filtered.filter(item => 
-        item.season.type === filters.season_type
+      filtered = filtered.filter(
+        item => item.season.type === filters.season_type
       );
     }
 
     // Filter by year
     if (filters.year) {
-      filtered = filtered.filter(item => 
-        item.season.start_date.getFullYear() === filters.year
+      filtered = filtered.filter(
+        item => item.season.start_date.getFullYear() === filters.year
       );
     }
 
     // Filter by rank range
     if (filters.min_rank) {
-      filtered = filtered.filter(item => 
-        item.final_rank >= filters.min_rank!
-      );
+      filtered = filtered.filter(item => item.final_rank >= filters.min_rank!);
     }
 
     if (filters.max_rank) {
-      filtered = filtered.filter(item => 
-        item.final_rank <= filters.max_rank!
-      );
+      filtered = filtered.filter(item => item.final_rank <= filters.max_rank!);
     }
 
     // Filter by minimum matches
     if (filters.min_matches) {
-      filtered = filtered.filter(item => 
-        item.total_matches >= filters.min_matches!
+      filtered = filtered.filter(
+        item => item.total_matches >= filters.min_matches!
       );
     }
 
@@ -416,15 +419,18 @@ export const useSeasonHistory = (userId?: string) => {
   }, [history, filters]);
 
   // Get season by ID
-  const getSeasonById = useCallback((seasonId: string) => {
-    return history.find(item => item.season_id === seasonId);
-  }, [history]);
+  const getSeasonById = useCallback(
+    (seasonId: string) => {
+      return history.find(item => item.season_id === seasonId);
+    },
+    [history]
+  );
 
   // Get best season
   const getBestSeason = useCallback(() => {
     if (history.length === 0) return null;
-    
-    return history.reduce((best, current) => 
+
+    return history.reduce((best, current) =>
       current.final_rank < best.final_rank ? current : best
     );
   }, [history]);
@@ -432,8 +438,8 @@ export const useSeasonHistory = (userId?: string) => {
   // Get worst season
   const getWorstSeason = useCallback(() => {
     if (history.length === 0) return null;
-    
-    return history.reduce((worst, current) => 
+
+    return history.reduce((worst, current) =>
       current.final_rank > worst.final_rank ? current : worst
     );
   }, [history]);
@@ -441,17 +447,27 @@ export const useSeasonHistory = (userId?: string) => {
   // Get career statistics
   const getCareerStats = useCallback(() => {
     if (history.length === 0) return null;
-    
+
     const totalSeasons = history.length;
-    const totalMatches = history.reduce((sum, item) => sum + item.total_matches, 0);
+    const totalMatches = history.reduce(
+      (sum, item) => sum + item.total_matches,
+      0
+    );
     const totalWins = history.reduce((sum, item) => sum + item.wins, 0);
     const totalLosses = history.reduce((sum, item) => sum + item.losses, 0);
     const totalWinRate = totalMatches > 0 ? totalWins / totalMatches : 0;
-    const averageRank = history.reduce((sum, item) => sum + item.final_rank, 0) / totalSeasons;
+    const averageRank =
+      history.reduce((sum, item) => sum + item.final_rank, 0) / totalSeasons;
     const bestRank = Math.min(...history.map(item => item.final_rank));
-    const totalAchievements = history.reduce((sum, item) => sum + item.achievements.length, 0);
-    const totalPoints = history.reduce((sum, item) => sum + item.total_points, 0);
-    
+    const totalAchievements = history.reduce(
+      (sum, item) => sum + item.achievements.length,
+      0
+    );
+    const totalPoints = history.reduce(
+      (sum, item) => sum + item.total_points,
+      0
+    );
+
     return {
       total_seasons: totalSeasons,
       total_matches: totalMatches,
@@ -462,52 +478,55 @@ export const useSeasonHistory = (userId?: string) => {
       best_rank: bestRank,
       total_achievements: totalAchievements,
       total_points: totalPoints,
-      average_points_per_season: totalPoints / totalSeasons
+      average_points_per_season: totalPoints / totalSeasons,
     };
   }, [history]);
 
   // Get performance trends
   const getPerformanceTrends = useCallback(() => {
     if (history.length < 2) return null;
-    
-    const sortedHistory = [...history].sort((a, b) => 
-      a.season.start_date.getTime() - b.season.start_date.getTime()
+
+    const sortedHistory = [...history].sort(
+      (a, b) => a.season.start_date.getTime() - b.season.start_date.getTime()
     );
-    
+
     return {
       rank_trend: sortedHistory.map(item => ({
         season: item.season.name,
         rank: item.final_rank,
-        date: item.season.start_date
+        date: item.season.start_date,
       })),
       elo_trend: sortedHistory.map(item => ({
         season: item.season.name,
         elo: item.final_elo_rating,
         change: item.elo_change,
-        date: item.season.start_date
+        date: item.season.start_date,
       })),
       win_rate_trend: sortedHistory.map(item => ({
         season: item.season.name,
         win_rate: item.win_rate,
-        date: item.season.start_date
-      }))
+        date: item.season.start_date,
+      })),
     };
   }, [history]);
 
   // Get achievements summary
   const getAchievementsSummary = useCallback(() => {
     const allAchievements = history.flatMap(item => item.achievements);
-    const achievementCounts = allAchievements.reduce((acc, achievement) => {
-      acc[achievement.category] = (acc[achievement.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const achievementCounts = allAchievements.reduce(
+      (acc, achievement) => {
+        acc[achievement.category] = (acc[achievement.category] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
     return {
       total_achievements: allAchievements.length,
       by_category: achievementCounts,
       recent_achievements: allAchievements
         .sort((a, b) => b.earned_at.getTime() - a.earned_at.getTime())
-        .slice(0, 5)
+        .slice(0, 5),
     };
   }, [history]);
 
@@ -529,6 +548,6 @@ export const useSeasonHistory = (userId?: string) => {
     getWorstSeason,
     getCareerStats,
     getPerformanceTrends,
-    getAchievementsSummary
+    getAchievementsSummary,
   };
-}; 
+};

@@ -20,7 +20,7 @@ export const checkCurrentDatabaseStatus = async (): Promise<DatabaseStatus> => {
     userCount: 0,
     lastActivity: null,
     isAccessible: false,
-    errors: []
+    errors: [],
   };
 
   try {
@@ -67,7 +67,7 @@ export const checkCurrentDatabaseStatus = async (): Promise<DatabaseStatus> => {
           .from(table)
           .select('id')
           .limit(1);
-        
+
         if (!error && data && data.length > 0) {
           status.hasData = true;
         }
@@ -75,7 +75,6 @@ export const checkCurrentDatabaseStatus = async (): Promise<DatabaseStatus> => {
         // Table might not exist, that's okay
       }
     }
-
   } catch (error: any) {
     status.errors.push(`General error: ${error.message}`);
   }
@@ -93,4 +92,4 @@ export const getDatabaseRecommendation = (status: DatabaseStatus): string => {
   } else {
     return '🆕 Database trống. Có thể sử dụng database hiện tại hoặc tạo mới.';
   }
-}; 
+};

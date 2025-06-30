@@ -45,7 +45,11 @@ export const useOfflineQueue = () => {
     localStorage.setItem('offline-queue', JSON.stringify(queue));
   }, [queue]);
 
-  const addToQueue = (type: string, data: Record<string, any>, maxRetries = 3) => {
+  const addToQueue = (
+    type: string,
+    data: Record<string, any>,
+    maxRetries = 3
+  ) => {
     const action: QueueItem = {
       id: Date.now().toString(),
       type,
@@ -55,7 +59,7 @@ export const useOfflineQueue = () => {
     };
 
     setQueue(prev => [...prev, action]);
-    
+
     if (isOnline) {
       processQueue();
     } else {
@@ -67,7 +71,7 @@ export const useOfflineQueue = () => {
     if (queue.length === 0) return;
 
     const actionsToProcess = [...queue];
-    
+
     for (const action of actionsToProcess) {
       try {
         await executeAction(action);
@@ -76,11 +80,13 @@ export const useOfflineQueue = () => {
         toast.success('Đồng bộ thành công');
       } catch (error) {
         // Increment retry count
-        setQueue(prev => prev.map(item => 
-          item.id === action.id 
-            ? { ...item, retries: item.retries + 1 }
-            : item
-        ));
+        setQueue(prev =>
+          prev.map(item =>
+            item.id === action.id
+              ? { ...item, retries: item.retries + 1 }
+              : item
+          )
+        );
 
         if (action.retries >= maxRetries) {
           // Remove failed action after max retries
@@ -94,7 +100,7 @@ export const useOfflineQueue = () => {
   const executeAction = async (action: QueueItem) => {
     // This would implement the actual API calls based on action type
     console.log('Executing action:', action);
-    
+
     // Mock implementation - replace with real API calls
     switch (action.type) {
       case 'create_challenge':
@@ -112,6 +118,6 @@ export const useOfflineQueue = () => {
     isOnline,
     queueSize: queue.length,
     addToQueue,
-    processQueue
+    processQueue,
   };
 };

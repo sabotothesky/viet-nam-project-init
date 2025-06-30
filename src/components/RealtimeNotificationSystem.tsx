@@ -8,30 +8,32 @@ interface RealtimeNotificationSystemProps {
   children: React.ReactNode;
 }
 
-const RealtimeNotificationSystem = ({ children }: RealtimeNotificationSystemProps) => {
+const RealtimeNotificationSystem = ({
+  children,
+}: RealtimeNotificationSystemProps) => {
   const { user } = useAuth();
-  
+
   const { isConnected, connectionError, reconnect } = useRealtimeSubscriptions({
-    onChallengeReceived: (challenge) => {
-      console.log('New challenge received:', challenge);
+    onChallengeReceived: challenge => {
+      // ...removed console.log('New challenge received:', challenge)
       // Additional custom handling if needed
     },
-    onChallengeUpdated: (challenge) => {
-      console.log('Challenge updated:', challenge);
+    onChallengeUpdated: challenge => {
+      // ...removed console.log('Challenge updated:', challenge)
       // Additional custom handling if needed
     },
-    onBookingCreated: (booking) => {
-      console.log('New booking created:', booking);
+    onBookingCreated: booking => {
+      // ...removed console.log('New booking created:', booking)
       // Additional custom handling if needed
     },
-    onBookingUpdated: (booking) => {
-      console.log('Booking updated:', booking);
+    onBookingUpdated: booking => {
+      // ...removed console.log('Booking updated:', booking)
       // Additional custom handling if needed
     },
-    onNotificationReceived: (notification) => {
-      console.log('New notification received:', notification);
+    onNotificationReceived: notification => {
+      // ...removed console.log('New notification received:', notification)
       // Additional custom handling if needed
-    }
+    },
   });
 
   // Show connection status in development
@@ -40,13 +42,13 @@ const RealtimeNotificationSystem = ({ children }: RealtimeNotificationSystemProp
   return (
     <>
       {children}
-      
+
       {/* Connection Status Indicator (only show if there are issues or in dev mode) */}
       {(isDev || connectionError) && user && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <Badge 
-            variant={isConnected ? "default" : "destructive"}
-            className="flex items-center space-x-2 p-2 cursor-pointer hover:opacity-80 transition-opacity"
+        <div className='fixed bottom-4 right-4 z-50'>
+          <Badge
+            variant={isConnected ? 'default' : 'destructive'}
+            className='flex items-center space-x-2 p-2 cursor-pointer hover:opacity-80 transition-opacity'
             onClick={() => {
               if (connectionError) {
                 reconnect();
@@ -55,13 +57,13 @@ const RealtimeNotificationSystem = ({ children }: RealtimeNotificationSystemProp
           >
             {isConnected ? (
               <>
-                <Wifi className="w-3 h-3" />
-                <span className="text-xs">Real-time ON</span>
+                <Wifi className='w-3 h-3' />
+                <span className='text-xs'>Real-time ON</span>
               </>
             ) : (
               <>
-                <WifiOff className="w-3 h-3" />
-                <span className="text-xs">
+                <WifiOff className='w-3 h-3' />
+                <span className='text-xs'>
                   {connectionError || 'Connecting...'}
                 </span>
               </>

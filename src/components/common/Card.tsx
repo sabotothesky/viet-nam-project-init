@@ -1,6 +1,10 @@
-
 import React from 'react';
-import { Card as ShadcnCard, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Card as ShadcnCard,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '@/components/ui/card';
 
 interface CardProps {
   children: React.ReactNode;
@@ -13,18 +17,14 @@ interface CardWithHeaderProps extends CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
-  return (
-    <ShadcnCard className={className}>
-      {children}
-    </ShadcnCard>
-  );
+  return <ShadcnCard className={className}>{children}</ShadcnCard>;
 };
 
 export const CardWithHeader: React.FC<CardWithHeaderProps> = ({
   title,
   headerContent,
   children,
-  className = ''
+  className = '',
 }) => {
   return (
     <ShadcnCard className={className}>
@@ -34,9 +34,7 @@ export const CardWithHeader: React.FC<CardWithHeaderProps> = ({
           {headerContent}
         </CardHeader>
       )}
-      <CardContent>
-        {children}
-      </CardContent>
+      <CardContent>{children}</CardContent>
     </ShadcnCard>
   );
 };

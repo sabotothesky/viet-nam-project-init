@@ -51,4 +51,4 @@ describe('TournamentCard', () => {
 
     expect(screen.getByText(/Dec 1, 2024/)).toBeInTheDocument();
   });
-}); 
+});

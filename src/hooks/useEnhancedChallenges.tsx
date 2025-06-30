@@ -4,42 +4,58 @@ import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
 // Distance calculation helper
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+const calculateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+) => {
   const R = 6371; // Radius of the Earth in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in km
 };
 
 // Enhanced club priority calculation
-const calculateClubPriority = (club: any, userLat?: number, userLng?: number) => {
+const calculateClubPriority = (
+  club: any,
+  userLat?: number,
+  userLng?: number
+) => {
   let score = 0;
-  
+
   // 1. SABO owned clubs get highest priority
   if (club.is_sabo_owned) {
     score += 1000;
   }
-  
+
   // 2. Monthly payment amount (normalized to 0-500 points)
   score += Math.min(club.monthly_payment / 10, 500);
-  
+
   // 3. Distance from user (closer = higher score)
   if (userLat && userLng && club.latitude && club.longitude) {
-    const distance = calculateDistance(userLat, userLng, club.latitude, club.longitude);
+    const distance = calculateDistance(
+      userLat,
+      userLng,
+      club.latitude,
+      club.longitude
+    );
     score += Math.max(0, 100 - distance); // Max 100 points for distance
   }
-  
+
   // 4. Available tables
   score += (club.available_tables || 0) * 2;
-  
+
   // 5. Rating/Reviews (if available)
   score += (club.average_rating || 0) * 20;
-  
+
   return Math.round(score);
 };
 
@@ -48,14 +64,16 @@ export const useEnhancedChallenges = () => {
   const queryClient = useQueryClient();
 
   // Fetch received challenges
-  const { data: receivedChallenges = [], isLoading: loadingReceived } = useQuery({
-    queryKey: ['received-challenges', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return [];
-      
-      const { data, error } = await supabase
-        .from('challenges')
-        .select(`
+  const { data: receivedChallenges = [], isLoading: loadingReceived } =
+    useQuery({
+      queryKey: ['received-challenges', user?.id],
+      queryFn: async () => {
+        if (!user?.id) return [];
+
+        const { data, error } = await supabase
+          .from('challenges')
+          .select(
+            `
           *,
           challenger:profiles!challenges_challenger_id_fkey(
             user_id,
@@ -63,25 +81,27 @@ export const useEnhancedChallenges = () => {
             avatar_url,
             current_rank
           )
-        `)
-        .eq('challenged_id', user.id)
-        .order('created_at', { ascending: false });
+        `
+          )
+          .eq('challenged_id', user.id)
+          .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!user?.id,
-  });
+        if (error) throw error;
+        return data || [];
+      },
+      enabled: !!user?.id,
+    });
 
   // Fetch sent challenges
   const { data: sentChallenges = [], isLoading: loadingSent } = useQuery({
     queryKey: ['sent-challenges', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      
+
       const { data, error } = await supabase
         .from('challenges')
-        .select(`
+        .select(
+          `
           *,
           challenged:profiles!challenges_challenged_id_fkey(
             user_id,
@@ -89,7 +109,8 @@ export const useEnhancedChallenges = () => {
             avatar_url,
             current_rank
           )
-        `)
+        `
+        )
         .eq('challenger_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -117,10 +138,12 @@ export const useEnhancedChallenges = () => {
       const userLng = 105.8542;
 
       // Calculate priority scores and sort
-      const clubsWithPriority = (data || []).map(club => ({
-        ...club,
-        priority_score: calculateClubPriority(club, userLat, userLng)
-      })).sort((a, b) => b.priority_score - a.priority_score);
+      const clubsWithPriority = (data || [])
+        .map(club => ({
+          ...club,
+          priority_score: calculateClubPriority(club, userLat, userLng),
+        }))
+        .sort((a, b) => b.priority_score - a.priority_score);
 
       return clubsWithPriority.slice(0, 10); // Top 10 clubs
     },
@@ -128,13 +151,13 @@ export const useEnhancedChallenges = () => {
 
   // Send challenge function
   const sendChallenge = useMutation({
-    mutationFn: async ({ 
-      challengedId, 
-      betPoints, 
-      message 
-    }: { 
-      challengedId: string; 
-      betPoints: number; 
+    mutationFn: async ({
+      challengedId,
+      betPoints,
+      message,
+    }: {
+      challengedId: string;
+      betPoints: number;
       message: string;
     }) => {
       if (!user?.id) throw new Error('User not authenticated');
@@ -147,9 +170,11 @@ export const useEnhancedChallenges = () => {
           challenged_id: challengedId,
           bet_points: betPoints,
           message: message,
-          status: 'pending'
+          status: 'pending',
         })
-        .select('*, challenger:profiles!challenges_challenger_id_fkey(full_name)')
+        .select(
+          '*, challenger:profiles!challenges_challenger_id_fkey(full_name)'
+        )
         .single();
 
       if (challengeError) throw challengeError;
@@ -162,7 +187,7 @@ export const useEnhancedChallenges = () => {
           type: 'challenge_received',
           title: 'Bạn có thách đấu mới! ⚡',
           message: `${challenge.challenger.full_name} muốn thách đấu với mức cược ${betPoints} điểm`,
-          challenge_id: challenge.id
+          challenge_id: challenge.id,
         });
 
       if (notificationError) {
@@ -171,16 +196,14 @@ export const useEnhancedChallenges = () => {
 
       // 3. Send real-time notification
       try {
-        await supabase
-          .channel('notifications')
-          .send({
-            type: 'broadcast',
-            event: 'new_challenge',
-            payload: {
-              user_id: challengedId,
-              challenge: challenge
-            }
-          });
+        await supabase.channel('notifications').send({
+          type: 'broadcast',
+          event: 'new_challenge',
+          payload: {
+            user_id: challengedId,
+            challenge: challenge,
+          },
+        });
       } catch (realtimeError) {
         console.error('Failed to send real-time notification:', realtimeError);
       }
@@ -198,12 +221,12 @@ export const useEnhancedChallenges = () => {
 
   // Respond to challenge
   const respondToChallenge = useMutation({
-    mutationFn: async ({ 
-      challengeId, 
-      status, 
-      proposalData 
-    }: { 
-      challengeId: string; 
+    mutationFn: async ({
+      challengeId,
+      status,
+      proposalData,
+    }: {
+      challengeId: string;
       status: 'accepted' | 'declined';
       proposalData?: {
         clubId: string;
@@ -217,14 +240,16 @@ export const useEnhancedChallenges = () => {
           .update({
             status: 'accepted',
             proposed_club_id: proposalData.clubId,
-            proposed_datetime: proposalData.datetime
+            proposed_datetime: proposalData.datetime,
           })
           .eq('id', challengeId)
-          .select(`
+          .select(
+            `
             *,
             challenger:profiles!challenges_challenger_id_fkey(user_id, full_name),
             challenged:profiles!challenges_challenged_id_fkey(user_id, full_name)
-          `)
+          `
+          )
           .single();
 
         if (updateError) throw updateError;
@@ -237,7 +262,7 @@ export const useEnhancedChallenges = () => {
             type: 'challenge_accepted',
             title: 'Thách đấu được chấp nhận! 🎉',
             message: `${challenge.challenged.full_name} đã chấp nhận thách đấu và đề xuất lịch`,
-            challenge_id: challengeId
+            challenge_id: challengeId,
           });
 
         if (notificationError) {
@@ -261,7 +286,7 @@ export const useEnhancedChallenges = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['received-challenges'] });
       queryClient.invalidateQueries({ queryKey: ['sent-challenges'] });
-      
+
       if (variables.status === 'accepted') {
         toast.success('Đã chấp nhận thách đấu và gửi đề xuất!');
       } else {
@@ -279,12 +304,14 @@ export const useEnhancedChallenges = () => {
       // 1. Get current challenge data
       const { data: currentChallenge, error: fetchError } = await supabase
         .from('challenges')
-        .select(`
+        .select(
+          `
           *,
           club:clubs!challenges_proposed_club_id_fkey(*),
           challenger:profiles!challenges_challenger_id_fkey(user_id, full_name),
           challenged:profiles!challenges_challenged_id_fkey(user_id, full_name)
-        `)
+        `
+        )
         .eq('id', challengeId)
         .single();
 
@@ -296,7 +323,7 @@ export const useEnhancedChallenges = () => {
         .update({
           status: 'confirmed',
           confirmed_club_id: currentChallenge.proposed_club_id,
-          confirmed_datetime: currentChallenge.proposed_datetime
+          confirmed_datetime: currentChallenge.proposed_datetime,
         })
         .eq('id', challengeId)
         .select()
@@ -312,7 +339,7 @@ export const useEnhancedChallenges = () => {
           challenge_id: challengeId,
           booking_datetime: currentChallenge.proposed_datetime,
           duration_minutes: 120,
-          status: 'pending'
+          status: 'pending',
         })
         .select()
         .single();
@@ -330,23 +357,23 @@ export const useEnhancedChallenges = () => {
           type: 'match_scheduled',
           title: 'Trận đấu đã được xác nhận! 📅',
           message: `Trận đấu tại ${currentChallenge.club.name} vào ${formatDateTime(currentChallenge.proposed_datetime)}`,
-          challenge_id: challengeId
+          challenge_id: challengeId,
         }),
         supabase.from('notifications').insert({
           user_id: currentChallenge.challenged_id,
           type: 'match_scheduled',
           title: 'Trận đấu đã được xác nhận! 📅',
           message: `Trận đấu tại ${currentChallenge.club.name} vào ${formatDateTime(currentChallenge.proposed_datetime)}`,
-          challenge_id: challengeId
-        })
+          challenge_id: challengeId,
+        }),
       ]);
 
       // 5. Update booking as club notified
       await supabase
         .from('club_bookings')
-        .update({ 
+        .update({
           club_notified: true,
-          players_notified: true
+          players_notified: true,
         })
         .eq('id', booking.id);
 

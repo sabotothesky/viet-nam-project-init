@@ -108,173 +108,186 @@ export const usePosts = (userId?: string) => {
   const [page, setPage] = useState(1);
 
   // Fetch posts
-  const fetchPosts = useCallback(async (pageNum: number = 1, limit: number = 10) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock posts data
-      const mockPosts: Post[] = [
-        {
-          id: '1',
-          author_id: '1',
-          author: {
+  const fetchPosts = useCallback(
+    async (pageNum: number = 1, limit: number = 10) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Mock posts data
+        const mockPosts: Post[] = [
+          {
             id: '1',
-            username: 'pool_master',
-            avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A+'
+            author_id: '1',
+            author: {
+              id: '1',
+              username: 'pool_master',
+              avatar_url: '/avatars/pool_master.jpg',
+              rank: 'A+',
+            },
+            content:
+              'Vừa thắng trận đấu căng thẳng với @champion_player! Kết quả 7-5. Cảm ơn tất cả mọi người đã ủng hộ! 🎱🏆',
+            images: ['/posts/match_win_1.jpg', '/posts/match_win_2.jpg'],
+            location: {
+              name: 'Club Bida ABC',
+              address: '123 Đường ABC, Quận 1, TP.HCM',
+            },
+            tags: ['victory', '8ball', 'excited'],
+            likes_count: 45,
+            comments_count: 12,
+            shares_count: 3,
+            is_liked: false,
+            is_shared: false,
+            visibility: 'public',
+            created_at: new Date(Date.now() - 1000 * 60 * 30),
+            updated_at: new Date(),
+            metadata: {
+              match_result: {
+                opponent: 'champion_player',
+                score: '7-5',
+                venue: 'Club Bida ABC',
+              },
+            },
           },
-          content: 'Vừa thắng trận đấu căng thẳng với @champion_player! Kết quả 7-5. Cảm ơn tất cả mọi người đã ủng hộ! 🎱🏆',
-          images: ['/posts/match_win_1.jpg', '/posts/match_win_2.jpg'],
-          location: {
-            name: 'Club Bida ABC',
-            address: '123 Đường ABC, Quận 1, TP.HCM'
-          },
-          tags: ['victory', '8ball', 'excited'],
-          likes_count: 45,
-          comments_count: 12,
-          shares_count: 3,
-          is_liked: false,
-          is_shared: false,
-          visibility: 'public',
-          created_at: new Date(Date.now() - 1000 * 60 * 30),
-          updated_at: new Date(),
-          metadata: {
-            match_result: {
-              opponent: 'champion_player',
-              score: '7-5',
-              venue: 'Club Bida ABC'
-            }
-          }
-        },
-        {
-          id: '2',
-          author_id: '2',
-          author: {
+          {
             id: '2',
-            username: 'champion',
-            avatar_url: '/avatars/champion.jpg',
-            rank: 'G'
+            author_id: '2',
+            author: {
+              id: '2',
+              username: 'champion',
+              avatar_url: '/avatars/champion.jpg',
+              rank: 'G',
+            },
+            content:
+              'Chia sẻ một số tips chơi 9-ball cho các bạn mới. Điểm quan trọng nhất là phải có chiến thuật rõ ràng! 📚🎯',
+            video_url: 'https://youtube.com/watch?v=example',
+            tags: ['tips', '9ball', 'tutorial'],
+            likes_count: 78,
+            comments_count: 23,
+            shares_count: 15,
+            is_liked: true,
+            is_shared: false,
+            visibility: 'public',
+            created_at: new Date(Date.now() - 1000 * 60 * 60 * 2),
+            updated_at: new Date(),
           },
-          content: 'Chia sẻ một số tips chơi 9-ball cho các bạn mới. Điểm quan trọng nhất là phải có chiến thuật rõ ràng! 📚🎯',
-          video_url: 'https://youtube.com/watch?v=example',
-          tags: ['tips', '9ball', 'tutorial'],
-          likes_count: 78,
-          comments_count: 23,
-          shares_count: 15,
-          is_liked: true,
-          is_shared: false,
-          visibility: 'public',
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 2),
-          updated_at: new Date()
-        },
-        {
-          id: '3',
-          author_id: '3',
-          author: {
+          {
             id: '3',
-            username: 'veteran',
-            avatar_url: '/avatars/veteran.jpg',
-            rank: 'A+'
+            author_id: '3',
+            author: {
+              id: '3',
+              username: 'veteran',
+              avatar_url: '/avatars/veteran.jpg',
+              rank: 'A+',
+            },
+            content:
+              'Đạt được thành tích mới: "Vô địch giải đấu"! Cảm ơn tất cả đồng đội và người hâm mộ! 🏆✨',
+            images: ['/posts/tournament_win.jpg'],
+            tags: ['achievement', 'tournament', 'champion'],
+            likes_count: 156,
+            comments_count: 34,
+            shares_count: 28,
+            is_liked: false,
+            is_shared: true,
+            visibility: 'public',
+            created_at: new Date(Date.now() - 1000 * 60 * 60 * 6),
+            updated_at: new Date(),
+            metadata: {
+              achievement: {
+                name: 'Vô địch giải đấu',
+                description: 'Vô địch giải đấu cấp thành phố',
+                icon_url: '/achievements/tournament_winner.png',
+              },
+            },
           },
-          content: 'Đạt được thành tích mới: "Vô địch giải đấu"! Cảm ơn tất cả đồng đội và người hâm mộ! 🏆✨',
-          images: ['/posts/tournament_win.jpg'],
-          tags: ['achievement', 'tournament', 'champion'],
-          likes_count: 156,
-          comments_count: 34,
-          shares_count: 28,
-          is_liked: false,
-          is_shared: true,
-          visibility: 'public',
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 6),
-          updated_at: new Date(),
-          metadata: {
-            achievement: {
-              name: 'Vô địch giải đấu',
-              description: 'Vô địch giải đấu cấp thành phố',
-              icon_url: '/achievements/tournament_winner.png'
-            }
-          }
+        ];
+
+        if (pageNum === 1) {
+          setPosts(mockPosts);
+        } else {
+          setPosts(prev => [...prev, ...mockPosts]);
         }
-      ];
-      
-      if (pageNum === 1) {
-        setPosts(mockPosts);
-      } else {
-        setPosts(prev => [...prev, ...mockPosts]);
+
+        setHasMore(mockPosts.length === limit);
+        setPage(pageNum);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Không thể tải bài viết');
+      } finally {
+        setLoading(false);
       }
-      
-      setHasMore(mockPosts.length === limit);
-      setPage(pageNum);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải bài viết');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Create new post
-  const createPost = useCallback(async (data: CreatePostData) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock author data
-      const author = {
-        id: userId,
-        username: 'current_user',
-        avatar_url: '/avatars/current_user.jpg',
-        rank: 'A'
-      };
-      
-      const newPost: Post = {
-        id: Date.now().toString(),
-        author_id: userId,
-        author,
-        content: data.content,
-        images: data.images ? data.images.map(file => URL.createObjectURL(file)) : undefined,
-        video_url: data.video_url,
-        location: data.location,
-        tags: data.tags,
-        likes_count: 0,
-        comments_count: 0,
-        shares_count: 0,
-        is_liked: false,
-        is_shared: false,
-        visibility: data.visibility,
-        created_at: new Date(),
-        updated_at: new Date(),
-        metadata: data.metadata
-      };
-      
-      setPosts(prev => [newPost, ...prev]);
-      return newPost;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo bài viết');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const createPost = useCallback(
+    async (data: CreatePostData) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Mock author data
+        const author = {
+          id: userId,
+          username: 'current_user',
+          avatar_url: '/avatars/current_user.jpg',
+          rank: 'A',
+        };
+
+        const newPost: Post = {
+          id: Date.now().toString(),
+          author_id: userId,
+          author,
+          content: data.content,
+          images: data.images
+            ? data.images.map(file => URL.createObjectURL(file))
+            : undefined,
+          video_url: data.video_url,
+          location: data.location,
+          tags: data.tags,
+          likes_count: 0,
+          comments_count: 0,
+          shares_count: 0,
+          is_liked: false,
+          is_shared: false,
+          visibility: data.visibility,
+          created_at: new Date(),
+          updated_at: new Date(),
+          metadata: data.metadata,
+        };
+
+        setPosts(prev => [newPost, ...prev]);
+        return newPost;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Không thể tạo bài viết');
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Like/unlike post
   const toggleLike = useCallback(async (postId: string) => {
     try {
-      setPosts(prev => 
-        prev.map(post => 
-          post.id === postId 
+      setPosts(prev =>
+        prev.map(post =>
+          post.id === postId
             ? {
                 ...post,
                 is_liked: !post.is_liked,
-                likes_count: post.is_liked ? post.likes_count - 1 : post.likes_count + 1
+                likes_count: post.is_liked
+                  ? post.likes_count - 1
+                  : post.likes_count + 1,
               }
             : post
         )
@@ -287,13 +300,15 @@ export const usePosts = (userId?: string) => {
   // Share post
   const sharePost = useCallback(async (postId: string) => {
     try {
-      setPosts(prev => 
-        prev.map(post => 
-          post.id === postId 
+      setPosts(prev =>
+        prev.map(post =>
+          post.id === postId
             ? {
                 ...post,
                 is_shared: !post.is_shared,
-                shares_count: post.is_shared ? post.shares_count - 1 : post.shares_count + 1
+                shares_count: post.is_shared
+                  ? post.shares_count - 1
+                  : post.shares_count + 1,
               }
             : post
         )
@@ -313,24 +328,34 @@ export const usePosts = (userId?: string) => {
   }, []);
 
   // Get posts by user
-  const getPostsByUser = useCallback((targetUserId: string) => {
-    return posts.filter(post => post.author_id === targetUserId);
-  }, [posts]);
+  const getPostsByUser = useCallback(
+    (targetUserId: string) => {
+      return posts.filter(post => post.author_id === targetUserId);
+    },
+    [posts]
+  );
 
   // Get posts by tag
-  const getPostsByTag = useCallback((tag: string) => {
-    return posts.filter(post => post.tags.includes(tag));
-  }, [posts]);
+  const getPostsByTag = useCallback(
+    (tag: string) => {
+      return posts.filter(post => post.tags.includes(tag));
+    },
+    [posts]
+  );
 
   // Search posts
-  const searchPosts = useCallback((query: string) => {
-    const lowercaseQuery = query.toLowerCase();
-    return posts.filter(post => 
-      post.content.toLowerCase().includes(lowercaseQuery) ||
-      post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)) ||
-      post.author.username.toLowerCase().includes(lowercaseQuery)
-    );
-  }, [posts]);
+  const searchPosts = useCallback(
+    (query: string) => {
+      const lowercaseQuery = query.toLowerCase();
+      return posts.filter(
+        post =>
+          post.content.toLowerCase().includes(lowercaseQuery) ||
+          post.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)) ||
+          post.author.username.toLowerCase().includes(lowercaseQuery)
+      );
+    },
+    [posts]
+  );
 
   // Load more posts
   const loadMorePosts = useCallback(() => {
@@ -356,7 +381,7 @@ export const usePosts = (userId?: string) => {
     getPostsByUser,
     getPostsByTag,
     searchPosts,
-    loadMorePosts
+    loadMorePosts,
   };
 };
 
@@ -365,13 +390,15 @@ export const usePostBySlug = (slug: string) => {
     queryKey: ['post', slug],
     queryFn: async () => {
       if (!slug) return null;
-      
+
       const { data, error } = await supabase
         .from('posts')
-        .select(`
+        .select(
+          `
           *,
           author:profiles!posts_author_id_fkey(full_name, current_rank)
-        `)
+        `
+        )
         .eq('slug', slug)
         .eq('status', 'published')
         .single();

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '../useAuth';
@@ -20,7 +19,9 @@ export interface MarketplaceTransaction {
 }
 
 export const useMarketplaceTransactions = () => {
-  const [myTransactions, setMyTransactions] = useState<MarketplaceTransaction[]>([]);
+  const [myTransactions, setMyTransactions] = useState<
+    MarketplaceTransaction[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
@@ -41,7 +42,9 @@ export const useMarketplaceTransactions = () => {
       if (error) throw error;
       setMyTransactions(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch transactions');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch transactions'
+      );
     } finally {
       setLoading(false);
     }
@@ -51,6 +54,6 @@ export const useMarketplaceTransactions = () => {
     myTransactions,
     loading,
     error,
-    fetchMyTransactions
+    fetchMyTransactions,
   };
 };

@@ -6,23 +6,32 @@ const envSchema = z.object({
   VITE_VNP_HASH_SECRET: z.string().min(1, 'VNPAY Hash Secret is required'),
   VITE_VNP_RETURN_URL: z.string().url('VNPAY Return URL must be a valid URL'),
   VITE_VNP_PAYMENT_URL: z.string().url('VNPAY Payment URL must be a valid URL'),
-  
+
   // Supabase Configuration
   VITE_SUPABASE_URL: z.string().url('Supabase URL must be a valid URL'),
   VITE_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase Anon Key is required'),
-  
+
   // App Configuration
   VITE_APP_VERSION: z.string().default('1.0.0'),
   VITE_APP_NAME: z.string().default('SABO Pool Arena Hub'),
-  
+
   // Sentry Configuration
   VITE_SENTRY_DSN: z.string().optional(),
-  
+
   // Feature Flags
-  VITE_ENABLE_PWA: z.string().transform(val => val === 'true').default('true'),
-  VITE_ENABLE_ANALYTICS: z.string().transform(val => val === 'true').default('true'),
-  VITE_ENABLE_NOTIFICATIONS: z.string().transform(val => val === 'true').default('true'),
-  
+  VITE_ENABLE_PWA: z
+    .string()
+    .transform(val => val === 'true')
+    .default('true'),
+  VITE_ENABLE_ANALYTICS: z
+    .string()
+    .transform(val => val === 'true')
+    .default('true'),
+  VITE_ENABLE_NOTIFICATIONS: z
+    .string()
+    .transform(val => val === 'true')
+    .default('true'),
+
   // Development
   DEV: z.boolean().default(false),
   PROD: z.boolean().default(false),
@@ -45,4 +54,4 @@ export const env = envSchema.parse({
   PROD: import.meta.env.PROD,
 });
 
-export type Env = z.infer<typeof envSchema>; 
+export type Env = z.infer<typeof envSchema>;

@@ -15,52 +15,63 @@ const RankVerificationBadge: React.FC<RankVerificationBadgeProps> = ({
   verified = true,
   size = 'md',
   position = 'top-right',
-  showIcon = true
+  showIcon = true,
 }) => {
   if (!rank || rank === 'K1') return null;
 
   const getRankColor = (rank: string) => {
-    if (rank.startsWith('G')) return 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900';
-    if (rank.startsWith('B')) return 'bg-gradient-to-r from-blue-400 to-blue-500 text-blue-900';
-    if (rank.startsWith('A')) return 'bg-gradient-to-r from-green-400 to-green-500 text-green-900';
-    if (rank.startsWith('C')) return 'bg-gradient-to-r from-purple-400 to-purple-500 text-purple-900';
+    if (rank.startsWith('G'))
+      return 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900';
+    if (rank.startsWith('B'))
+      return 'bg-gradient-to-r from-blue-400 to-blue-500 text-blue-900';
+    if (rank.startsWith('A'))
+      return 'bg-gradient-to-r from-green-400 to-green-500 text-green-900';
+    if (rank.startsWith('C'))
+      return 'bg-gradient-to-r from-purple-400 to-purple-500 text-purple-900';
     return 'bg-gradient-to-r from-gray-400 to-gray-500 text-gray-900';
   };
 
   const getRankIcon = (rank: string) => {
-    if (rank.startsWith('G')) return <Crown className="w-3 h-3" />;
-    if (rank.startsWith('A')) return <Trophy className="w-3 h-3" />;
-    if (rank.startsWith('B')) return <Star className="w-3 h-3" />;
-    return <Shield className="w-3 h-3" />;
+    if (rank.startsWith('G')) return <Crown className='w-3 h-3' />;
+    if (rank.startsWith('A')) return <Trophy className='w-3 h-3' />;
+    if (rank.startsWith('B')) return <Star className='w-3 h-3' />;
+    return <Shield className='w-3 h-3' />;
   };
 
   const getSizeClasses = (size: string) => {
     switch (size) {
-      case 'sm': return 'px-2 py-1 text-xs';
-      case 'lg': return 'px-4 py-2 text-sm';
-      default: return 'px-3 py-1 text-xs';
+      case 'sm':
+        return 'px-2 py-1 text-xs';
+      case 'lg':
+        return 'px-4 py-2 text-sm';
+      default:
+        return 'px-3 py-1 text-xs';
     }
   };
 
   const getPositionClasses = (position: string) => {
     switch (position) {
-      case 'top-left': return 'top-2 left-2';
-      case 'bottom-right': return 'bottom-2 right-2';
-      case 'bottom-left': return 'bottom-2 left-2';
-      default: return 'top-2 right-2';
+      case 'top-left':
+        return 'top-2 left-2';
+      case 'bottom-right':
+        return 'bottom-2 right-2';
+      case 'bottom-left':
+        return 'bottom-2 left-2';
+      default:
+        return 'top-2 right-2';
     }
   };
 
   return (
     <div className={`absolute ${getPositionClasses(position)} z-10`}>
-      <Badge 
+      <Badge
         className={`${getRankColor(rank)} ${getSizeClasses(size)} font-bold flex items-center gap-1 shadow-lg border-2 border-white/20 backdrop-blur-sm`}
       >
         {showIcon && getRankIcon(rank)}
         <span>Hạng {rank}</span>
         {verified && (
-          <div className="w-2 h-2 bg-white rounded-full flex items-center justify-center">
-            <div className="w-1 h-1 bg-green-500 rounded-full"></div>
+          <div className='w-2 h-2 bg-white rounded-full flex items-center justify-center'>
+            <div className='w-1 h-1 bg-green-500 rounded-full'></div>
           </div>
         )}
       </Badge>
@@ -68,4 +79,4 @@ const RankVerificationBadge: React.FC<RankVerificationBadgeProps> = ({
   );
 };
 
-export default RankVerificationBadge; 
+export default RankVerificationBadge;

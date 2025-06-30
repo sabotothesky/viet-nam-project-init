@@ -35,7 +35,8 @@ export const useAdmin = () => {
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error checking admin status:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred';
         setError(`Error checking admin status: ${errorMessage}`);
         return;
       }
@@ -45,12 +46,13 @@ export const useAdmin = () => {
         setAdminUser({
           ...data,
           role: data.role as 'system_admin' | 'club_admin',
-          permissions: (data.permissions as Record<string, boolean>) || {}
+          permissions: (data.permissions as Record<string, boolean>) || {},
         });
       }
     } catch (error) {
       console.error('Error in checkAdminStatus:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
       setError(`Error in checkAdminStatus: ${errorMessage}`);
     } finally {
       setLoading(false);

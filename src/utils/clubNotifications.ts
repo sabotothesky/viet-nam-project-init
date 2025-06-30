@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 interface ClubNotificationData {
@@ -12,9 +11,9 @@ interface ClubNotificationData {
 }
 
 export const sendClubNotification = async (
-  club: any, 
-  booking: any, 
-  challengerName: string, 
+  club: any,
+  booking: any,
+  challengerName: string,
   challengedName: string
 ) => {
   try {
@@ -25,7 +24,7 @@ export const sendClubNotification = async (
       duration: booking.duration_minutes,
       challenger_name: challengerName,
       challenged_name: challengedName,
-      booking_id: booking.id
+      booking_id: booking.id,
     };
 
     console.log('Club notification data:', notificationData);
@@ -56,6 +55,6 @@ export const formatDateTime = (dateString: string) => {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };

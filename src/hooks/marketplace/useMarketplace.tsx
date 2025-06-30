@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useMarketplaceItems } from './useMarketplaceItems';
 import { useMyMarketplaceItems } from './useMyMarketplaceItems';
@@ -7,28 +6,28 @@ import { useAuth } from '../useAuth';
 
 export const useMarketplace = () => {
   const { user } = useAuth();
-  const { 
-    items, 
-    loading: itemsLoading, 
-    error: itemsError, 
-    fetchItems, 
-    incrementViews 
+  const {
+    items,
+    loading: itemsLoading,
+    error: itemsError,
+    fetchItems,
+    incrementViews,
   } = useMarketplaceItems();
-  
-  const { 
-    myItems, 
-    loading: myItemsLoading, 
-    error: myItemsError, 
-    fetchMyItems, 
-    createItem, 
-    updateItem 
+
+  const {
+    myItems,
+    loading: myItemsLoading,
+    error: myItemsError,
+    fetchMyItems,
+    createItem,
+    updateItem,
   } = useMyMarketplaceItems();
-  
-  const { 
-    myTransactions, 
-    loading: transactionsLoading, 
-    error: transactionsError, 
-    fetchMyTransactions 
+
+  const {
+    myTransactions,
+    loading: transactionsLoading,
+    error: transactionsError,
+    fetchMyTransactions,
   } = useMarketplaceTransactions();
 
   const loading = itemsLoading || myItemsLoading || transactionsLoading;
@@ -36,11 +35,7 @@ export const useMarketplace = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([
-        fetchItems(),
-        fetchMyItems(),
-        fetchMyTransactions()
-      ]);
+      await Promise.all([fetchItems(), fetchMyItems(), fetchMyTransactions()]);
     };
 
     loadData();
@@ -57,7 +52,7 @@ export const useMarketplace = () => {
     updateItem,
     incrementViews,
     refreshMyItems: fetchMyItems,
-    refreshTransactions: fetchMyTransactions
+    refreshTransactions: fetchMyTransactions,
   };
 };
 

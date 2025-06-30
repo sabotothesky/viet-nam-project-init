@@ -72,14 +72,14 @@ export const useMatches = (userId?: string) => {
   // Fetch matches
   const fetchMatches = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock matches data
       const mockMatches: Match[] = [
         {
@@ -90,7 +90,7 @@ export const useMatches = (userId?: string) => {
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
             rank: 'A+',
-            elo_rating: 1850
+            elo_rating: 1850,
           },
           player2_id: '2',
           player2: {
@@ -98,7 +98,7 @@ export const useMatches = (userId?: string) => {
             username: 'champion',
             avatar_url: '/avatars/champion.jpg',
             rank: 'G',
-            elo_rating: 2100
+            elo_rating: 2100,
           },
           match_type: '8-ball',
           status: 'completed',
@@ -108,7 +108,7 @@ export const useMatches = (userId?: string) => {
           completed_time: new Date(Date.now() - 1000 * 60 * 60 * 1.5),
           score: {
             player1_score: 7,
-            player2_score: 5
+            player2_score: 5,
           },
           winner_id: '1',
           loser_id: '2',
@@ -121,9 +121,9 @@ export const useMatches = (userId?: string) => {
               duration: 180,
               break_shot: {
                 player_id: '1',
-                balls_potted: 2
+                balls_potted: 2,
               },
-              created_at: new Date()
+              created_at: new Date(),
             },
             {
               id: '2',
@@ -133,14 +133,14 @@ export const useMatches = (userId?: string) => {
               duration: 210,
               break_shot: {
                 player_id: '2',
-                balls_potted: 1
+                balls_potted: 1,
               },
-              created_at: new Date()
-            }
+              created_at: new Date(),
+            },
           ],
           stake_amount: 100000,
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 3),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '2',
@@ -150,7 +150,7 @@ export const useMatches = (userId?: string) => {
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
             rank: 'A+',
-            elo_rating: 1850
+            elo_rating: 1850,
           },
           player2_id: '3',
           player2: {
@@ -158,7 +158,7 @@ export const useMatches = (userId?: string) => {
             username: 'veteran',
             avatar_url: '/avatars/veteran.jpg',
             rank: 'A+',
-            elo_rating: 1900
+            elo_rating: 1900,
           },
           match_type: '9-ball',
           status: 'scheduled',
@@ -166,11 +166,11 @@ export const useMatches = (userId?: string) => {
           scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 24),
           score: {
             player1_score: 0,
-            player2_score: 0
+            player2_score: 0,
           },
           stake_amount: 150000,
           created_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '3',
@@ -180,7 +180,7 @@ export const useMatches = (userId?: string) => {
             username: 'newbie',
             avatar_url: '/avatars/newbie.jpg',
             rank: 'C',
-            elo_rating: 1200
+            elo_rating: 1200,
           },
           player2_id: '1',
           player2: {
@@ -188,7 +188,7 @@ export const useMatches = (userId?: string) => {
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
             rank: 'A+',
-            elo_rating: 1850
+            elo_rating: 1850,
           },
           match_type: '8-ball',
           status: 'in_progress',
@@ -197,7 +197,7 @@ export const useMatches = (userId?: string) => {
           started_time: new Date(Date.now() - 1000 * 60 * 20),
           score: {
             player1_score: 2,
-            player2_score: 4
+            player2_score: 4,
           },
           frames: [
             {
@@ -206,7 +206,7 @@ export const useMatches = (userId?: string) => {
               frame_number: 1,
               winner_id: '1',
               duration: 150,
-              created_at: new Date()
+              created_at: new Date(),
             },
             {
               id: '4',
@@ -214,15 +214,15 @@ export const useMatches = (userId?: string) => {
               frame_number: 2,
               winner_id: '1',
               duration: 180,
-              created_at: new Date()
-            }
+              created_at: new Date(),
+            },
           ],
           stake_amount: 50000,
           created_at: new Date(Date.now() - 1000 * 60 * 60),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
       ];
-      
+
       setMatches(mockMatches);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể tải trận đấu');
@@ -232,77 +232,80 @@ export const useMatches = (userId?: string) => {
   }, [userId]);
 
   // Create new match
-  const createMatch = useCallback(async (data: CreateMatchData) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock player data
-      const player1 = {
-        id: userId,
-        username: 'current_user',
-        avatar_url: '/avatars/current_user.jpg',
-        rank: 'A',
-        elo_rating: 1800
-      };
-      
-      const player2 = {
-        id: data.player2_id,
-        username: 'opponent_user',
-        avatar_url: '/avatars/opponent.jpg',
-        rank: 'B',
-        elo_rating: 1600
-      };
-      
-      const newMatch: Match = {
-        id: Date.now().toString(),
-        player1_id: userId,
-        player1,
-        player2_id: data.player2_id,
-        player2,
-        match_type: data.match_type,
-        status: 'scheduled',
-        venue: data.venue,
-        scheduled_time: data.scheduled_time,
-        score: {
-          player1_score: 0,
-          player2_score: 0
-        },
-        frames: [],
-        stake_amount: data.stake_amount,
-        tournament_id: data.tournament_id,
-        challenge_id: data.challenge_id,
-        notes: data.notes,
-        created_at: new Date(),
-        updated_at: new Date()
-      };
-      
-      setMatches(prev => [newMatch, ...prev]);
-      return newMatch;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo trận đấu');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const createMatch = useCallback(
+    async (data: CreateMatchData) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Mock player data
+        const player1 = {
+          id: userId,
+          username: 'current_user',
+          avatar_url: '/avatars/current_user.jpg',
+          rank: 'A',
+          elo_rating: 1800,
+        };
+
+        const player2 = {
+          id: data.player2_id,
+          username: 'opponent_user',
+          avatar_url: '/avatars/opponent.jpg',
+          rank: 'B',
+          elo_rating: 1600,
+        };
+
+        const newMatch: Match = {
+          id: Date.now().toString(),
+          player1_id: userId,
+          player1,
+          player2_id: data.player2_id,
+          player2,
+          match_type: data.match_type,
+          status: 'scheduled',
+          venue: data.venue,
+          scheduled_time: data.scheduled_time,
+          score: {
+            player1_score: 0,
+            player2_score: 0,
+          },
+          frames: [],
+          stake_amount: data.stake_amount,
+          tournament_id: data.tournament_id,
+          challenge_id: data.challenge_id,
+          notes: data.notes,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+
+        setMatches(prev => [newMatch, ...prev]);
+        return newMatch;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Không thể tạo trận đấu');
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Start match
   const startMatch = useCallback(async (matchId: string) => {
     try {
-      setMatches(prev => 
-        prev.map(match => 
-          match.id === matchId 
+      setMatches(prev =>
+        prev.map(match =>
+          match.id === matchId
             ? {
                 ...match,
                 status: 'in_progress' as const,
                 started_time: new Date(),
-                updated_at: new Date()
+                updated_at: new Date(),
               }
             : match
         )
@@ -313,60 +316,73 @@ export const useMatches = (userId?: string) => {
   }, []);
 
   // Update match score
-  const updateMatchScore = useCallback(async (matchId: string, player1Score: number, player2Score: number) => {
-    try {
-      setMatches(prev => 
-        prev.map(match => 
-          match.id === matchId 
-            ? {
-                ...match,
-                score: {
-                  player1_score: player1Score,
-                  player2_score: player2Score
-                },
-                updated_at: new Date()
-              }
-            : match
-        )
-      );
-    } catch (err) {
-      console.error('Failed to update match score:', err);
-    }
-  }, []);
+  const updateMatchScore = useCallback(
+    async (matchId: string, player1Score: number, player2Score: number) => {
+      try {
+        setMatches(prev =>
+          prev.map(match =>
+            match.id === matchId
+              ? {
+                  ...match,
+                  score: {
+                    player1_score: player1Score,
+                    player2_score: player2Score,
+                  },
+                  updated_at: new Date(),
+                }
+              : match
+          )
+        );
+      } catch (err) {
+        console.error('Failed to update match score:', err);
+      }
+    },
+    []
+  );
 
   // Complete match
-  const completeMatch = useCallback(async (matchId: string, winnerId: string, finalScore: { player1_score: number; player2_score: number }) => {
-    try {
-      setMatches(prev => 
-        prev.map(match => 
-          match.id === matchId 
-            ? {
-                ...match,
-                status: 'completed' as const,
-                completed_time: new Date(),
-                score: finalScore,
-                winner_id: winnerId,
-                loser_id: winnerId === match.player1_id ? match.player2_id : match.player1_id,
-                updated_at: new Date()
-              }
-            : match
-        )
-      );
-    } catch (err) {
-      console.error('Failed to complete match:', err);
-    }
-  }, []);
+  const completeMatch = useCallback(
+    async (
+      matchId: string,
+      winnerId: string,
+      finalScore: { player1_score: number; player2_score: number }
+    ) => {
+      try {
+        setMatches(prev =>
+          prev.map(match =>
+            match.id === matchId
+              ? {
+                  ...match,
+                  status: 'completed' as const,
+                  completed_time: new Date(),
+                  score: finalScore,
+                  winner_id: winnerId,
+                  loser_id:
+                    winnerId === match.player1_id
+                      ? match.player2_id
+                      : match.player1_id,
+                  updated_at: new Date(),
+                }
+              : match
+          )
+        );
+      } catch (err) {
+        console.error('Failed to complete match:', err);
+      }
+    },
+    []
+  );
 
   // Cancel match
   const cancelMatch = useCallback(async (matchId: string) => {
     try {
-      setMatches(prev => 
-        prev.map(match => 
-          match.id === matchId 
+      setMatches(prev =>
+        prev.map(match =>
+          match.id === matchId
             ? {
                 ...match,
                 status: 'cancelled' as const,
-                updated_at: new Date()
+                updated_at: new Date(),
               }
             : match
         )
@@ -377,50 +393,68 @@ export const useMatches = (userId?: string) => {
   }, []);
 
   // Get match by ID
-  const getMatchById = useCallback((matchId: string) => {
-    return matches.find(match => match.id === matchId);
-  }, [matches]);
+  const getMatchById = useCallback(
+    (matchId: string) => {
+      return matches.find(match => match.id === matchId);
+    },
+    [matches]
+  );
 
   // Get matches by status
-  const getMatchesByStatus = useCallback((status: Match['status']) => {
-    return matches.filter(match => match.status === status);
-  }, [matches]);
+  const getMatchesByStatus = useCallback(
+    (status: Match['status']) => {
+      return matches.filter(match => match.status === status);
+    },
+    [matches]
+  );
 
   // Get matches for current user
   const getMyMatches = useCallback(() => {
     if (!userId) return [];
-    return matches.filter(match => 
-      match.player1_id === userId || match.player2_id === userId
+    return matches.filter(
+      match => match.player1_id === userId || match.player2_id === userId
     );
   }, [matches, userId]);
 
   // Get upcoming matches
   const getUpcomingMatches = useCallback(() => {
     const now = new Date();
-    return matches.filter(match => 
-      match.status === 'scheduled' && match.scheduled_time > now
+    return matches.filter(
+      match => match.status === 'scheduled' && match.scheduled_time > now
     );
   }, [matches]);
 
   // Get recent matches
-  const getRecentMatches = useCallback((limit: number = 10) => {
-    return matches
-      .filter(match => match.status === 'completed')
-      .sort((a, b) => b.completed_time!.getTime() - a.completed_time!.getTime())
-      .slice(0, limit);
-  }, [matches]);
+  const getRecentMatches = useCallback(
+    (limit: number = 10) => {
+      return matches
+        .filter(match => match.status === 'completed')
+        .sort(
+          (a, b) => b.completed_time!.getTime() - a.completed_time!.getTime()
+        )
+        .slice(0, limit);
+    },
+    [matches]
+  );
 
   // Get match statistics
   const getMatchStats = useCallback(() => {
     if (!userId) return null;
-    
+
     const myMatches = getMyMatches();
-    const completedMatches = myMatches.filter(match => match.status === 'completed');
-    
-    const wins = completedMatches.filter(match => match.winner_id === userId).length;
-    const losses = completedMatches.filter(match => match.loser_id === userId).length;
-    const winRate = completedMatches.length > 0 ? wins / completedMatches.length : 0;
-    
+    const completedMatches = myMatches.filter(
+      match => match.status === 'completed'
+    );
+
+    const wins = completedMatches.filter(
+      match => match.winner_id === userId
+    ).length;
+    const losses = completedMatches.filter(
+      match => match.loser_id === userId
+    ).length;
+    const winRate =
+      completedMatches.length > 0 ? wins / completedMatches.length : 0;
+
     return {
       total_matches: completedMatches.length,
       wins,
@@ -428,7 +462,7 @@ export const useMatches = (userId?: string) => {
       win_rate: winRate,
       total_earnings: completedMatches
         .filter(match => match.winner_id === userId)
-        .reduce((sum, match) => sum + match.stake_amount, 0)
+        .reduce((sum, match) => sum + match.stake_amount, 0),
     };
   }, [matches, userId, getMyMatches]);
 
@@ -451,6 +485,6 @@ export const useMatches = (userId?: string) => {
     getMyMatches,
     getUpcomingMatches,
     getRecentMatches,
-    getMatchStats
+    getMatchStats,
   };
 };

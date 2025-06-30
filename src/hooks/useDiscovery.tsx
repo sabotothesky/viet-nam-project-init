@@ -51,19 +51,22 @@ export const useDiscovery = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<DiscoveryFilters>({});
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // Get user location
   const getUserLocation = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           setUserLocation({
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           });
         },
-        (error) => {
+        error => {
           console.error('Error getting location:', error);
         }
       );
@@ -75,10 +78,10 @@ export const useDiscovery = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock discovery data
       const mockItems: DiscoveryItem[] = [
         {
@@ -90,7 +93,7 @@ export const useDiscovery = () => {
           location: {
             address: '123 Đường ABC, Quận 1',
             city: 'TP.HCM',
-            coordinates: { lat: 10.7769, lng: 106.7009 }
+            coordinates: { lat: 10.7769, lng: 106.7009 },
           },
           rating: 4.5,
           distance: 2.3,
@@ -100,8 +103,8 @@ export const useDiscovery = () => {
           metadata: {
             table_count: 20,
             price_per_hour: 50000,
-            amenities: ['wifi', 'parking', 'food']
-          }
+            amenities: ['wifi', 'parking', 'food'],
+          },
         },
         {
           id: '2',
@@ -111,7 +114,7 @@ export const useDiscovery = () => {
           image_url: '/avatars/player-a.jpg',
           location: {
             address: '456 Đường XYZ, Quận 3',
-            city: 'TP.HCM'
+            city: 'TP.HCM',
           },
           rating: 4.8,
           distance: 1.5,
@@ -121,8 +124,8 @@ export const useDiscovery = () => {
           metadata: {
             rank: 'A+',
             win_rate: 0.75,
-            total_matches: 150
-          }
+            total_matches: 150,
+          },
         },
         {
           id: '3',
@@ -132,7 +135,7 @@ export const useDiscovery = () => {
           image_url: '/images/tournament-spring.jpg',
           location: {
             address: '789 Đường VIP, Quận 7',
-            city: 'TP.HCM'
+            city: 'TP.HCM',
           },
           rating: 4.7,
           distance: 5.2,
@@ -142,8 +145,8 @@ export const useDiscovery = () => {
           metadata: {
             prize_pool: 50000000,
             entry_fee: 100000,
-            max_participants: 64
-          }
+            max_participants: 64,
+          },
         },
         {
           id: '4',
@@ -153,7 +156,7 @@ export const useDiscovery = () => {
           image_url: '/images/workshop.jpg',
           location: {
             address: '321 Đường Học, Quận 5',
-            city: 'TP.HCM'
+            city: 'TP.HCM',
           },
           rating: 4.6,
           distance: 3.1,
@@ -163,8 +166,8 @@ export const useDiscovery = () => {
           metadata: {
             duration: '3 giờ',
             price: 200000,
-            instructor: 'Nguyễn Văn B'
-          }
+            instructor: 'Nguyễn Văn B',
+          },
         },
         {
           id: '5',
@@ -174,7 +177,7 @@ export const useDiscovery = () => {
           image_url: '/images/8ball-tips.jpg',
           location: {
             address: 'Online',
-            city: 'Toàn quốc'
+            city: 'Toàn quốc',
           },
           rating: 4.4,
           tags: ['kinh nghiệm', 'tips', '8-ball'],
@@ -183,14 +186,16 @@ export const useDiscovery = () => {
           metadata: {
             author: 'pool_expert',
             read_time: '5 phút',
-            likes: 45
-          }
-        }
+            likes: 45,
+          },
+        },
       ];
-      
+
       setItems(mockItems);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu khám phá');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải dữ liệu khám phá'
+      );
     } finally {
       setLoading(false);
     }
@@ -218,21 +223,21 @@ export const useDiscovery = () => {
     // Filter by location/radius
     if (filters.location && userLocation) {
       // This would implement actual distance calculation
-      filtered = filtered.filter(item => 
-        item.distance && item.distance <= (filters.radius || 10)
+      filtered = filtered.filter(
+        item => item.distance && item.distance <= (filters.radius || 10)
       );
     }
 
     // Filter by rating
     if (filters.rating) {
-      filtered = filtered.filter(item => 
-        item.rating && item.rating >= filters.rating!
+      filtered = filtered.filter(
+        item => item.rating && item.rating >= filters.rating!
       );
     }
 
     // Filter by tags
     if (filters.tags && filters.tags.length > 0) {
-      filtered = filtered.filter(item => 
+      filtered = filtered.filter(item =>
         filters.tags!.some(tag => item.tags.includes(tag))
       );
     }
@@ -240,16 +245,20 @@ export const useDiscovery = () => {
     // Filter by price range
     if (filters.price_range) {
       filtered = filtered.filter(item => {
-        const price = item.metadata?.price_per_hour || item.metadata?.price || 0;
-        return price >= filters.price_range!.min && price <= filters.price_range!.max;
+        const price =
+          item.metadata?.price_per_hour || item.metadata?.price || 0;
+        return (
+          price >= filters.price_range!.min && price <= filters.price_range!.max
+        );
       });
     }
 
     // Filter by date range
     if (filters.date_range) {
-      filtered = filtered.filter(item => 
-        item.created_at >= filters.date_range!.from && 
-        item.created_at <= filters.date_range!.to
+      filtered = filtered.filter(
+        item =>
+          item.created_at >= filters.date_range!.from &&
+          item.created_at <= filters.date_range!.to
       );
     }
 
@@ -257,33 +266,39 @@ export const useDiscovery = () => {
   }, [items, filters, userLocation]);
 
   // Search items
-  const searchItems = useCallback((query: string) => {
-    const lowercaseQuery = query.toLowerCase();
-    return items.filter(item => 
-      item.title.toLowerCase().includes(lowercaseQuery) ||
-      item.description.toLowerCase().includes(lowercaseQuery) ||
-      item.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
-    );
-  }, [items]);
+  const searchItems = useCallback(
+    (query: string) => {
+      const lowercaseQuery = query.toLowerCase();
+      return items.filter(
+        item =>
+          item.title.toLowerCase().includes(lowercaseQuery) ||
+          item.description.toLowerCase().includes(lowercaseQuery) ||
+          item.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+      );
+    },
+    [items]
+  );
 
   // Get items by type
-  const getItemsByType = useCallback((type: DiscoveryItem['type']) => {
-    return items.filter(item => item.type === type);
-  }, [items]);
+  const getItemsByType = useCallback(
+    (type: DiscoveryItem['type']) => {
+      return items.filter(item => item.type === type);
+    },
+    [items]
+  );
 
   // Get nearby items
-  const getNearbyItems = useCallback((radius: number = 5) => {
-    if (!userLocation) return [];
-    return items.filter(item => 
-      item.distance && item.distance <= radius
-    );
-  }, [items, userLocation]);
+  const getNearbyItems = useCallback(
+    (radius: number = 5) => {
+      if (!userLocation) return [];
+      return items.filter(item => item.distance && item.distance <= radius);
+    },
+    [items, userLocation]
+  );
 
   // Get trending items
   const getTrendingItems = useCallback(() => {
-    return items
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 10);
+    return items.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10);
   }, [items]);
 
   useEffect(() => {
@@ -292,12 +307,12 @@ export const useDiscovery = () => {
   }, [getUserLocation, fetchDiscoveryItems]);
 
   const sendChallenge = useMutation({
-    mutationFn: async ({ 
-      challengedId, 
-      betPoints, 
-      message, 
-      proposedClubId, 
-      proposedDatetime 
+    mutationFn: async ({
+      challengedId,
+      betPoints,
+      message,
+      proposedClubId,
+      proposedDatetime,
     }: {
       challengedId: string;
       betPoints: number;
@@ -314,7 +329,7 @@ export const useDiscovery = () => {
           message: message,
           status: 'pending',
           proposed_club_id: proposedClubId,
-          proposed_datetime: proposedDatetime
+          proposed_datetime: proposedDatetime,
         })
         .select()
         .single();
@@ -322,17 +337,15 @@ export const useDiscovery = () => {
       if (error) throw error;
 
       // Send notification
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: challengedId,
-          type: 'challenge_received',
-          title: 'Bạn có thách đấu mới! ⚡',
-          message: `Có người muốn thách đấu với mức cược ${betPoints} điểm`,
-          challenge_id: data.id,
-          club_id: proposedClubId,
-          is_read: false
-        });
+      await supabase.from('notifications').insert({
+        user_id: challengedId,
+        type: 'challenge_received',
+        title: 'Bạn có thách đấu mới! ⚡',
+        message: `Có người muốn thách đấu với mức cược ${betPoints} điểm`,
+        challenge_id: data.id,
+        club_id: proposedClubId,
+        is_read: false,
+      });
 
       return data;
     },
@@ -340,7 +353,7 @@ export const useDiscovery = () => {
       toast.success('Thách đấu đã được gửi! ⚡');
       queryClient.invalidateQueries({ queryKey: ['challenges'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error sending challenge:', error);
       toast.error('Có lỗi xảy ra khi gửi thách đấu');
     },

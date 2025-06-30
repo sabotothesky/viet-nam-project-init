@@ -70,4 +70,4 @@ export interface SeasonComparison {
     previous_points: number;
     points_change: number;
   }>;
-} 
+}

@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Maximize, 
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
   Settings,
   MessageCircle,
   Heart,
@@ -19,7 +19,7 @@ import {
   Mic,
   MicOff,
   Video,
-  VideoOff
+  VideoOff,
 } from 'lucide-react';
 
 interface StreamMessage {
@@ -56,7 +56,7 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
   viewers,
   isLive,
   onJoinStream,
-  onLeaveStream
+  onLeaveStream,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -67,7 +67,7 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
   const [isStreamer, setIsStreamer] = useState(false);
   const [streamerAudio, setStreamerAudio] = useState(true);
   const [streamerVideo, setStreamerVideo] = useState(true);
-  
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -80,24 +80,24 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
           user: {
             id: '1',
             username: 'viewer1',
-            avatar_url: '/avatars/viewer1.jpg'
+            avatar_url: '/avatars/viewer1.jpg',
           },
           message: 'Trận đấu hay quá!',
           timestamp: new Date(),
-          type: 'message'
+          type: 'message',
         },
         {
           id: (Date.now() + 1).toString(),
           user: {
             id: '2',
-            username: 'viewer2'
+            username: 'viewer2',
           },
           message: '🔥🔥🔥',
           timestamp: new Date(),
-          type: 'reaction'
-        }
+          type: 'reaction',
+        },
       ];
-      
+
       setMessages(prev => [...prev.slice(-50), ...mockMessages]); // Keep last 50 messages
     }, 3000);
 
@@ -145,13 +145,13 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
         id: Date.now().toString(),
         user: {
           id: 'current-user',
-          username: 'Bạn'
+          username: 'Bạn',
         },
         message: newMessage,
         timestamp: new Date(),
-        type: 'message'
+        type: 'message',
       };
-      
+
       setMessages(prev => [...prev, message]);
       setNewMessage('');
     }
@@ -167,83 +167,91 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('vi-VN', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <div className='w-full max-w-6xl mx-auto'>
+      <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
         {/* Main Video Area */}
-        <div className="lg:col-span-3">
+        <div className='lg:col-span-3'>
           <Card>
-            <CardContent className="p-0">
+            <CardContent className='p-0'>
               {/* Video Player */}
-              <div className="relative bg-black aspect-video">
+              <div className='relative bg-black aspect-video'>
                 <video
                   ref={videoRef}
-                  className="w-full h-full object-cover"
-                  poster="/stream-poster.jpg"
+                  className='w-full h-full object-cover'
+                  poster='/stream-poster.jpg'
                   onClick={handlePlayPause}
                 >
-                  <source src="/mock-stream.mp4" type="video/mp4" />
+                  <source src='/mock-stream.mp4' type='video/mp4' />
                   Your browser does not support the video tag.
                 </video>
 
                 {/* Live Badge */}
                 {isLive && (
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-red-500 text-white animate-pulse">
+                  <div className='absolute top-4 left-4'>
+                    <Badge className='bg-red-500 text-white animate-pulse'>
                       LIVE
                     </Badge>
                   </div>
                 )}
 
                 {/* Viewer Count */}
-                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full">
-                  <Eye className="h-4 w-4" />
-                  <span className="text-sm">{viewers.toLocaleString()}</span>
+                <div className='absolute top-4 right-4 flex items-center gap-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full'>
+                  <Eye className='h-4 w-4' />
+                  <span className='text-sm'>{viewers.toLocaleString()}</span>
                 </div>
 
                 {/* Video Controls */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-2'>
                       <Button
-                        variant="ghost"
-                        size="sm"
+                        variant='ghost'
+                        size='sm'
                         onClick={handlePlayPause}
-                        className="text-white hover:bg-white hover:bg-opacity-20"
+                        className='text-white hover:bg-white hover:bg-opacity-20'
                       >
-                        {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                        {isPlaying ? (
+                          <Pause className='h-5 w-5' />
+                        ) : (
+                          <Play className='h-5 w-5' />
+                        )}
                       </Button>
-                      
+
                       <Button
-                        variant="ghost"
-                        size="sm"
+                        variant='ghost'
+                        size='sm'
                         onClick={handleMute}
-                        className="text-white hover:bg-white hover:bg-opacity-20"
+                        className='text-white hover:bg-white hover:bg-opacity-20'
                       >
-                        {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                        {isMuted ? (
+                          <VolumeX className='h-5 w-5' />
+                        ) : (
+                          <Volume2 className='h-5 w-5' />
+                        )}
                       </Button>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
+
+                    <div className='flex items-center gap-2'>
                       <Button
-                        variant="ghost"
-                        size="sm"
+                        variant='ghost'
+                        size='sm'
                         onClick={handleFullscreen}
-                        className="text-white hover:bg-white hover:bg-opacity-20"
+                        className='text-white hover:bg-white hover:bg-opacity-20'
                       >
-                        <Maximize className="h-5 w-5" />
+                        <Maximize className='h-5 w-5' />
                       </Button>
-                      
+
                       <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-white hover:bg-white hover:bg-opacity-20"
+                        variant='ghost'
+                        size='sm'
+                        className='text-white hover:bg-white hover:bg-opacity-20'
                       >
-                        <Settings className="h-5 w-5" />
+                        <Settings className='h-5 w-5' />
                       </Button>
                     </div>
                   </div>
@@ -251,51 +259,59 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
               </div>
 
               {/* Stream Info */}
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-3">
+              <div className='p-4'>
+                <div className='flex items-start justify-between mb-3'>
                   <div>
-                    <h2 className="text-xl font-bold">{title}</h2>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Avatar className="h-6 w-6">
+                    <h2 className='text-xl font-bold'>{title}</h2>
+                    <div className='flex items-center gap-2 mt-1'>
+                      <Avatar className='h-6 w-6'>
                         <AvatarImage src={streamer.avatar_url} />
                         <AvatarFallback>{streamer.username[0]}</AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">{streamer.username}</span>
-                      <span className="text-sm text-gray-600">
+                      <span className='font-medium'>{streamer.username}</span>
+                      <span className='text-sm text-gray-600'>
                         {streamer.followers.toLocaleString()} followers
                       </span>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Heart className="h-4 w-4 mr-2" />
+
+                  <div className='flex items-center gap-2'>
+                    <Button variant='outline' size='sm'>
+                      <Heart className='h-4 w-4 mr-2' />
                       Follow
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <Share className="h-4 w-4" />
+                    <Button variant='outline' size='sm'>
+                      <Share className='h-4 w-4' />
                     </Button>
                   </div>
                 </div>
 
                 {/* Streamer Controls (if is streamer) */}
                 {isStreamer && (
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <div className='flex items-center gap-2 p-3 bg-gray-50 rounded-lg'>
                     <Button
                       variant={streamerAudio ? 'default' : 'outline'}
-                      size="sm"
+                      size='sm'
                       onClick={() => setStreamerAudio(!streamerAudio)}
                     >
-                      {streamerAudio ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+                      {streamerAudio ? (
+                        <Mic className='h-4 w-4' />
+                      ) : (
+                        <MicOff className='h-4 w-4' />
+                      )}
                     </Button>
                     <Button
                       variant={streamerVideo ? 'default' : 'outline'}
-                      size="sm"
+                      size='sm'
                       onClick={() => setStreamerVideo(!streamerVideo)}
                     >
-                      {streamerVideo ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+                      {streamerVideo ? (
+                        <Video className='h-4 w-4' />
+                      ) : (
+                        <VideoOff className='h-4 w-4' />
+                      )}
                     </Button>
-                    <Button variant="destructive" size="sm">
+                    <Button variant='destructive' size='sm'>
                       Kết thúc stream
                     </Button>
                   </div>
@@ -306,80 +322,86 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
         </div>
 
         {/* Chat Sidebar */}
-        <div className="lg:col-span-1">
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5" />
+        <div className='lg:col-span-1'>
+          <Card className='h-full'>
+            <CardHeader className='pb-3'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='text-lg flex items-center gap-2'>
+                  <MessageCircle className='h-5 w-5' />
                   Chat
                 </CardTitle>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
+                  size='sm'
                   onClick={() => setShowChat(!showChat)}
-                  className="lg:hidden"
+                  className='lg:hidden'
                 >
                   {showChat ? 'Ẩn' : 'Hiện'}
                 </Button>
               </div>
             </CardHeader>
-            
+
             {showChat && (
-              <CardContent className="space-y-4">
+              <CardContent className='space-y-4'>
                 {/* Chat Messages */}
                 <div
                   ref={chatRef}
-                  className="h-64 overflow-y-auto space-y-2 border rounded-lg p-3"
+                  className='h-64 overflow-y-auto space-y-2 border rounded-lg p-3'
                 >
-                  {messages.map((message) => (
-                    <div key={message.id} className="flex items-start gap-2">
-                      <Avatar className="h-6 w-6 flex-shrink-0">
+                  {messages.map(message => (
+                    <div key={message.id} className='flex items-start gap-2'>
+                      <Avatar className='h-6 w-6 flex-shrink-0'>
                         <AvatarImage src={message.user.avatar_url} />
-                        <AvatarFallback>{message.user.username[0]}</AvatarFallback>
+                        <AvatarFallback>
+                          {message.user.username[0]}
+                        </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{message.user.username}</span>
-                          <span className="text-xs text-gray-500">
+                      <div className='flex-1 min-w-0'>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-sm font-medium'>
+                            {message.user.username}
+                          </span>
+                          <span className='text-xs text-gray-500'>
                             {formatTime(message.timestamp)}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-700">{message.message}</p>
+                        <p className='text-sm text-gray-700'>
+                          {message.message}
+                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Message Input */}
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   <Input
-                    placeholder="Nhập tin nhắn..."
+                    placeholder='Nhập tin nhắn...'
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={e => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="flex-1"
+                    className='flex-1'
                   />
-                  <Button size="sm" onClick={handleSendMessage}>
+                  <Button size='sm' onClick={handleSendMessage}>
                     Gửi
                   </Button>
                 </div>
 
                 {/* Quick Reactions */}
-                <div className="flex gap-1">
-                  {['👍', '❤️', '🔥', '👏', '🎉'].map((emoji) => (
+                <div className='flex gap-1'>
+                  {['👍', '❤️', '🔥', '👏', '🎉'].map(emoji => (
                     <Button
                       key={emoji}
-                      variant="outline"
-                      size="sm"
-                      className="text-lg"
+                      variant='outline'
+                      size='sm'
+                      className='text-lg'
                       onClick={() => {
                         const message: StreamMessage = {
                           id: Date.now().toString(),
                           user: { id: 'current-user', username: 'Bạn' },
                           message: emoji,
                           timestamp: new Date(),
-                          type: 'reaction'
+                          type: 'reaction',
                         };
                         setMessages(prev => [...prev, message]);
                       }}
@@ -395,4 +417,4 @@ export const LiveStream: React.FC<LiveStreamProps> = ({
       </div>
     </div>
   );
-}; 
+};

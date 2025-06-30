@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../integrations/supabase/client';
-import { 
-  QRCode, 
-  TableQRCode, 
-  QuickMatch, 
-  MatchResult, 
+import {
+  QRCode,
+  TableQRCode,
+  QuickMatch,
+  MatchResult,
   CreateQuickMatchRequest,
   ConfirmMatchResultRequest,
-  PlayerRanking
+  PlayerRanking,
 } from '../types/qr';
 
 export interface QRScanResult {
@@ -68,10 +68,10 @@ export const useQRSystem = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock QR codes data
       const mockQRCodes: QRCode[] = [
         {
@@ -83,13 +83,13 @@ export const useQRSystem = (userId?: string) => {
             match_id: 'match_123',
             opponent: 'player1',
             venue: 'Club Bida ABC',
-            scheduled_time: '2024-01-25T14:00:00Z'
+            scheduled_time: '2024-01-25T14:00:00Z',
           },
           image_url: '/qr-codes/match_123.png',
           is_active: true,
           expires_at: new Date('2024-01-25T16:00:00Z'),
           created_at: new Date('2024-01-20'),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '2',
@@ -100,13 +100,13 @@ export const useQRSystem = (userId?: string) => {
             tournament_id: 'tournament_456',
             name: 'Giải đấu mùa xuân 2024',
             entry_fee: 100000,
-            max_participants: 64
+            max_participants: 64,
           },
           image_url: '/qr-codes/tournament_456.png',
           is_active: true,
           expires_at: new Date('2024-02-01T00:00:00Z'),
           created_at: new Date('2024-01-15'),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '3',
@@ -117,12 +117,12 @@ export const useQRSystem = (userId?: string) => {
             club_id: 'club_789',
             name: 'Club Bida ABC',
             address: '123 Đường ABC, Quận 1, TP.HCM',
-            check_in_reward: 100
+            check_in_reward: 100,
           },
           image_url: '/qr-codes/club_789.png',
           is_active: true,
           created_at: new Date('2024-01-10'),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '4',
@@ -133,16 +133,16 @@ export const useQRSystem = (userId?: string) => {
             amount: 50000,
             currency: 'VND',
             description: 'Phí tham gia giải đấu',
-            payment_method: 'qr_code'
+            payment_method: 'qr_code',
           },
           image_url: '/qr-codes/payment_001.png',
           is_active: true,
           expires_at: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
           created_at: new Date(),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
       ];
-      
+
       setQRCodes(mockQRCodes);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể tải mã QR');
@@ -154,14 +154,14 @@ export const useQRSystem = (userId?: string) => {
   // Fetch scan history
   const fetchScanHistory = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // Mock scan history data
       const mockScanHistory: QRScanHistory[] = [
         {
@@ -171,20 +171,21 @@ export const useQRSystem = (userId?: string) => {
           user: {
             id: userId,
             username: 'current_user',
-            avatar_url: '/avatars/current_user.jpg'
+            avatar_url: '/avatars/current_user.jpg',
           },
           scan_time: new Date(Date.now() - 1000 * 60 * 30),
           location: {
             lat: 10.7769,
             lng: 106.7009,
-            address: 'Club Bida ABC, 123 Đường ABC, Quận 1, TP.HCM'
+            address: 'Club Bida ABC, 123 Đường ABC, Quận 1, TP.HCM',
           },
           device_info: {
-            user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+            user_agent:
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
             platform: 'iOS',
-            ip_address: '192.168.1.100'
+            ip_address: '192.168.1.100',
           },
-          result: 'success'
+          result: 'success',
         },
         {
           id: '2',
@@ -193,20 +194,21 @@ export const useQRSystem = (userId?: string) => {
           user: {
             id: userId,
             username: 'current_user',
-            avatar_url: '/avatars/current_user.jpg'
+            avatar_url: '/avatars/current_user.jpg',
           },
           scan_time: new Date(Date.now() - 1000 * 60 * 60 * 2),
           location: {
             lat: 10.7769,
             lng: 106.7009,
-            address: 'Club Bida ABC, 123 Đường ABC, Quận 1, TP.HCM'
+            address: 'Club Bida ABC, 123 Đường ABC, Quận 1, TP.HCM',
           },
           device_info: {
-            user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+            user_agent:
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
             platform: 'iOS',
-            ip_address: '192.168.1.100'
+            ip_address: '192.168.1.100',
           },
-          result: 'success'
+          result: 'success',
         },
         {
           id: '3',
@@ -215,153 +217,168 @@ export const useQRSystem = (userId?: string) => {
           user: {
             id: userId,
             username: 'current_user',
-            avatar_url: '/avatars/current_user.jpg'
+            avatar_url: '/avatars/current_user.jpg',
           },
           scan_time: new Date(Date.now() - 1000 * 60 * 60 * 24),
           location: {
             lat: 10.7829,
             lng: 106.7009,
-            address: 'Club Bida XYZ, 456 Đường XYZ, Quận 3, TP.HCM'
+            address: 'Club Bida XYZ, 456 Đường XYZ, Quận 3, TP.HCM',
           },
           device_info: {
-            user_agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
+            user_agent:
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)',
             platform: 'iOS',
-            ip_address: '192.168.1.100'
+            ip_address: '192.168.1.100',
           },
-          result: 'success'
-        }
+          result: 'success',
+        },
       ];
-      
+
       setScanHistory(mockScanHistory);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải lịch sử quét mã');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải lịch sử quét mã'
+      );
     } finally {
       setLoading(false);
     }
   }, [userId]);
 
   // Create QR code
-  const createQRCode = useCallback(async (data: CreateQRCodeData) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newQRCode: QRCode = {
-        id: Date.now().toString(),
-        type: data.type,
-        title: data.title,
-        description: data.description,
-        data: data.data,
-        image_url: `/qr-codes/${data.type}_${Date.now()}.png`,
-        is_active: true,
-        expires_at: data.expires_at,
-        created_at: new Date(),
-        updated_at: new Date()
-      };
-      
-      setQRCodes(prev => [newQRCode, ...prev]);
-      return newQRCode;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo mã QR');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const createQRCode = useCallback(
+    async (data: CreateQRCodeData) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const newQRCode: QRCode = {
+          id: Date.now().toString(),
+          type: data.type,
+          title: data.title,
+          description: data.description,
+          data: data.data,
+          image_url: `/qr-codes/${data.type}_${Date.now()}.png`,
+          is_active: true,
+          expires_at: data.expires_at,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+
+        setQRCodes(prev => [newQRCode, ...prev]);
+        return newQRCode;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Không thể tạo mã QR');
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Scan QR code
-  const scanQRCode = useCallback(async (qrData: string, location?: { lat: number; lng: number; address: string }) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Parse QR data (in real app, this would decode the QR content)
-      const qrCode = qrCodes.find(qr => qr.id === qrData || qr.image_url?.includes(qrData));
-      
-      if (!qrCode) {
-        throw new Error('Mã QR không hợp lệ');
+  const scanQRCode = useCallback(
+    async (
+      qrData: string,
+      location?: { lat: number; lng: number; address: string }
+    ) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Parse QR data (in real app, this would decode the QR content)
+        const qrCode = qrCodes.find(
+          qr => qr.id === qrData || qr.image_url?.includes(qrData)
+        );
+
+        if (!qrCode) {
+          throw new Error('Mã QR không hợp lệ');
+        }
+
+        if (!qrCode.is_active) {
+          throw new Error('Mã QR đã bị vô hiệu hóa');
+        }
+
+        if (qrCode.expires_at && qrCode.expires_at < new Date()) {
+          throw new Error('Mã QR đã hết hạn');
+        }
+
+        // Create scan history entry
+        const scanEntry: QRScanHistory = {
+          id: Date.now().toString(),
+          qr_code_id: qrCode.id,
+          user_id: userId,
+          user: {
+            id: userId,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+          },
+          scan_time: new Date(),
+          location,
+          device_info: {
+            user_agent: navigator.userAgent,
+            platform: navigator.platform,
+            ip_address: undefined, // Would be set by server
+          },
+          result: 'success',
+        };
+
+        setScanHistory(prev => [scanEntry, ...prev]);
+
+        // Handle different QR code types
+        const result = await handleQRCodeAction(qrCode);
+
+        return {
+          qrCode,
+          scanEntry,
+          result,
+        };
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Lỗi khi quét mã QR';
+        setError(errorMessage);
+
+        // Log failed scan
+        const failedScan: QRScanHistory = {
+          id: Date.now().toString(),
+          qr_code_id: 'unknown',
+          user_id: userId,
+          user: {
+            id: userId,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+          },
+          scan_time: new Date(),
+          location,
+          device_info: {
+            user_agent: navigator.userAgent,
+            platform: navigator.platform,
+            ip_address: undefined,
+          },
+          result: 'error',
+          error_message: errorMessage,
+        };
+
+        setScanHistory(prev => [failedScan, ...prev]);
+
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      
-      if (!qrCode.is_active) {
-        throw new Error('Mã QR đã bị vô hiệu hóa');
-      }
-      
-      if (qrCode.expires_at && qrCode.expires_at < new Date()) {
-        throw new Error('Mã QR đã hết hạn');
-      }
-      
-      // Create scan history entry
-      const scanEntry: QRScanHistory = {
-        id: Date.now().toString(),
-        qr_code_id: qrCode.id,
-        user_id: userId,
-        user: {
-          id: userId,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg'
-        },
-        scan_time: new Date(),
-        location,
-        device_info: {
-          user_agent: navigator.userAgent,
-          platform: navigator.platform,
-          ip_address: undefined // Would be set by server
-        },
-        result: 'success'
-      };
-      
-      setScanHistory(prev => [scanEntry, ...prev]);
-      
-      // Handle different QR code types
-      const result = await handleQRCodeAction(qrCode);
-      
-      return {
-        qrCode,
-        scanEntry,
-        result
-      };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Lỗi khi quét mã QR';
-      setError(errorMessage);
-      
-      // Log failed scan
-      const failedScan: QRScanHistory = {
-        id: Date.now().toString(),
-        qr_code_id: 'unknown',
-        user_id: userId,
-        user: {
-          id: userId,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg'
-        },
-        scan_time: new Date(),
-        location,
-        device_info: {
-          user_agent: navigator.userAgent,
-          platform: navigator.platform,
-          ip_address: undefined
-        },
-        result: 'error',
-        error_message: errorMessage
-      };
-      
-      setScanHistory(prev => [failedScan, ...prev]);
-      
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, qrCodes]);
+    },
+    [userId, qrCodes]
+  );
 
   // Handle QR code actions based on type
   const handleQRCodeAction = useCallback(async (qrCode: QRCode) => {
@@ -370,49 +387,49 @@ export const useQRSystem = (userId?: string) => {
         return {
           action: 'join_match',
           message: `Đã tham gia trận đấu với ${qrCode.data.opponent}`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       case 'tournament':
         return {
           action: 'register_tournament',
           message: `Đã đăng ký tham gia ${qrCode.data.name}`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       case 'club':
         return {
           action: 'check_in',
           message: `Đã check-in tại ${qrCode.data.name}`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       case 'payment':
         return {
           action: 'initiate_payment',
           message: `Khởi tạo thanh toán ${qrCode.data.amount} ${qrCode.data.currency}`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       case 'user':
         return {
           action: 'view_profile',
           message: `Xem hồ sơ người dùng`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       case 'achievement':
         return {
           action: 'unlock_achievement',
           message: `Mở khóa thành tích`,
-          data: qrCode.data
+          data: qrCode.data,
         };
-      
+
       default:
         return {
           action: 'unknown',
           message: 'Hành động không xác định',
-          data: qrCode.data
+          data: qrCode.data,
         };
     }
   }, []);
@@ -420,9 +437,9 @@ export const useQRSystem = (userId?: string) => {
   // Deactivate QR code
   const deactivateQRCode = useCallback(async (qrCodeId: string) => {
     try {
-      setQRCodes(prev => 
-        prev.map(qr => 
-          qr.id === qrCodeId 
+      setQRCodes(prev =>
+        prev.map(qr =>
+          qr.id === qrCodeId
             ? { ...qr, is_active: false, updated_at: new Date() }
             : qr
         )
@@ -442,14 +459,20 @@ export const useQRSystem = (userId?: string) => {
   }, []);
 
   // Get QR code by ID
-  const getQRCodeById = useCallback((qrCodeId: string) => {
-    return qrCodes.find(qr => qr.id === qrCodeId);
-  }, [qrCodes]);
+  const getQRCodeById = useCallback(
+    (qrCodeId: string) => {
+      return qrCodes.find(qr => qr.id === qrCodeId);
+    },
+    [qrCodes]
+  );
 
   // Get QR codes by type
-  const getQRCodesByType = useCallback((type: QRCode['type']) => {
-    return qrCodes.filter(qr => qr.type === type);
-  }, [qrCodes]);
+  const getQRCodesByType = useCallback(
+    (type: QRCode['type']) => {
+      return qrCodes.filter(qr => qr.type === type);
+    },
+    [qrCodes]
+  );
 
   // Get active QR codes
   const getActiveQRCodes = useCallback(() => {
@@ -457,32 +480,44 @@ export const useQRSystem = (userId?: string) => {
   }, [qrCodes]);
 
   // Get user's scan history
-  const getUserScanHistory = useCallback((targetUserId?: string) => {
-    const id = targetUserId || userId;
-    if (!id) return [];
-    return scanHistory.filter(scan => scan.user_id === id);
-  }, [scanHistory, userId]);
+  const getUserScanHistory = useCallback(
+    (targetUserId?: string) => {
+      const id = targetUserId || userId;
+      if (!id) return [];
+      return scanHistory.filter(scan => scan.user_id === id);
+    },
+    [scanHistory, userId]
+  );
 
   // Get recent scans
-  const getRecentScans = useCallback((limit: number = 10) => {
-    return scanHistory
-      .sort((a, b) => b.scan_time.getTime() - a.scan_time.getTime())
-      .slice(0, limit);
-  }, [scanHistory]);
+  const getRecentScans = useCallback(
+    (limit: number = 10) => {
+      return scanHistory
+        .sort((a, b) => b.scan_time.getTime() - a.scan_time.getTime())
+        .slice(0, limit);
+    },
+    [scanHistory]
+  );
 
   // Get scan statistics
   const getScanStats = useCallback(() => {
     const totalScans = scanHistory.length;
-    const successfulScans = scanHistory.filter(scan => scan.result === 'success').length;
-    const failedScans = scanHistory.filter(scan => scan.result === 'error').length;
-    const expiredScans = scanHistory.filter(scan => scan.result === 'expired').length;
-    
+    const successfulScans = scanHistory.filter(
+      scan => scan.result === 'success'
+    ).length;
+    const failedScans = scanHistory.filter(
+      scan => scan.result === 'error'
+    ).length;
+    const expiredScans = scanHistory.filter(
+      scan => scan.result === 'expired'
+    ).length;
+
     return {
       total: totalScans,
       successful: successfulScans,
       failed: failedScans,
       expired: expiredScans,
-      success_rate: totalScans > 0 ? (successfulScans / totalScans) * 100 : 0
+      success_rate: totalScans > 0 ? (successfulScans / totalScans) * 100 : 0,
     };
   }, [scanHistory]);
 
@@ -514,6 +549,6 @@ export const useQRSystem = (userId?: string) => {
     getUserScanHistory,
     getRecentScans,
     getScanStats,
-    generateQRImageUrl
+    generateQRImageUrl,
   };
-}; 
+};

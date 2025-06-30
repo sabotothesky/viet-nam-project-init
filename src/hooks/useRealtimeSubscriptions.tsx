@@ -14,7 +14,9 @@ interface RealtimeSubscriptionOptions {
   onNotificationReceived?: (notification: Notification) => void;
 }
 
-export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = {}) => {
+export const useRealtimeSubscriptions = (
+  options: RealtimeSubscriptionOptions = {}
+) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -22,9 +24,8 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user?.id) return;
 
-    console.log('Setting up comprehensive real-time subscriptions for user:', user.id);
+    if (!user?.id) return;
 
     // Create a single channel for all subscriptions
     const channel = supabase.channel(`user-realtime-${user.id}`);
@@ -36,10 +37,10 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
         event: '*',
         schema: 'public',
         table: 'challenges',
-        filter: `challenger_id=eq.${user.id}`
+        filter: `challenger_id=eq.${user.id}`,
       },
-      (payload) => {
-        console.log('Challenge update (as challenger):', payload);
+      payload => {
+        // ...removed console.log('Challenge update (as challenger):', payload)
         handleChallengeUpdate(payload, 'challenger');
       }
     );
@@ -51,10 +52,10 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
         event: '*',
         schema: 'public',
         table: 'challenges',
-        filter: `challenged_id=eq.${user.id}`
+        filter: `challenged_id=eq.${user.id}`,
       },
-      (payload) => {
-        console.log('Challenge update (as challenged):', payload);
+      payload => {
+        // ...removed console.log('Challenge update (as challenged):', payload)
         handleChallengeUpdate(payload, 'challenged');
       }
     );
@@ -65,10 +66,10 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
       {
         event: '*',
         schema: 'public',
-        table: 'club_bookings'
+        table: 'club_bookings',
       },
-      (payload) => {
-        console.log('Booking update:', payload);
+      payload => {
+        // ...removed console.log('Booking update:', payload)
         handleBookingUpdate(payload);
       }
     );
@@ -80,24 +81,24 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
         event: 'INSERT',
         schema: 'public',
         table: 'notifications',
-        filter: `user_id=eq.${user.id}`
+        filter: `user_id=eq.${user.id}`,
       },
-      (payload) => {
-        console.log('New notification:', payload);
+      payload => {
+        // ...removed console.log('New notification:', payload)
         handleNotificationReceived(payload);
       }
     );
 
     // Handle connection status
-    const subscription = channel.subscribe((status) => {
-      console.log('Real-time subscription status:', status);
-      
+    const subscription = channel.subscribe(status => {
+      // ...removed console.log('Real-time subscription status:', status)
+
       if (status === 'SUBSCRIBED') {
         setIsConnected(true);
         setConnectionError(null);
         toast.success('Kết nối real-time thành công! 🔗', {
           duration: 2000,
-          position: 'top-center'
+          position: 'top-center',
         });
       } else if (status === 'CHANNEL_ERROR') {
         setIsConnected(false);
@@ -115,7 +116,7 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
     // Cleanup function
     return () => {
       if (channelRef.current) {
-        console.log('Cleaning up real-time subscriptions');
+        // ...removed console.log('Cleaning up real-time subscriptions')
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
@@ -123,9 +124,12 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
     };
   }, [user?.id]);
 
-  const handleChallengeUpdate = (payload: Challenge, userRole: 'challenger' | 'challenged') => {
+  const handleChallengeUpdate = (
+    payload: Challenge,
+    userRole: 'challenger' | 'challenged'
+  ) => {
     const { eventType, new: newRecord, old: oldRecord } = payload;
-    
+
     // Invalidate relevant queries
     queryClient.invalidateQueries({ queryKey: ['received-challenges'] });
     queryClient.invalidateQueries({ queryKey: ['sent-challenges'] });
@@ -143,29 +147,29 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
               onClick: () => {
                 // Navigate to challenges page
                 window.location.hash = '#challenges';
-              }
-            }
+              },
+            },
           });
           options.onChallengeReceived?.(newRecord);
         }
         break;
-        
+
       case 'UPDATE':
         if (userRole === 'challenger') {
           if (newRecord.status === 'accepted') {
             toast.success('🎉 Thách đấu được chấp nhận!', {
               description: 'Đối thủ đã chấp nhận và đề xuất lịch',
-              duration: 5000
+              duration: 5000,
             });
           } else if (newRecord.status === 'declined') {
             toast.error('❌ Thách đấu bị từ chối', {
               description: 'Đối thủ đã từ chối thách đấu của bạn',
-              duration: 5000
+              duration: 5000,
             });
           } else if (newRecord.status === 'confirmed') {
             toast.success('📅 Trận đấu đã được xác nhận!', {
               description: 'CLB đã được thông báo và đặt bàn',
-              duration: 5000
+              duration: 5000,
             });
           }
         }
@@ -176,21 +180,21 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
 
   const handleBookingUpdate = (payload: any) => {
     const { eventType, new: newRecord } = payload;
-    
+
     // Only handle bookings related to user's challenges
     queryClient.invalidateQueries({ queryKey: ['user-bookings'] });
-    
+
     if (eventType === 'INSERT') {
       toast.info('🏓 Đặt bàn thành công!', {
         description: 'CLB đã được thông báo về trận đấu',
-        duration: 4000
+        duration: 4000,
       });
       options.onBookingCreated?.(newRecord);
     } else if (eventType === 'UPDATE') {
       if (newRecord.status === 'confirmed') {
         toast.success('✅ CLB đã xác nhận đặt bàn!', {
           description: 'Trận đấu đã được CLB xác nhận',
-          duration: 5000
+          duration: 5000,
         });
       }
       options.onBookingUpdated?.(newRecord);
@@ -199,33 +203,33 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
 
   const handleNotificationReceived = (payload: Notification) => {
     const notification = payload.new;
-    
+
     // Invalidate notifications queries
     queryClient.invalidateQueries({ queryKey: ['enhanced-notifications'] });
-    
+
     // Show appropriate toast based on notification type
     const toastConfig = getToastConfig(notification);
-    
+
     if (notification.priority === 'urgent') {
       toast.error(toastConfig.title, {
         description: toastConfig.description,
         duration: 10000,
-        action: toastConfig.action
+        action: toastConfig.action,
       });
     } else if (notification.priority === 'high') {
       toast.warning(toastConfig.title, {
         description: toastConfig.description,
         duration: 7000,
-        action: toastConfig.action
+        action: toastConfig.action,
       });
     } else {
       toast.info(toastConfig.title, {
         description: toastConfig.description,
         duration: 5000,
-        action: toastConfig.action
+        action: toastConfig.action,
       });
     }
-    
+
     options.onNotificationReceived?.(notification);
   };
 
@@ -233,10 +237,12 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
     const baseConfig = {
       title: notification.title,
       description: notification.message,
-      action: notification.action_url ? {
-        label: 'Xem chi tiết',
-        onClick: () => window.location.href = notification.action_url
-      } : undefined
+      action: notification.action_url
+        ? {
+            label: 'Xem chi tiết',
+            onClick: () => (window.location.href = notification.action_url),
+          }
+        : undefined,
     };
 
     switch (notification.type) {
@@ -280,37 +286,39 @@ export const useRealtimeSubscriptions = (options: RealtimeSubscriptionOptions = 
       }
       setConnectionError(null);
       // The useEffect will handle reconnection
-    }
+    },
   };
 };
 
 // Add the missing tournament subscription hook
-export const useTournamentSubscription = (onUpdate?: (payload: any) => void) => {
+export const useTournamentSubscription = (
+  onUpdate?: (payload: any) => void
+) => {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
-    console.log('Setting up tournament real-time subscription');
-    
+    // ...removed console.log('Setting up tournament real-time subscription')
+
     const channel = supabase.channel(`tournaments-${Date.now()}`);
-    
+
     channel.on(
       'postgres_changes',
       {
         event: '*',
         schema: 'public',
-        table: 'tournaments'
+        table: 'tournaments',
       },
-      (payload) => {
-        console.log('Tournament update received:', payload);
+      payload => {
+        // ...removed console.log('Tournament update received:', payload)
         onUpdate?.(payload);
       }
     );
 
-    channel.subscribe((status) => {
-      console.log('Tournament subscription status:', status);
-      
+    channel.subscribe(status => {
+      // ...removed console.log('Tournament subscription status:', status)
+
       if (status === 'SUBSCRIBED') {
         setIsConnected(true);
         setError(null);
@@ -327,7 +335,7 @@ export const useTournamentSubscription = (onUpdate?: (payload: any) => void) => 
 
     return () => {
       if (channelRef.current) {
-        console.log('Cleaning up tournament subscription');
+        // ...removed console.log('Cleaning up tournament subscription')
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
@@ -337,6 +345,6 @@ export const useTournamentSubscription = (onUpdate?: (payload: any) => void) => 
 
   return {
     isConnected,
-    error
+    error,
   };
 };

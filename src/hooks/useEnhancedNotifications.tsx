@@ -46,26 +46,29 @@ export const useEnhancedNotifications = () => {
     queryKey: ['enhanced-notifications', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      
+
       try {
         // First get notifications
-        const { data: notificationsData, error: notificationsError } = await supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(50);
-        
+        const { data: notificationsData, error: notificationsError } =
+          await supabase
+            .from('notifications')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(50);
+
         if (notificationsError) throw notificationsError;
-        
+
         // Then get challenge data separately for notifications that have challenge_id
         const notificationsWithChallenges = await Promise.all(
-          (notificationsData || []).map(async (notification) => {
+          (notificationsData || []).map(async notification => {
             if (notification.challenge_id) {
               try {
-                const { data: challengeData, error: challengeError } = await supabase
-                  .from('challenges')
-                  .select(`
+                const { data: challengeData, error: challengeError } =
+                  await supabase
+                    .from('challenges')
+                    .select(
+                      `
                     *,
                     challenger:profiles!challenges_challenger_id_fkey(
                       user_id,
@@ -79,14 +82,15 @@ export const useEnhancedNotifications = () => {
                       avatar_url,
                       current_rank
                     )
-                  `)
-                  .eq('id', notification.challenge_id)
-                  .single();
-                
+                  `
+                    )
+                    .eq('id', notification.challenge_id)
+                    .single();
+
                 if (!challengeError && challengeData) {
                   return {
                     ...notification,
-                    challenge: challengeData
+                    challenge: challengeData,
                   };
                 }
               } catch (error) {
@@ -96,7 +100,7 @@ export const useEnhancedNotifications = () => {
             return notification;
           })
         );
-        
+
         return notificationsWithChallenges;
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -116,8 +120,8 @@ export const useEnhancedNotifications = () => {
 
     // Simple connection status check
     const channel = supabase.channel('notification-status-check');
-    
-    channel.subscribe((status) => {
+
+    channel.subscribe(status => {
       setIsConnected(status === 'SUBSCRIBED');
     });
 

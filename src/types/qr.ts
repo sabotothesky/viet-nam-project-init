@@ -113,8 +113,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Có thể đi 1 chấm phá + 1 chấm đơn trong trận',
       'Đã đạt giải cấp tỉnh/thành',
       'Là top đầu tại CLB',
-      'Có tiềm năng lên chuyên nghiệp'
-    ]
+      'Có tiềm năng lên chuyên nghiệp',
+    ],
   },
   {
     rank_code: 'H+',
@@ -128,8 +128,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Có thể đi 1 chấm đơn với hình đẹp, cửa lộ',
       'Đã tham gia ít nhất 1 giải đấu',
       'Thường xuyên giao lưu CLB khác',
-      'Sắp đạt tiêu chuẩn lên G'
-    ]
+      'Sắp đạt tiêu chuẩn lên G',
+    ],
   },
   {
     rank_code: 'H',
@@ -143,8 +143,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Có thể dọn bi với hỗ trợ',
       'Mới đạt thành tích ở nội bộ CLB',
       'Tham gia hệ thống phân hạng',
-      'Được CLB đánh giá cao'
-    ]
+      'Được CLB đánh giá cao',
+    ],
   },
   {
     rank_code: 'I+',
@@ -158,8 +158,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Không thể đi chấm hoặc gỡ hình',
       'Đang luyện tập lên H',
       'Có biểu hiện tiến bộ rõ',
-      'Có hướng dẫn từ người chơi cao cấp'
-    ]
+      'Có hướng dẫn từ người chơi cao cấp',
+    ],
   },
   {
     rank_code: 'I',
@@ -173,8 +173,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Thiếu chiến thuật',
       'Mới gia nhập CLB',
       'Đã thi đấu ít trận chính thức',
-      'Cần thêm va chạm thực tế'
-    ]
+      'Cần thêm va chạm thực tế',
+    ],
   },
   {
     rank_code: 'K+',
@@ -187,8 +187,8 @@ export const PLAYER_RANKING_CONFIGS = [
       'Đi được 3-5 bi, không ổn định',
       'Chưa đủ khả năng dọn hình',
       'Có tiềm năng nhưng chưa luyện tập đều',
-      'Chơi giải giao lưu nhỏ'
-    ]
+      'Chơi giải giao lưu nhỏ',
+    ],
   },
   {
     rank_code: 'K',
@@ -202,9 +202,9 @@ export const PLAYER_RANKING_CONFIGS = [
       'Mới bắt đầu học kỹ năng cơ bản',
       'Người chơi mới',
       'Cần học lối chơi và luật',
-      'Chưa thi đấu lần nào'
-    ]
-  }
+      'Chưa thi đấu lần nào',
+    ],
+  },
 ];
 
 export const getRankingConfig = (rankCode: string) => {
@@ -269,4 +269,4 @@ export interface UserProfile {
   experience_years?: number;
   created_at: string;
   updated_at: string;
-} 
+}

@@ -58,4 +58,4 @@ const sessionStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.sessionStorage = sessionStorageMock; 
+global.sessionStorage = sessionStorageMock;

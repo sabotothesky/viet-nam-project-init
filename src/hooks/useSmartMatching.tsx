@@ -36,17 +36,17 @@ export const useSmartMatching = () => {
   const [suggestions, setSuggestions] = useState<MatchingSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [criteria, setCriteria] = useState<MatchingCriteria>({
-    skillLevel: "Tìm đối thủ cùng trình độ",
-    location: "Người chơi gần bạn", 
-    playtime: "Cùng thời gian chơi",
-    interests: ["Sở thích tương tự"]
+    skillLevel: 'Tìm đối thủ cùng trình độ',
+    location: 'Người chơi gần bạn',
+    playtime: 'Cùng thời gian chơi',
+    interests: ['Sở thích tương tự'],
   });
 
   const getMatchingSuggestions = async (currentUser: UserProfile) => {
     if (!currentUser) return [];
 
     setLoading(true);
-    
+
     try {
       // Get current user profile
       const { data: userProfile } = await supabase
@@ -70,28 +70,32 @@ export const useSmartMatching = () => {
       const scoredMatches = potentialMatches.map(match => {
         const matchScore = calculateMatchScore(userProfile, match);
         const matchReasons = getMatchReasons(userProfile, match);
-        
+
         return {
           id: match.user_id,
           name: match.full_name || 'Unknown Player',
           avatar: match.avatar_url || '/placeholder.svg',
           rank: match.current_rank || 'K1',
-          age: match.date_of_birth ? 
-            new Date().getFullYear() - new Date(match.date_of_birth).getFullYear() : 25,
+          age: match.date_of_birth
+            ? new Date().getFullYear() -
+              new Date(match.date_of_birth).getFullYear()
+            : 25,
           location: match.address || 'Hà Nội',
           bio: match.bio || 'Yêu thích bida và muốn tìm đối thủ xứng tầm!',
           stats: {
             matches_played: match.matches_played || 0,
             matches_won: match.matches_won || 0,
-            win_rate: match.matches_played > 0 ? 
-              Math.round((match.matches_won / match.matches_played) * 100) : 0,
-            longest_run: Math.floor(Math.random() * 15) + 5
+            win_rate:
+              match.matches_played > 0
+                ? Math.round((match.matches_won / match.matches_played) * 100)
+                : 0,
+            longest_run: Math.floor(Math.random() * 15) + 5,
           },
           distance: `${Math.floor(Math.random() * 10) + 1}km`,
           last_active: getRandomLastActive(),
           preferred_stakes: [50000, 100000, 200000],
           matchScore,
-          matchReasons
+          matchReasons,
         };
       });
 
@@ -109,51 +113,57 @@ export const useSmartMatching = () => {
     }
   };
 
-  const calculateMatchScore = (userProfile: UserProfile, matchProfile: UserProfile) => {
+  const calculateMatchScore = (
+    userProfile: UserProfile,
+    matchProfile: UserProfile
+  ) => {
     let score = 0;
 
     // Skill level matching (40 points max)
     const userRankValue = getRankValue(userProfile.current_rank);
     const matchRankValue = getRankValue(matchProfile.current_rank);
     const rankDifference = Math.abs(userRankValue - matchRankValue);
-    score += Math.max(0, 40 - (rankDifference * 5));
+    score += Math.max(0, 40 - rankDifference * 5);
 
     // Experience matching (30 points max)
     const userExperience = userProfile.experience_years || 0;
     const matchExperience = matchProfile.experience_years || 0;
     const expDifference = Math.abs(userExperience - matchExperience);
-    score += Math.max(0, 30 - (expDifference * 3));
+    score += Math.max(0, 30 - expDifference * 3);
 
     // Activity level (30 points max)
     const userMatches = userProfile.matches_played || 0;
     const matchMatches = matchProfile.matches_played || 0;
     if (userMatches > 0 && matchMatches > 0) {
       const activityDifference = Math.abs(userMatches - matchMatches);
-      score += Math.max(0, 30 - (activityDifference / 10));
+      score += Math.max(0, 30 - activityDifference / 10);
     }
 
     return Math.min(100, Math.max(0, score));
   };
 
-  const getMatchReasons = (userProfile: UserProfile, matchProfile: UserProfile) => {
+  const getMatchReasons = (
+    userProfile: UserProfile,
+    matchProfile: UserProfile
+  ) => {
     const reasons = [];
-    
+
     const userRankValue = getRankValue(userProfile.current_rank);
     const matchRankValue = getRankValue(matchProfile.current_rank);
     if (Math.abs(userRankValue - matchRankValue) <= 2) {
-      reasons.push("Cùng trình độ");
+      reasons.push('Cùng trình độ');
     }
 
     if (Math.random() > 0.5) {
-      reasons.push("Gần bạn");
+      reasons.push('Gần bạn');
     }
 
     if (Math.random() > 0.6) {
-      reasons.push("Hoạt động thường xuyên");
+      reasons.push('Hoạt động thường xuyên');
     }
 
     if (reasons.length === 0) {
-      reasons.push("Đối thủ tiềm năng");
+      reasons.push('Đối thủ tiềm năng');
     }
 
     return reasons;
@@ -161,19 +171,32 @@ export const useSmartMatching = () => {
 
   const getRankValue = (rank: string) => {
     const rankMap: { [key: string]: number } = {
-      'K1': 1, 'K2': 2, 'K3': 3,
-      'C1': 4, 'C2': 5, 'C3': 6,
-      'B1': 7, 'B2': 8, 'B3': 9,
-      'A1': 10, 'A2': 11, 'A3': 12,
-      'G': 13, 'G+': 14
+      K1: 1,
+      K2: 2,
+      K3: 3,
+      C1: 4,
+      C2: 5,
+      C3: 6,
+      B1: 7,
+      B2: 8,
+      B3: 9,
+      A1: 10,
+      A2: 11,
+      A3: 12,
+      G: 13,
+      'G+': 14,
     };
     return rankMap[rank] || 1;
   };
 
   const getRandomLastActive = () => {
     const options = [
-      'Vừa xong', '5 phút trước', '15 phút trước', 
-      '1 giờ trước', '2 giờ trước', 'Hôm qua'
+      'Vừa xong',
+      '5 phút trước',
+      '15 phút trước',
+      '1 giờ trước',
+      '2 giờ trước',
+      'Hôm qua',
     ];
     return options[Math.floor(Math.random() * options.length)];
   };
@@ -199,6 +222,6 @@ export const useSmartMatching = () => {
     criteria,
     setCriteria,
     loadSuggestions,
-    removeFromSuggestions
+    removeFromSuggestions,
   };
 };

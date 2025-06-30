@@ -27,7 +27,13 @@ export interface RankRequest {
 
 export interface RankRequestEvidence {
   id: string;
-  type: 'match_result' | 'tournament_result' | 'video' | 'screenshot' | 'witness' | 'other';
+  type:
+    | 'match_result'
+    | 'tournament_result'
+    | 'video'
+    | 'screenshot'
+    | 'witness'
+    | 'other';
   title: string;
   description: string;
   file_url?: string;
@@ -64,10 +70,10 @@ export const useRankRequests = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock rank requests data
       const mockRequests: RankRequest[] = [
         {
@@ -77,7 +83,7 @@ export const useRankRequests = (userId?: string) => {
             id: '1',
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            current_rank: 'A'
+            current_rank: 'A',
           },
           requested_rank: 'A+',
           current_elo_rating: 1850,
@@ -93,10 +99,10 @@ export const useRankRequests = (userId?: string) => {
                   { opponent: 'player2', score: '7-3', date: '2024-01-16' },
                   { opponent: 'player3', score: '7-6', date: '2024-01-17' },
                   { opponent: 'player4', score: '7-4', date: '2024-01-18' },
-                  { opponent: 'player5', score: '7-2', date: '2024-01-19' }
-                ]
+                  { opponent: 'player5', score: '7-2', date: '2024-01-19' },
+                ],
               },
-              created_at: new Date('2024-01-20')
+              created_at: new Date('2024-01-20'),
             },
             {
               id: '2',
@@ -107,14 +113,14 @@ export const useRankRequests = (userId?: string) => {
                 tournament_name: 'Giải đấu mùa xuân 2024',
                 position: 3,
                 total_participants: 64,
-                date: '2024-01-10'
+                date: '2024-01-10',
               },
-              created_at: new Date('2024-01-20')
-            }
+              created_at: new Date('2024-01-20'),
+            },
           ],
           status: 'pending',
           created_at: new Date('2024-01-20'),
-          updated_at: new Date('2024-01-20')
+          updated_at: new Date('2024-01-20'),
         },
         {
           id: '2',
@@ -123,7 +129,7 @@ export const useRankRequests = (userId?: string) => {
             id: '2',
             username: 'champion',
             avatar_url: '/avatars/champion.jpg',
-            current_rank: 'B+'
+            current_rank: 'B+',
           },
           requested_rank: 'A',
           current_elo_rating: 1650,
@@ -138,21 +144,21 @@ export const useRankRequests = (userId?: string) => {
                 opponent: 'player_a',
                 score: '7-4',
                 date: '2024-01-18',
-                duration: '15:30'
+                duration: '15:30',
               },
-              created_at: new Date('2024-01-19')
-            }
+              created_at: new Date('2024-01-19'),
+            },
           ],
           status: 'under_review',
           reviewer_id: 'admin1',
           reviewer: {
             id: 'admin1',
             username: 'admin_reviewer',
-            avatar_url: '/avatars/admin.jpg'
+            avatar_url: '/avatars/admin.jpg',
           },
           review_notes: 'Đang xem xét video trận đấu',
           created_at: new Date('2024-01-19'),
-          updated_at: new Date('2024-01-21')
+          updated_at: new Date('2024-01-21'),
         },
         {
           id: '3',
@@ -161,7 +167,7 @@ export const useRankRequests = (userId?: string) => {
             id: '3',
             username: 'veteran',
             avatar_url: '/avatars/veteran.jpg',
-            current_rank: 'A'
+            current_rank: 'A',
           },
           requested_rank: 'A+',
           current_elo_rating: 1800,
@@ -174,22 +180,22 @@ export const useRankRequests = (userId?: string) => {
               file_url: '/screenshots/elo_rating.png',
               metadata: {
                 elo_rating: 1805,
-                date: '2024-01-15'
+                date: '2024-01-15',
               },
-              created_at: new Date('2024-01-15')
-            }
+              created_at: new Date('2024-01-15'),
+            },
           ],
           status: 'approved',
           reviewer_id: 'admin1',
           reviewer: {
             id: 'admin1',
             username: 'admin_reviewer',
-            avatar_url: '/avatars/admin.jpg'
+            avatar_url: '/avatars/admin.jpg',
           },
           review_notes: 'Đủ điều kiện thăng hạng dựa trên ELO rating',
           review_date: new Date('2024-01-16'),
           created_at: new Date('2024-01-15'),
-          updated_at: new Date('2024-01-16')
+          updated_at: new Date('2024-01-16'),
         },
         {
           id: '4',
@@ -198,7 +204,7 @@ export const useRankRequests = (userId?: string) => {
             id: '4',
             username: 'newbie',
             avatar_url: '/avatars/newbie.jpg',
-            current_rank: 'C'
+            current_rank: 'C',
           },
           requested_rank: 'B',
           current_elo_rating: 1400,
@@ -212,132 +218,150 @@ export const useRankRequests = (userId?: string) => {
                 witnesses: [
                   { name: 'witness1', rank: 'B+', date: '2024-01-14' },
                   { name: 'witness2', rank: 'B+', date: '2024-01-14' },
-                  { name: 'witness3', rank: 'A', date: '2024-01-14' }
-                ]
+                  { name: 'witness3', rank: 'A', date: '2024-01-14' },
+                ],
               },
-              created_at: new Date('2024-01-14')
-            }
+              created_at: new Date('2024-01-14'),
+            },
           ],
           status: 'rejected',
           reviewer_id: 'admin2',
           reviewer: {
             id: 'admin2',
             username: 'admin_reviewer2',
-            avatar_url: '/avatars/admin2.jpg'
+            avatar_url: '/avatars/admin2.jpg',
           },
-          review_notes: 'Chưa đủ bằng chứng thuyết phục. Cần thêm trận đấu thực tế.',
+          review_notes:
+            'Chưa đủ bằng chứng thuyết phục. Cần thêm trận đấu thực tế.',
           review_date: new Date('2024-01-15'),
           created_at: new Date('2024-01-14'),
-          updated_at: new Date('2024-01-15')
-        }
+          updated_at: new Date('2024-01-15'),
+        },
       ];
-      
+
       setRequests(mockRequests);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải yêu cầu thăng hạng');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải yêu cầu thăng hạng'
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
   // Create rank request
-  const createRankRequest = useCallback(async (data: CreateRankRequestData) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const newRequest: RankRequest = {
-        id: Date.now().toString(),
-        user_id: userId,
-        user: {
-          id: userId,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg',
-          current_rank: 'B'
-        },
-        requested_rank: data.requested_rank,
-        current_elo_rating: 1600,
-        evidence: data.evidence.map((evidence, index) => ({
-          ...evidence,
-          id: (Date.now() + index).toString(),
-          created_at: new Date()
-        })),
-        status: 'pending',
-        created_at: new Date(),
-        updated_at: new Date()
-      };
-      
-      setRequests(prev => [newRequest, ...prev]);
-      return newRequest;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo yêu cầu thăng hạng');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const createRankRequest = useCallback(
+    async (data: CreateRankRequestData) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const newRequest: RankRequest = {
+          id: Date.now().toString(),
+          user_id: userId,
+          user: {
+            id: userId,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+            current_rank: 'B',
+          },
+          requested_rank: data.requested_rank,
+          current_elo_rating: 1600,
+          evidence: data.evidence.map((evidence, index) => ({
+            ...evidence,
+            id: (Date.now() + index).toString(),
+            created_at: new Date(),
+          })),
+          status: 'pending',
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+
+        setRequests(prev => [newRequest, ...prev]);
+        return newRequest;
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Không thể tạo yêu cầu thăng hạng'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Review rank request
-  const reviewRankRequest = useCallback(async (
-    requestId: string, 
-    status: 'approved' | 'rejected', 
-    notes?: string
-  ) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setRequests(prev => 
-        prev.map(request => 
-          request.id === requestId 
-            ? {
-                ...request,
-                status,
-                reviewer_id: userId,
-                reviewer: {
-                  id: userId,
-                  username: 'admin_reviewer',
-                  avatar_url: '/avatars/admin.jpg'
-                },
-                review_notes: notes,
-                review_date: new Date(),
-                updated_at: new Date()
-              }
-            : request
-        )
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể đánh giá yêu cầu');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const reviewRankRequest = useCallback(
+    async (
+      requestId: string,
+      status: 'approved' | 'rejected',
+      notes?: string
+    ) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        setRequests(prev =>
+          prev.map(request =>
+            request.id === requestId
+              ? {
+                  ...request,
+                  status,
+                  reviewer_id: userId,
+                  reviewer: {
+                    id: userId,
+                    username: 'admin_reviewer',
+                    avatar_url: '/avatars/admin.jpg',
+                  },
+                  review_notes: notes,
+                  review_date: new Date(),
+                  updated_at: new Date(),
+                }
+              : request
+          )
+        );
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể đánh giá yêu cầu'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Update rank request status
-  const updateRequestStatus = useCallback(async (requestId: string, status: RankRequest['status']) => {
-    try {
-      setRequests(prev => 
-        prev.map(request => 
-          request.id === requestId 
-            ? { ...request, status, updated_at: new Date() }
-            : request
-        )
-      );
-    } catch (err) {
-      console.error('Failed to update request status:', err);
-    }
-  }, []);
+  const updateRequestStatus = useCallback(
+    async (requestId: string, status: RankRequest['status']) => {
+      try {
+        setRequests(prev =>
+          prev.map(request =>
+            request.id === requestId
+              ? { ...request, status, updated_at: new Date() }
+              : request
+          )
+        );
+      } catch (err) {
+        console.error('Failed to update request status:', err);
+      }
+    },
+    []
+  );
 
   // Delete rank request
   const deleteRankRequest = useCallback(async (requestId: string) => {
@@ -364,30 +388,31 @@ export const useRankRequests = (userId?: string) => {
 
     // Filter by status
     if (filters.status && filters.status.length > 0) {
-      filtered = filtered.filter(request => 
+      filtered = filtered.filter(request =>
         filters.status!.includes(request.status)
       );
     }
 
     // Filter by requested rank
     if (filters.requested_rank && filters.requested_rank.length > 0) {
-      filtered = filtered.filter(request => 
+      filtered = filtered.filter(request =>
         filters.requested_rank!.includes(request.requested_rank)
       );
     }
 
     // Filter by reviewer
     if (filters.reviewer_id) {
-      filtered = filtered.filter(request => 
-        request.reviewer_id === filters.reviewer_id
+      filtered = filtered.filter(
+        request => request.reviewer_id === filters.reviewer_id
       );
     }
 
     // Filter by date range
     if (filters.date_range) {
-      filtered = filtered.filter(request => 
-        request.created_at >= filters.date_range!.from && 
-        request.created_at <= filters.date_range!.to
+      filtered = filtered.filter(
+        request =>
+          request.created_at >= filters.date_range!.from &&
+          request.created_at <= filters.date_range!.to
       );
     }
 
@@ -395,16 +420,22 @@ export const useRankRequests = (userId?: string) => {
   }, [requests, filters]);
 
   // Get request by ID
-  const getRequestById = useCallback((requestId: string) => {
-    return requests.find(request => request.id === requestId);
-  }, [requests]);
+  const getRequestById = useCallback(
+    (requestId: string) => {
+      return requests.find(request => request.id === requestId);
+    },
+    [requests]
+  );
 
   // Get user's requests
-  const getUserRequests = useCallback((targetUserId?: string) => {
-    const id = targetUserId || userId;
-    if (!id) return [];
-    return requests.filter(request => request.user_id === id);
-  }, [requests, userId]);
+  const getUserRequests = useCallback(
+    (targetUserId?: string) => {
+      const id = targetUserId || userId;
+      if (!id) return [];
+      return requests.filter(request => request.user_id === id);
+    },
+    [requests, userId]
+  );
 
   // Get pending requests
   const getPendingRequests = useCallback(() => {
@@ -412,52 +443,96 @@ export const useRankRequests = (userId?: string) => {
   }, [requests]);
 
   // Get requests by status
-  const getRequestsByStatus = useCallback((status: RankRequest['status']) => {
-    return requests.filter(request => request.status === status);
-  }, [requests]);
+  const getRequestsByStatus = useCallback(
+    (status: RankRequest['status']) => {
+      return requests.filter(request => request.status === status);
+    },
+    [requests]
+  );
 
   // Get requests by reviewer
-  const getRequestsByReviewer = useCallback((reviewerId: string) => {
-    return requests.filter(request => request.reviewer_id === reviewerId);
-  }, [requests]);
+  const getRequestsByReviewer = useCallback(
+    (reviewerId: string) => {
+      return requests.filter(request => request.reviewer_id === reviewerId);
+    },
+    [requests]
+  );
 
   // Get request statistics
   const getRequestStats = useCallback(() => {
     const totalRequests = requests.length;
     const pendingRequests = requests.filter(r => r.status === 'pending').length;
-    const approvedRequests = requests.filter(r => r.status === 'approved').length;
-    const rejectedRequests = requests.filter(r => r.status === 'rejected').length;
-    const underReviewRequests = requests.filter(r => r.status === 'under_review').length;
-    
+    const approvedRequests = requests.filter(
+      r => r.status === 'approved'
+    ).length;
+    const rejectedRequests = requests.filter(
+      r => r.status === 'rejected'
+    ).length;
+    const underReviewRequests = requests.filter(
+      r => r.status === 'under_review'
+    ).length;
+
     return {
       total: totalRequests,
       pending: pendingRequests,
       approved: approvedRequests,
       rejected: rejectedRequests,
       under_review: underReviewRequests,
-      approval_rate: totalRequests > 0 ? (approvedRequests / totalRequests) * 100 : 0
+      approval_rate:
+        totalRequests > 0 ? (approvedRequests / totalRequests) * 100 : 0,
     };
   }, [requests]);
 
   // Check if user can request rank
-  const canRequestRank = useCallback((currentRank: string, requestedRank: string) => {
-    const rankOrder = ['C', 'C+', 'B', 'B+', 'A', 'A+', 'G', 'H+', 'H', 'I+', 'I', 'K+', 'K'];
-    const currentIndex = rankOrder.indexOf(currentRank);
-    const requestedIndex = rankOrder.indexOf(requestedRank);
-    
-    // Can only request one rank higher
-    return requestedIndex === currentIndex + 1;
-  }, []);
+  const canRequestRank = useCallback(
+    (currentRank: string, requestedRank: string) => {
+      const rankOrder = [
+        'C',
+        'C+',
+        'B',
+        'B+',
+        'A',
+        'A+',
+        'G',
+        'H+',
+        'H',
+        'I+',
+        'I',
+        'K+',
+        'K',
+      ];
+      const currentIndex = rankOrder.indexOf(currentRank);
+      const requestedIndex = rankOrder.indexOf(requestedRank);
+
+      // Can only request one rank higher
+      return requestedIndex === currentIndex + 1;
+    },
+    []
+  );
 
   // Get eligible ranks for request
   const getEligibleRanks = useCallback((currentRank: string) => {
-    const rankOrder = ['C', 'C+', 'B', 'B+', 'A', 'A+', 'G', 'H+', 'H', 'I+', 'I', 'K+', 'K'];
+    const rankOrder = [
+      'C',
+      'C+',
+      'B',
+      'B+',
+      'A',
+      'A+',
+      'G',
+      'H+',
+      'H',
+      'I+',
+      'I',
+      'K+',
+      'K',
+    ];
     const currentIndex = rankOrder.indexOf(currentRank);
-    
+
     if (currentIndex === -1 || currentIndex === rankOrder.length - 1) {
       return [];
     }
-    
+
     return [rankOrder[currentIndex + 1]];
   }, []);
 
@@ -485,6 +560,6 @@ export const useRankRequests = (userId?: string) => {
     getRequestsByReviewer,
     getRequestStats,
     canRequestRank,
-    getEligibleRanks
+    getEligibleRanks,
   };
-}; 
+};

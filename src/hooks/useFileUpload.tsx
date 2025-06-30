@@ -45,7 +45,7 @@ export const useFileUpload = () => {
   };
 
   const uploadFile = async (
-    file: File, 
+    file: File,
     options: UploadOptions,
     userId?: string
   ): Promise<UploadResult> => {
@@ -65,7 +65,7 @@ export const useFileUpload = () => {
       const timestamp = Date.now();
       const randomStr = Math.random().toString(36).substring(7);
       const fileName = `${timestamp}_${randomStr}.${fileExt}`;
-      
+
       // Construct file path
       let filePath = fileName;
       if (options.folder) {
@@ -75,14 +75,16 @@ export const useFileUpload = () => {
         filePath = `${userId}/${filePath}`;
       }
 
-      console.log(`Uploading file to bucket: ${options.bucket}, path: ${filePath}`);
+      // ...removed console.log(...)
+        `Uploading file to bucket: ${options.bucket}, path: ${filePath}`
+      );
 
       // Upload file
       const { data, error } = await supabase.storage
         .from(options.bucket)
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
         });
 
       if (error) {
@@ -91,7 +93,7 @@ export const useFileUpload = () => {
         return { error: error.message };
       }
 
-      console.log('Upload successful:', data);
+      // ...removed console.log('Upload successful:', data)
 
       // Get public URL
       const { data: urlData } = supabase.storage
@@ -103,12 +105,12 @@ export const useFileUpload = () => {
 
       return {
         url: urlData.publicUrl,
-        path: filePath
+        path: filePath,
       };
-
     } catch (error) {
       console.error('Upload exception:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
       throw new Error(`Upload failed: ${errorMessage}`);
     } finally {
       setUploading(false);
@@ -116,11 +118,12 @@ export const useFileUpload = () => {
     }
   };
 
-  const deleteFile = async (bucket: string, filePath: string): Promise<boolean> => {
+  const deleteFile = async (
+    bucket: string,
+    filePath: string
+  ): Promise<boolean> => {
     try {
-      const { error } = await supabase.storage
-        .from(bucket)
-        .remove([filePath]);
+      const { error } = await supabase.storage.from(bucket).remove([filePath]);
 
       if (error) {
         console.error('Delete error:', error);
@@ -132,7 +135,8 @@ export const useFileUpload = () => {
       return true;
     } catch (error) {
       console.error('Delete exception:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error occurred';
       throw new Error(`Delete failed: ${errorMessage}`);
     }
   };
@@ -141,7 +145,7 @@ export const useFileUpload = () => {
     uploading,
     progress,
     uploadFile,
-    deleteFile
+    deleteFile,
   };
 };
 
@@ -150,17 +154,21 @@ export const useAvatarUpload = (userId?: string) => {
   const { uploadFile, uploading, progress } = useFileUpload();
 
   const uploadAvatar = (file: File) => {
-    return uploadFile(file, {
-      bucket: 'avatars',
-      maxSize: 2, // 2MB
-      allowedTypes: ['image/*']
-    }, userId);
+    return uploadFile(
+      file,
+      {
+        bucket: 'avatars',
+        maxSize: 2, // 2MB
+        allowedTypes: ['image/*'],
+      },
+      userId
+    );
   };
 
   return {
     uploadAvatar,
     uploading,
-    progress
+    progress,
   };
 };
 
@@ -168,17 +176,26 @@ export const useDocumentUpload = (userId?: string) => {
   const { uploadFile, uploading, progress } = useFileUpload();
 
   const uploadDocument = (file: File) => {
-    return uploadFile(file, {
-      bucket: 'documents',
-      folder: 'user-documents',
-      maxSize: 10, // 10MB
-      allowedTypes: ['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
-    }, userId);
+    return uploadFile(
+      file,
+      {
+        bucket: 'documents',
+        folder: 'user-documents',
+        maxSize: 10, // 10MB
+        allowedTypes: [
+          'application/pdf',
+          'image/*',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ],
+      },
+      userId
+    );
   };
 
   return {
     uploadDocument,
     uploading,
-    progress
+    progress,
   };
 };

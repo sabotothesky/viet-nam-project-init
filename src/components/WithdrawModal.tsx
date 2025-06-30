@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +22,12 @@ interface WithdrawModalProps {
   onSuccess: () => void;
 }
 
-const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProps) => {
+const WithdrawModal = ({
+  isOpen,
+  onClose,
+  wallet,
+  onSuccess,
+}: WithdrawModalProps) => {
   const { user } = useAuth();
   const [amount, setAmount] = useState('');
   const [bankAccount, setBankAccount] = useState('');
@@ -45,39 +55,39 @@ const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProp
     setLoading(true);
     try {
       // Tạo yêu cầu rút tiền
-      const { error } = await supabase
-        .from('wallet_transactions')
-        .insert({
-          wallet_id: wallet.id,
-          transaction_type: 'withdraw',
-          amount: parseInt(amount),
-          balance_before: wallet.balance,
-          balance_after: wallet.balance - parseInt(amount),
-          description: `Rút tiền về tài khoản ${bankAccount} - ${bankName}`,
-          payment_method: 'bank_transfer',
-          status: 'pending',
-          metadata: {
-            bank_account: bankAccount,
-            bank_name: bankName,
-            account_holder: accountHolder,
-            notes: notes
-          }
-        });
+      const { error } = await supabase.from('wallet_transactions').insert({
+        wallet_id: wallet.id,
+        transaction_type: 'withdraw',
+        amount: parseInt(amount),
+        balance_before: wallet.balance,
+        balance_after: wallet.balance - parseInt(amount),
+        description: `Rút tiền về tài khoản ${bankAccount} - ${bankName}`,
+        payment_method: 'bank_transfer',
+        status: 'pending',
+        metadata: {
+          bank_account: bankAccount,
+          bank_name: bankName,
+          account_holder: accountHolder,
+          notes: notes,
+        },
+      });
 
       if (error) throw error;
 
       // Cập nhật số dư ví (tạm thời trừ tiền, sẽ hoàn lại nếu rút tiền thất bại)
       const { error: walletError } = await supabase
         .from('wallets')
-        .update({ 
+        .update({
           balance: wallet.balance - parseInt(amount),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', wallet.id);
 
       if (walletError) throw walletError;
 
-      toast.success('Yêu cầu rút tiền đã được gửi! Chúng tôi sẽ xử lý trong 1-3 ngày làm việc.');
+      toast.success(
+        'Yêu cầu rút tiền đã được gửi! Chúng tôi sẽ xử lý trong 1-3 ngày làm việc.'
+      );
       onSuccess();
       onClose();
       handleReset();
@@ -101,33 +111,33 @@ const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+      <DialogContent className='max-w-md max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Rút tiền từ ví</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className='space-y-4'>
           {/* Current Balance */}
-          <div className="bg-gray-50 p-3 rounded-md">
-            <p className="text-sm text-gray-600">Số dư hiện tại:</p>
-            <p className="text-lg font-semibold text-gray-900">
+          <div className='bg-gray-50 p-3 rounded-md'>
+            <p className='text-sm text-gray-600'>Số dư hiện tại:</p>
+            <p className='text-lg font-semibold text-gray-900'>
               {wallet?.balance?.toLocaleString('vi-VN') || '0'} VNĐ
             </p>
           </div>
 
           {/* Amount Input */}
           <div>
-            <Label htmlFor="withdraw-amount">Số tiền rút (VNĐ)</Label>
+            <Label htmlFor='withdraw-amount'>Số tiền rút (VNĐ)</Label>
             <Input
-              id="withdraw-amount"
-              type="number"
+              id='withdraw-amount'
+              type='number'
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Nhập số tiền"
-              min="50000"
+              onChange={e => setAmount(e.target.value)}
+              placeholder='Nhập số tiền'
+              min='50000'
               max={wallet?.balance || 0}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className='text-xs text-gray-500 mt-1'>
               Tối thiểu 50,000 VNĐ - Phí rút tiền: 5,000 VNĐ
             </p>
           </div>
@@ -135,15 +145,15 @@ const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProp
           {/* Quick Amount Buttons */}
           <div>
             <Label>Chọn nhanh:</Label>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {quickAmounts.map((quickAmount) => (
+            <div className='grid grid-cols-3 gap-2 mt-2'>
+              {quickAmounts.map(quickAmount => (
                 <Button
                   key={quickAmount}
-                  variant="outline"
-                  size="sm"
+                  variant='outline'
+                  size='sm'
                   onClick={() => setAmount(quickAmount.toString())}
                   disabled={quickAmount > (wallet?.balance || 0)}
-                  className="text-xs"
+                  className='text-xs'
                 >
                   {quickAmount.toLocaleString('vi-VN')}
                 </Button>
@@ -152,63 +162,65 @@ const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProp
           </div>
 
           {/* Bank Information */}
-          <div className="space-y-3">
+          <div className='space-y-3'>
             <Label>Thông tin ngân hàng</Label>
-            
+
             <div>
               <Input
                 value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                placeholder="Tên ngân hàng (VD: Vietcombank, Techcombank...)"
+                onChange={e => setBankName(e.target.value)}
+                placeholder='Tên ngân hàng (VD: Vietcombank, Techcombank...)'
               />
             </div>
-            
+
             <div>
               <Input
                 value={bankAccount}
-                onChange={(e) => setBankAccount(e.target.value)}
-                placeholder="Số tài khoản"
+                onChange={e => setBankAccount(e.target.value)}
+                placeholder='Số tài khoản'
               />
             </div>
-            
+
             <div>
               <Input
                 value={accountHolder}
-                onChange={(e) => setAccountHolder(e.target.value)}
-                placeholder="Tên chủ tài khoản"
+                onChange={e => setAccountHolder(e.target.value)}
+                placeholder='Tên chủ tài khoản'
               />
             </div>
           </div>
 
           {/* Notes */}
           <div>
-            <Label htmlFor="notes">Ghi chú (tùy chọn)</Label>
+            <Label htmlFor='notes'>Ghi chú (tùy chọn)</Label>
             <Textarea
-              id="notes"
+              id='notes'
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ghi chú thêm..."
+              onChange={e => setNotes(e.target.value)}
+              placeholder='Ghi chú thêm...'
               rows={2}
             />
           </div>
 
           {/* Summary */}
           {amount && parseInt(amount) >= 50000 && (
-            <div className="bg-yellow-50 p-4 rounded-md">
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Số tiền rút:</span>
-                  <span className="text-sm font-medium">
+            <div className='bg-yellow-50 p-4 rounded-md'>
+              <div className='space-y-1'>
+                <div className='flex justify-between items-center'>
+                  <span className='text-sm text-gray-600'>Số tiền rút:</span>
+                  <span className='text-sm font-medium'>
                     {parseInt(amount).toLocaleString('vi-VN')} VNĐ
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Phí giao dịch:</span>
-                  <span className="text-sm font-medium">5,000 VNĐ</span>
+                <div className='flex justify-between items-center'>
+                  <span className='text-sm text-gray-600'>Phí giao dịch:</span>
+                  <span className='text-sm font-medium'>5,000 VNĐ</span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="text-sm font-medium text-gray-900">Bạn nhận được:</span>
-                  <span className="text-lg font-semibold text-green-600">
+                <div className='flex justify-between items-center pt-2 border-t'>
+                  <span className='text-sm font-medium text-gray-900'>
+                    Bạn nhận được:
+                  </span>
+                  <span className='text-lg font-semibold text-green-600'>
                     {(parseInt(amount) - 5000).toLocaleString('vi-VN')} VNĐ
                   </span>
                 </div>
@@ -217,25 +229,32 @@ const WithdrawModal = ({ isOpen, onClose, wallet, onSuccess }: WithdrawModalProp
           )}
 
           {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
+          <div className='flex space-x-3 pt-4'>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => {
                 handleReset();
                 onClose();
               }}
-              className="flex-1"
+              className='flex-1'
             >
               Hủy
             </Button>
             <Button
               onClick={handleWithdraw}
-              disabled={loading || !amount || parseInt(amount) < 50000 || !bankAccount || !bankName || !accountHolder}
-              className="flex-1"
+              disabled={
+                loading ||
+                !amount ||
+                parseInt(amount) < 50000 ||
+                !bankAccount ||
+                !bankName ||
+                !accountHolder
+              }
+              className='flex-1'
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                   Đang xử lý...
                 </>
               ) : (

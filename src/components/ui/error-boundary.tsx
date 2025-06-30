@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,10 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error?: Error; retry: () => void }>;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -36,31 +38,34 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error} retry={this.retry} />;
+        return (
+          <FallbackComponent error={this.state.error} retry={this.retry} />
+        );
       }
 
       return (
-        <Card className="max-w-md mx-auto mt-8">
+        <Card className='max-w-md mx-auto mt-8'>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-600">
-              <AlertTriangle className="h-5 w-5" />
+            <CardTitle className='flex items-center gap-2 text-red-600'>
+              <AlertTriangle className='h-5 w-5' />
               Có lỗi xảy ra
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-gray-600">
-              Đã xảy ra lỗi không mong muốn. Vui lòng thử lại hoặc liên hệ hỗ trợ nếu lỗi tiếp tục.
+          <CardContent className='space-y-4'>
+            <p className='text-gray-600'>
+              Đã xảy ra lỗi không mong muốn. Vui lòng thử lại hoặc liên hệ hỗ
+              trợ nếu lỗi tiếp tục.
             </p>
             {this.state.error && (
-              <details className="text-sm text-gray-500">
+              <details className='text-sm text-gray-500'>
                 <summary>Chi tiết lỗi</summary>
-                <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto">
+                <pre className='mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto'>
                   {this.state.error.message}
                 </pre>
               </details>
             )}
-            <Button onClick={this.retry} className="w-full">
-              <RefreshCw className="h-4 w-4 mr-2" />
+            <Button onClick={this.retry} className='w-full'>
+              <RefreshCw className='h-4 w-4 mr-2' />
               Thử lại
             </Button>
           </CardContent>

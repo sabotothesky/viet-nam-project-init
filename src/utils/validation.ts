@@ -1,4 +1,3 @@
-
 export const validateEmail = (email: string): string | null => {
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   if (!email) return 'Email là bắt buộc';
@@ -9,7 +8,8 @@ export const validateEmail = (email: string): string | null => {
 export const validatePhone = (phone: string): string | null => {
   const phoneRegex = /^0\d{9}$/;
   if (!phone) return 'Số điện thoại là bắt buộc';
-  if (!phoneRegex.test(phone)) return 'Số điện thoại phải có 10 số và bắt đầu bằng 0';
+  if (!phoneRegex.test(phone))
+    return 'Số điện thoại phải có 10 số và bắt đầu bằng 0';
   return null;
 };
 
@@ -21,7 +21,10 @@ export const validatePassword = (password: string): string | null => {
   return null;
 };
 
-export const validateRequired = (value: string, fieldName: string): string | null => {
+export const validateRequired = (
+  value: string,
+  fieldName: string
+): string | null => {
   if (!value.trim()) return `${fieldName} là bắt buộc`;
   return null;
 };

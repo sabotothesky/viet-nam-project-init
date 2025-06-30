@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import UserAvatar from './UserAvatar';
 import SocialActions from './SocialActions';
 import CommentsSection from './CommentsSection';
@@ -35,9 +40,15 @@ interface PostCardProps {
   onChallenge?: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardProps) => {
+const PostCard = ({
+  post,
+  onLike,
+  onComment,
+  onShare,
+  onChallenge,
+}: PostCardProps) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  
+
   // Mock comments data
   const [comments, setComments] = useState([
     {
@@ -46,7 +57,7 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
         id: '2',
         name: 'Người chơi B',
         avatar: '/placeholder.svg',
-        rank: 'B+'
+        rank: 'B+',
       },
       content: 'Chúc mừng! Trận đấu hay lắm!',
       timestamp: '2 giờ trước',
@@ -59,15 +70,15 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
             id: '1',
             name: post.user.name,
             avatar: post.user.avatar,
-            rank: post.user.rank
+            rank: post.user.rank,
           },
           content: 'Cảm ơn bạn! 😊',
           timestamp: '1 giờ trước',
           likes: 2,
-          isLiked: true
-        }
-      ]
-    }
+          isLiked: true,
+        },
+      ],
+    },
   ]);
 
   const handleCommentClick = () => {
@@ -82,23 +93,29 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
         id: 'current_user',
         name: 'Bạn',
         avatar: '/placeholder.svg',
-        rank: 'A+'
+        rank: 'A+',
       },
       content,
       timestamp: 'Vừa xong',
       likes: 0,
       isLiked: false,
-      replies: []
+      replies: [],
     };
     setComments(prev => [...prev, newComment]);
   };
 
   const handleLikeComment = (commentId: string) => {
-    setComments(prev => prev.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, isLiked: !comment.isLiked, likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1 }
-        : comment
-    ));
+    setComments(prev =>
+      prev.map(comment =>
+        comment.id === commentId
+          ? {
+              ...comment,
+              isLiked: !comment.isLiked,
+              likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
+            }
+          : comment
+      )
+    );
   };
 
   const handleReplyComment = (commentId: string, content: string) => {
@@ -108,19 +125,21 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
         id: 'current_user',
         name: 'Bạn',
         avatar: '/placeholder.svg',
-        rank: 'A+'
+        rank: 'A+',
       },
       content,
       timestamp: 'Vừa xong',
       likes: 0,
-      isLiked: false
+      isLiked: false,
     };
-    
-    setComments(prev => prev.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, replies: [...(comment.replies || []), newReply] }
-        : comment
-    ));
+
+    setComments(prev =>
+      prev.map(comment =>
+        comment.id === commentId
+          ? { ...comment, replies: [...(comment.replies || []), newReply] }
+          : comment
+      )
+    );
   };
 
   const getPostTypeIcon = () => {
@@ -153,43 +172,51 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
 
   return (
     <>
-      <Card className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
-        <CardContent className="p-4">
+      <Card className='bg-white shadow-sm hover:shadow-md transition-shadow duration-200'>
+        <CardContent className='p-4'>
           {/* Post Header */}
-          <div className="flex items-center justify-between mb-3">
-            <UserAvatar user={post.user} size="md" showRank={true} />
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">{getPostTypeIcon()}</span>
-              <p className="text-xs text-comment-gray">{post.timestamp}</p>
+          <div className='flex items-center justify-between mb-3'>
+            <UserAvatar user={post.user} size='md' showRank={true} />
+            <div className='flex items-center space-x-2'>
+              <span className='text-2xl'>{getPostTypeIcon()}</span>
+              <p className='text-xs text-comment-gray'>{post.timestamp}</p>
             </div>
           </div>
 
           {/* Post Content */}
-          <div className="mb-4">
-            <p className="post-text text-gray-800 mb-3">{post.content}</p>
-            
+          <div className='mb-4'>
+            <p className='post-text text-gray-800 mb-3'>{post.content}</p>
+
             {/* Post Stats */}
             {post.stats && (
-              <div className={`${getStatsBackground()} rounded-lg p-4 text-white`}>
+              <div
+                className={`${getStatsBackground()} rounded-lg p-4 text-white`}
+              >
                 {post.type === 'match_result' && (
-                  <div className="text-center">
-                    <p className="text-3xl font-bold mb-1">{post.stats.score}</p>
-                    <p className="text-sm opacity-90">vs {post.stats.opponent}</p>
+                  <div className='text-center'>
+                    <p className='text-3xl font-bold mb-1'>
+                      {post.stats.score}
+                    </p>
+                    <p className='text-sm opacity-90'>
+                      vs {post.stats.opponent}
+                    </p>
                   </div>
                 )}
                 {post.type === 'achievement' && (
-                  <div className="text-center">
-                    <p className="text-lg font-bold">{post.stats.achievement}</p>
+                  <div className='text-center'>
+                    <p className='text-lg font-bold'>
+                      {post.stats.achievement}
+                    </p>
                   </div>
                 )}
               </div>
             )}
-            
+
             {post.image && (
-              <img 
-                src={post.image} 
-                alt="Post content"
-                className="w-full h-48 object-cover rounded-lg mt-3"
+              <img
+                src={post.image}
+                alt='Post content'
+                className='w-full h-48 object-cover rounded-lg mt-3'
               />
             )}
           </div>
@@ -211,7 +238,7 @@ const PostCard = ({ post, onLike, onComment, onShare, onChallenge }: PostCardPro
 
       {/* Comments Modal */}
       <Dialog open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[80vh]">
+        <DialogContent className='sm:max-w-lg max-h-[80vh]'>
           <DialogHeader>
             <DialogTitle>Bình luận</DialogTitle>
           </DialogHeader>

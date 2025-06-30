@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Bell, 
-  X, 
-  CheckCircle, 
-  AlertCircle, 
-  Info,
-  Trophy
-} from 'lucide-react';
+import { Bell, X, CheckCircle, AlertCircle, Info, Trophy } from 'lucide-react';
 
 interface Notification {
   id: string;
@@ -26,9 +19,9 @@ interface RealtimeNotificationBannerProps {
   onNotificationClick?: (notification: Notification) => void;
 }
 
-export const RealtimeNotificationBanner: React.FC<RealtimeNotificationBannerProps> = ({
-  onNotificationClick
-}) => {
+export const RealtimeNotificationBanner: React.FC<
+  RealtimeNotificationBannerProps
+> = ({ onNotificationClick }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -44,8 +37,8 @@ export const RealtimeNotificationBanner: React.FC<RealtimeNotificationBannerProp
           timestamp: new Date(),
           action: {
             label: 'Xem',
-            onClick: () => console.log('View achievement')
-          }
+            onClick: () => {}, // ...removed console.log('View achievement')
+          },
         },
         {
           id: (Date.now() + 1).toString(),
@@ -55,12 +48,15 @@ export const RealtimeNotificationBanner: React.FC<RealtimeNotificationBannerProp
           timestamp: new Date(),
           action: {
             label: 'Tham gia',
-            onClick: () => console.log('Join tournament')
-          }
-        }
+            onClick: () => {}, // ...removed console.log('Join tournament')
+          },
+        },
       ];
 
-      setNotifications(prev => [...prev.slice(-2), ...mockNotifications.slice(0, 1)]);
+      setNotifications(prev => [
+        ...prev.slice(-2),
+        ...mockNotifications.slice(0, 1),
+      ]);
       setIsVisible(true);
     }, 10000); // Show notification every 10 seconds
 
@@ -70,15 +66,15 @@ export const RealtimeNotificationBanner: React.FC<RealtimeNotificationBannerProp
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className='h-4 w-4 text-green-600' />;
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-600" />;
+        return <AlertCircle className='h-4 w-4 text-red-600' />;
       case 'warning':
-        return <AlertCircle className="h-4 w-4 text-yellow-600" />;
+        return <AlertCircle className='h-4 w-4 text-yellow-600' />;
       case 'info':
-        return <Info className="h-4 w-4 text-blue-600" />;
+        return <Info className='h-4 w-4 text-blue-600' />;
       default:
-        return <Bell className="h-4 w-4 text-gray-600" />;
+        return <Bell className='h-4 w-4 text-gray-600' />;
     }
   };
 
@@ -115,46 +111,46 @@ export const RealtimeNotificationBanner: React.FC<RealtimeNotificationBannerProp
   }
 
   return (
-    <div className="fixed top-4 left-4 right-4 z-50 max-w-md mx-auto">
-      {notifications.map((notification) => (
+    <div className='fixed top-4 left-4 right-4 z-50 max-w-md mx-auto'>
+      {notifications.map(notification => (
         <div
           key={notification.id}
           className={`mb-2 p-4 rounded-lg border shadow-lg animate-in slide-in-from-top-2 duration-300 ${getNotificationColor(notification.type)}`}
         >
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">
+          <div className='flex items-start gap-3'>
+            <div className='flex-shrink-0 mt-0.5'>
               {getNotificationIcon(notification.type)}
             </div>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1">
-                <h4 className="font-medium text-sm">{notification.title}</h4>
+
+            <div className='flex-1 min-w-0'>
+              <div className='flex items-center justify-between mb-1'>
+                <h4 className='font-medium text-sm'>{notification.title}</h4>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
+                  size='sm'
                   onClick={() => handleDismiss(notification.id)}
-                  className="h-6 w-6 p-0 opacity-70 hover:opacity-100"
+                  className='h-6 w-6 p-0 opacity-70 hover:opacity-100'
                 >
-                  <X className="h-3 w-3" />
+                  <X className='h-3 w-3' />
                 </Button>
               </div>
-              
-              <p className="text-sm opacity-90 mb-2">{notification.message}</p>
-              
-              <div className="flex items-center justify-between">
-                <span className="text-xs opacity-75">
+
+              <p className='text-sm opacity-90 mb-2'>{notification.message}</p>
+
+              <div className='flex items-center justify-between'>
+                <span className='text-xs opacity-75'>
                   {notification.timestamp.toLocaleTimeString('vi-VN', {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}
                 </span>
-                
+
                 {notification.action && (
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     onClick={() => handleAction(notification)}
-                    className="h-6 px-2 text-xs"
+                    className='h-6 px-2 text-xs'
                   >
                     {notification.action.label}
                   </Button>

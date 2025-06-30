@@ -9,14 +9,15 @@ export const useAdminCheck = () => {
     queryKey: ['admin-check', user?.id],
     queryFn: async () => {
       if (!user?.id) return false;
-      
+
       const { data, error } = await supabase.rpc('is_user_admin', {
-        user_uuid: user.id
+        user_uuid: user.id,
       });
 
       if (error) {
         console.error('Error checking admin status:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred';
         return false;
       }
 

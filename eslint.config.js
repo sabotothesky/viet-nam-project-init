@@ -31,6 +31,9 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      // "@typescript-eslint/no-unused-expressions": "error", // Disabled due to plugin error
+      "@typescript-eslint/no-unused-expressions": "off", // Explicitly disabled to prevent plugin crash
+      "no-unused-expressions": "off", // Also disable base rule to prevent errors
       "@typescript-eslint/no-explicit-any": "warn",
       "prettier/prettier": "error",
       "no-console": "warn",

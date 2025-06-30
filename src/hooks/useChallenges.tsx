@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../integrations/supabase/client';
-import { 
-  Challenge, 
-  ChallengeResult, 
+import {
+  Challenge,
+  ChallengeResult,
   ChallengeVerification,
   ChallengeFilters,
   ChallengeStats,
@@ -11,7 +11,7 @@ import {
   SubmitChallengeResultRequest,
   VerifyChallengeRequest,
   getChallengeConfig,
-  isValidBetPoints
+  isValidBetPoints,
 } from '../types/challenge';
 
 export interface Challenge {
@@ -62,14 +62,14 @@ export const useChallenges = (userId?: string) => {
   // Fetch challenges
   const fetchChallenges = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock challenges data
       const mockChallenges: Challenge[] = [
         {
@@ -79,14 +79,14 @@ export const useChallenges = (userId?: string) => {
             id: '1',
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A'
+            rank: 'A',
           },
           opponent_id: '2',
           opponent: {
             id: '2',
             username: 'champion',
             avatar_url: '/avatars/champion.jpg',
-            rank: 'G'
+            rank: 'G',
           },
           status: 'pending',
           match_type: '8-ball',
@@ -95,7 +95,7 @@ export const useChallenges = (userId?: string) => {
           scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 24),
           created_at: new Date(),
           expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24),
-          notes: 'Thách đấu thân thiện'
+          notes: 'Thách đấu thân thiện',
         },
         {
           id: '2',
@@ -104,14 +104,14 @@ export const useChallenges = (userId?: string) => {
             id: '3',
             username: 'veteran',
             avatar_url: '/avatars/veteran.jpg',
-            rank: 'A+'
+            rank: 'A+',
           },
           opponent_id: '1',
           opponent: {
             id: '1',
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A'
+            rank: 'A',
           },
           status: 'accepted',
           match_type: '9-ball',
@@ -120,7 +120,7 @@ export const useChallenges = (userId?: string) => {
           scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 2),
           created_at: new Date(Date.now() - 1000 * 60 * 60),
           expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3),
-          notes: 'Trận đấu quan trọng'
+          notes: 'Trận đấu quan trọng',
         },
         {
           id: '3',
@@ -129,14 +129,14 @@ export const useChallenges = (userId?: string) => {
             id: '1',
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A'
+            rank: 'A',
           },
           opponent_id: '4',
           opponent: {
             id: '4',
             username: 'newbie',
             avatar_url: '/avatars/newbie.jpg',
-            rank: 'C'
+            rank: 'C',
           },
           status: 'completed',
           match_type: '8-ball',
@@ -148,11 +148,11 @@ export const useChallenges = (userId?: string) => {
           result: {
             winner_id: '1',
             score: '7-3',
-            completed_at: new Date(Date.now() - 1000 * 60 * 60 * 1.5)
-          }
-        }
+            completed_at: new Date(Date.now() - 1000 * 60 * 60 * 1.5),
+          },
+        },
       ];
-      
+
       setChallenges(mockChallenges);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể tải thách đấu');
@@ -162,71 +162,78 @@ export const useChallenges = (userId?: string) => {
   }, [userId]);
 
   // Create new challenge
-  const createChallenge = useCallback(async (data: CreateChallengeData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock opponent data
-      const opponent = {
-        id: data.opponent_id,
-        username: 'opponent_user',
-        avatar_url: '/avatars/opponent.jpg',
-        rank: 'B'
-      };
-      
-      const newChallenge: Challenge = {
-        id: Date.now().toString(),
-        challenger_id: userId!,
-        challenger: {
-          id: userId!,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg',
-          rank: 'A'
-        },
-        opponent_id: data.opponent_id,
-        opponent,
-        status: 'pending',
-        match_type: data.match_type,
-        stake_amount: data.stake_amount,
-        venue: data.venue,
-        scheduled_time: data.scheduled_time,
-        created_at: new Date(),
-        expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24),
-        notes: data.notes
-      };
-      
-      setChallenges(prev => [newChallenge, ...prev]);
-      return newChallenge;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo thách đấu');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const createChallenge = useCallback(
+    async (data: CreateChallengeData) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Mock opponent data
+        const opponent = {
+          id: data.opponent_id,
+          username: 'opponent_user',
+          avatar_url: '/avatars/opponent.jpg',
+          rank: 'B',
+        };
+
+        const newChallenge: Challenge = {
+          id: Date.now().toString(),
+          challenger_id: userId!,
+          challenger: {
+            id: userId!,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+            rank: 'A',
+          },
+          opponent_id: data.opponent_id,
+          opponent,
+          status: 'pending',
+          match_type: data.match_type,
+          stake_amount: data.stake_amount,
+          venue: data.venue,
+          scheduled_time: data.scheduled_time,
+          created_at: new Date(),
+          expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24),
+          notes: data.notes,
+        };
+
+        setChallenges(prev => [newChallenge, ...prev]);
+        return newChallenge;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể tạo thách đấu'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Accept challenge
   const acceptChallenge = useCallback(async (challengeId: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setChallenges(prev => 
-        prev.map(challenge => 
-          challenge.id === challengeId 
+
+      setChallenges(prev =>
+        prev.map(challenge =>
+          challenge.id === challengeId
             ? { ...challenge, status: 'accepted' as const }
             : challenge
         )
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể chấp nhận thách đấu');
+      setError(
+        err instanceof Error ? err.message : 'Không thể chấp nhận thách đấu'
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -238,19 +245,21 @@ export const useChallenges = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setChallenges(prev => 
-        prev.map(challenge => 
-          challenge.id === challengeId 
+
+      setChallenges(prev =>
+        prev.map(challenge =>
+          challenge.id === challengeId
             ? { ...challenge, status: 'declined' as const }
             : challenge
         )
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể từ chối thách đấu');
+      setError(
+        err instanceof Error ? err.message : 'Không thể từ chối thách đấu'
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -258,46 +267,56 @@ export const useChallenges = (userId?: string) => {
   }, []);
 
   // Complete challenge
-  const completeChallenge = useCallback(async (challengeId: string, result: { winner_id: string; score: string }) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setChallenges(prev => 
-        prev.map(challenge => 
-          challenge.id === challengeId 
-            ? { 
-                ...challenge, 
-                status: 'completed' as const,
-                result: {
-                  ...result,
-                  completed_at: new Date()
+  const completeChallenge = useCallback(
+    async (
+      challengeId: string,
+      result: { winner_id: string; score: string }
+    ) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        setChallenges(prev =>
+          prev.map(challenge =>
+            challenge.id === challengeId
+              ? {
+                  ...challenge,
+                  status: 'completed' as const,
+                  result: {
+                    ...result,
+                    completed_at: new Date(),
+                  },
                 }
-              }
-            : challenge
-        )
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể hoàn thành thách đấu');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+              : challenge
+          )
+        );
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể hoàn thành thách đấu'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   // Cancel challenge
   const cancelChallenge = useCallback(async (challengeId: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setChallenges(prev => prev.filter(challenge => challenge.id !== challengeId));
+
+      setChallenges(prev =>
+        prev.filter(challenge => challenge.id !== challengeId)
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể hủy thách đấu');
       throw err;
@@ -307,23 +326,28 @@ export const useChallenges = (userId?: string) => {
   }, []);
 
   // Get challenges by status
-  const getChallengesByStatus = useCallback((status: Challenge['status']) => {
-    return challenges.filter(challenge => challenge.status === status);
-  }, [challenges]);
+  const getChallengesByStatus = useCallback(
+    (status: Challenge['status']) => {
+      return challenges.filter(challenge => challenge.status === status);
+    },
+    [challenges]
+  );
 
   // Get challenges for current user
   const getMyChallenges = useCallback(() => {
     if (!userId) return [];
-    return challenges.filter(challenge => 
-      challenge.challenger_id === userId || challenge.opponent_id === userId
+    return challenges.filter(
+      challenge =>
+        challenge.challenger_id === userId || challenge.opponent_id === userId
     );
   }, [challenges, userId]);
 
   // Get pending challenges
   const getPendingChallenges = useCallback(() => {
     if (!userId) return [];
-    return challenges.filter(challenge => 
-      challenge.status === 'pending' && challenge.opponent_id === userId
+    return challenges.filter(
+      challenge =>
+        challenge.status === 'pending' && challenge.opponent_id === userId
     );
   }, [challenges, userId]);
 
@@ -343,7 +367,7 @@ export const useChallenges = (userId?: string) => {
     cancelChallenge,
     getChallengesByStatus,
     getMyChallenges,
-    getPendingChallenges
+    getPendingChallenges,
   };
 };
 
@@ -353,12 +377,14 @@ export const usePublicChallenges = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('challenges')
-        .select(`
+        .select(
+          `
           *,
           challenger:profiles!challenges_challenger_id_fkey(full_name, current_rank),
           challenged:profiles!challenges_challenged_id_fkey(full_name, current_rank),
           proposed_club:clubs!challenges_proposed_club_id_fkey(name, address)
-        `)
+        `
+        )
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
         .limit(10);

@@ -3,16 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Trophy, 
-  Users, 
-  Calendar, 
+import {
+  Trophy,
+  Users,
+  Calendar,
   MapPin,
   ChevronRight,
   ChevronDown,
   Play,
   Check,
-  X
+  X,
 } from 'lucide-react';
 
 interface Player {
@@ -44,7 +44,7 @@ interface TournamentBracketProps {
 
 export const TournamentBracket: React.FC<TournamentBracketProps> = ({
   tournamentId,
-  onMatchClick
+  onMatchClick,
 }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +59,7 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Generate mock bracket data
       const mockMatches: Match[] = [
         // Round 1 (Quarter Finals)
@@ -73,7 +73,7 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 3,
           winner: '1',
           status: 'completed',
-          scheduled_time: new Date(Date.now() - 1000 * 60 * 60 * 2)
+          scheduled_time: new Date(Date.now() - 1000 * 60 * 60 * 2),
         },
         {
           id: '1-2',
@@ -85,7 +85,7 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 7,
           winner: '4',
           status: 'completed',
-          scheduled_time: new Date(Date.now() - 1000 * 60 * 60 * 1)
+          scheduled_time: new Date(Date.now() - 1000 * 60 * 60 * 1),
         },
         {
           id: '1-3',
@@ -97,7 +97,7 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 2,
           winner: '5',
           status: 'completed',
-          scheduled_time: new Date(Date.now() - 1000 * 60 * 30)
+          scheduled_time: new Date(Date.now() - 1000 * 60 * 30),
         },
         {
           id: '1-4',
@@ -109,9 +109,9 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 7,
           winner: '8',
           status: 'completed',
-          scheduled_time: new Date(Date.now() - 1000 * 60 * 15)
+          scheduled_time: new Date(Date.now() - 1000 * 60 * 15),
         },
-        
+
         // Round 2 (Semi Finals)
         {
           id: '2-1',
@@ -123,7 +123,7 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 5,
           winner: '1',
           status: 'completed',
-          scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 2)
+          scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 2),
         },
         {
           id: '2-2',
@@ -135,9 +135,9 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player2_score: 6,
           winner: undefined,
           status: 'ongoing',
-          scheduled_time: new Date(Date.now() + 1000 * 60 * 30)
+          scheduled_time: new Date(Date.now() + 1000 * 60 * 30),
         },
-        
+
         // Round 3 (Finals)
         {
           id: '3-1',
@@ -146,10 +146,10 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
           player1: { id: '1', username: 'player1', rank: 'A+', seed: 1 },
           player2: undefined,
           status: 'pending',
-          scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 24)
-        }
+          scheduled_time: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        },
       ];
-      
+
       setMatches(mockMatches);
     } catch (error) {
       console.error('Failed to fetch bracket:', error);
@@ -199,29 +199,33 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
 
   const getWinnerStyle = (playerId: string, winnerId?: string) => {
     if (!winnerId) return '';
-    return playerId === winnerId ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200';
+    return playerId === winnerId
+      ? 'bg-green-50 border-green-200'
+      : 'bg-gray-50 border-gray-200';
   };
 
-  const rounds = Array.from(new Set(matches.map(m => m.round))).sort((a, b) => a - b);
+  const rounds = Array.from(new Set(matches.map(m => m.round))).sort(
+    (a, b) => a - b
+  );
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className='flex items-center justify-center py-8'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Round Navigation */}
-      <div className="flex items-center gap-2 overflow-x-auto">
-        {rounds.map((round) => (
+      <div className='flex items-center gap-2 overflow-x-auto'>
+        {rounds.map(round => (
           <Button
             key={round}
             variant={selectedRound === round ? 'default' : 'outline'}
             onClick={() => setSelectedRound(round)}
-            className="whitespace-nowrap"
+            className='whitespace-nowrap'
           >
             {getRoundName(round)}
           </Button>
@@ -229,95 +233,111 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
       </div>
 
       {/* Bracket Display */}
-      <div className="space-y-4">
+      <div className='space-y-4'>
         {matches
           .filter(match => match.round === selectedRound)
-          .map((match) => (
-            <Card 
-              key={match.id} 
+          .map(match => (
+            <Card
+              key={match.id}
               className={`cursor-pointer hover:shadow-md transition-shadow ${
                 match.status === 'ongoing' ? 'ring-2 ring-yellow-500' : ''
               }`}
               onClick={() => onMatchClick?.(match)}
             >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
+              <CardContent className='p-4'>
+                <div className='flex items-center justify-between mb-3'>
+                  <div className='flex items-center gap-2'>
                     <Badge className={getMatchStatusColor(match.status)}>
                       {getMatchStatusName(match.status)}
                     </Badge>
-                    <span className="text-sm text-gray-600">
+                    <span className='text-sm text-gray-600'>
                       Trận {match.match_number}
                     </span>
                   </div>
-                  
+
                   {match.scheduled_time && (
-                    <div className="text-sm text-gray-600">
+                    <div className='text-sm text-gray-600'>
                       {match.scheduled_time.toLocaleDateString('vi-VN')}
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   {/* Player 1 */}
-                  <div className={`flex items-center justify-between p-3 rounded-lg border ${
-                    getWinnerStyle(match.player1?.id || '', match.winner)
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
+                  <div
+                    className={`flex items-center justify-between p-3 rounded-lg border ${getWinnerStyle(
+                      match.player1?.id || '',
+                      match.winner
+                    )}`}
+                  >
+                    <div className='flex items-center gap-3'>
+                      <Avatar className='h-8 w-8'>
                         <AvatarImage src={match.player1?.avatar_url} />
-                        <AvatarFallback>{match.player1?.username[0]}</AvatarFallback>
+                        <AvatarFallback>
+                          {match.player1?.username[0]}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{match.player1?.username || 'TBD'}</div>
-                        <div className="text-sm text-gray-600">
-                          Hạng {match.player1?.rank} {match.player1?.seed && `(#${match.player1.seed})`}
+                        <div className='font-medium'>
+                          {match.player1?.username || 'TBD'}
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Hạng {match.player1?.rank}{' '}
+                          {match.player1?.seed && `(#${match.player1.seed})`}
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
+
+                    <div className='flex items-center gap-2'>
                       {match.player1_score !== undefined && (
-                        <span className="text-lg font-bold">
+                        <span className='text-lg font-bold'>
                           {match.player1_score}
                         </span>
                       )}
                       {match.winner === match.player1?.id && (
-                        <Check className="h-5 w-5 text-green-600" />
+                        <Check className='h-5 w-5 text-green-600' />
                       )}
                     </div>
                   </div>
 
                   {/* VS */}
-                  <div className="text-center py-2">
-                    <div className="text-lg font-bold text-gray-400">VS</div>
+                  <div className='text-center py-2'>
+                    <div className='text-lg font-bold text-gray-400'>VS</div>
                   </div>
 
                   {/* Player 2 */}
-                  <div className={`flex items-center justify-between p-3 rounded-lg border ${
-                    getWinnerStyle(match.player2?.id || '', match.winner)
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
+                  <div
+                    className={`flex items-center justify-between p-3 rounded-lg border ${getWinnerStyle(
+                      match.player2?.id || '',
+                      match.winner
+                    )}`}
+                  >
+                    <div className='flex items-center gap-3'>
+                      <Avatar className='h-8 w-8'>
                         <AvatarImage src={match.player2?.avatar_url} />
-                        <AvatarFallback>{match.player2?.username[0]}</AvatarFallback>
+                        <AvatarFallback>
+                          {match.player2?.username[0]}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{match.player2?.username || 'TBD'}</div>
-                        <div className="text-sm text-gray-600">
-                          Hạng {match.player2?.rank} {match.player2?.seed && `(#${match.player2.seed})`}
+                        <div className='font-medium'>
+                          {match.player2?.username || 'TBD'}
+                        </div>
+                        <div className='text-sm text-gray-600'>
+                          Hạng {match.player2?.rank}{' '}
+                          {match.player2?.seed && `(#${match.player2.seed})`}
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
+
+                    <div className='flex items-center gap-2'>
                       {match.player2_score !== undefined && (
-                        <span className="text-lg font-bold">
+                        <span className='text-lg font-bold'>
                           {match.player2_score}
                         </span>
                       )}
                       {match.winner === match.player2?.id && (
-                        <Check className="h-5 w-5 text-green-600" />
+                        <Check className='h-5 w-5 text-green-600' />
                       )}
                     </div>
                   </div>
@@ -325,27 +345,29 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
 
                 {/* Match Actions */}
                 {match.status === 'ongoing' && (
-                  <div className="flex gap-2 mt-3 pt-3 border-t">
-                    <Button size="sm" className="flex-1">
-                      <Play className="h-4 w-4 mr-2" />
+                  <div className='flex gap-2 mt-3 pt-3 border-t'>
+                    <Button size='sm' className='flex-1'>
+                      <Play className='h-4 w-4 mr-2' />
                       Theo dõi trực tiếp
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant='outline' size='sm'>
                       Cập nhật kết quả
                     </Button>
                   </div>
                 )}
 
-                {match.status === 'pending' && match.player1 && match.player2 && (
-                  <div className="flex gap-2 mt-3 pt-3 border-t">
-                    <Button size="sm" className="flex-1">
-                      Bắt đầu trận đấu
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Lên lịch lại
-                    </Button>
-                  </div>
-                )}
+                {match.status === 'pending' &&
+                  match.player1 &&
+                  match.player2 && (
+                    <div className='flex gap-2 mt-3 pt-3 border-t'>
+                      <Button size='sm' className='flex-1'>
+                        Bắt đầu trận đấu
+                      </Button>
+                      <Button variant='outline' size='sm'>
+                        Lên lịch lại
+                      </Button>
+                    </div>
+                  )}
               </CardContent>
             </Card>
           ))}
@@ -354,24 +376,29 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
       {/* Tournament Progress */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Tiến độ giải đấu</CardTitle>
+          <CardTitle className='text-lg'>Tiến độ giải đấu</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {rounds.map((round) => {
+          <div className='space-y-3'>
+            {rounds.map(round => {
               const roundMatches = matches.filter(m => m.round === round);
-              const completedMatches = roundMatches.filter(m => m.status === 'completed');
-              const progress = (completedMatches.length / roundMatches.length) * 100;
-              
+              const completedMatches = roundMatches.filter(
+                m => m.status === 'completed'
+              );
+              const progress =
+                (completedMatches.length / roundMatches.length) * 100;
+
               return (
-                <div key={round} className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                <div key={round} className='space-y-2'>
+                  <div className='flex justify-between text-sm'>
                     <span>{getRoundName(round)}</span>
-                    <span>{completedMatches.length}/{roundMatches.length} trận</span>
+                    <span>
+                      {completedMatches.length}/{roundMatches.length} trận
+                    </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all"
+                  <div className='w-full bg-gray-200 rounded-full h-2'>
+                    <div
+                      className='bg-blue-500 h-2 rounded-full transition-all'
                       style={{ width: `${progress}%` }}
                     ></div>
                   </div>
@@ -383,4 +410,4 @@ export const TournamentBracket: React.FC<TournamentBracketProps> = ({
       </Card>
     </div>
   );
-}; 
+};

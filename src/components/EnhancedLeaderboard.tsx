@@ -3,11 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { 
-  Trophy, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import {
+  Trophy,
+  TrendingUp,
+  TrendingDown,
   Crown,
   Star,
   Shield,
@@ -23,12 +29,12 @@ import {
   Award,
   Medal,
   TrendingUpIcon,
-  TrendingDownIcon
+  TrendingDownIcon,
 } from 'lucide-react';
-import { 
+import {
   getRankFromRating,
   getRankColor,
-  type PlayerStats
+  type PlayerStats,
 } from '../utils/eloCalculator';
 
 interface LeaderboardPlayer extends PlayerStats {
@@ -46,13 +52,16 @@ interface EnhancedLeaderboardProps {
   className?: string;
 }
 
-export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({ 
-  players, 
-  className 
+export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
+  players,
+  className,
 }) => {
-  const [filteredPlayers, setFilteredPlayers] = useState<LeaderboardPlayer[]>(players);
+  const [filteredPlayers, setFilteredPlayers] =
+    useState<LeaderboardPlayer[]>(players);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'rating' | 'matches' | 'win_rate' | 'streak' | 'form' | 'consistency'>('rating');
+  const [sortBy, setSortBy] = useState<
+    'rating' | 'matches' | 'win_rate' | 'streak' | 'form' | 'consistency'
+  >('rating');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [rankFilter, setRankFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
@@ -62,15 +71,18 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(player => 
-        player.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        player.club_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        player =>
+          player.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          player.club_name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Rank filter
     if (rankFilter !== 'all') {
-      filtered = filtered.filter(player => getRankFromRating(player.current_rating) === rankFilter);
+      filtered = filtered.filter(
+        player => getRankFromRating(player.current_rating) === rankFilter
+      );
     }
 
     // Sort
@@ -119,12 +131,16 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
   }, [players, searchTerm, sortBy, sortOrder, rankFilter]);
 
   const getRankColor = (rating: number) => {
-    if (rating >= 2800) return 'bg-purple-100 text-purple-800 border-purple-200';
-    if (rating >= 2600) return 'bg-purple-100 text-purple-800 border-purple-200';
+    if (rating >= 2800)
+      return 'bg-purple-100 text-purple-800 border-purple-200';
+    if (rating >= 2600)
+      return 'bg-purple-100 text-purple-800 border-purple-200';
     if (rating >= 2400) return 'bg-red-100 text-red-800 border-red-200';
     if (rating >= 2200) return 'bg-red-100 text-red-800 border-red-200';
-    if (rating >= 2000) return 'bg-orange-100 text-orange-800 border-orange-200';
-    if (rating >= 1800) return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (rating >= 2000)
+      return 'bg-orange-100 text-orange-800 border-orange-200';
+    if (rating >= 1800)
+      return 'bg-orange-100 text-orange-800 border-orange-200';
     if (rating >= 1600) return 'bg-blue-100 text-blue-800 border-blue-200';
     if (rating >= 1400) return 'bg-blue-100 text-blue-800 border-blue-200';
     if (rating >= 1200) return 'bg-green-100 text-green-800 border-green-200';
@@ -139,60 +155,71 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
     const rank = getRankFromRating(rating);
     const names: { [key: string]: string } = {
       'S+': 'Legendary',
-      'S': 'Master',
+      S: 'Master',
       'G+': 'Elite',
-      'G': 'Expert',
+      G: 'Expert',
       'A+': 'Advanced',
-      'A': 'Intermediate+',
+      A: 'Intermediate+',
       'B+': 'Intermediate',
-      'B': 'Beginner+',
+      B: 'Beginner+',
       'C+': 'Beginner',
-      'C': 'Novice+',
+      C: 'Novice+',
       'D+': 'Novice',
-      'D': 'Rookie+',
+      D: 'Rookie+',
       'E+': 'Rookie',
-      'E': 'Newcomer'
+      E: 'Newcomer',
     };
     return `${rank} (${names[rank]})`;
   };
 
   const getFormIcon = (form: number) => {
-    if (form > 50) return <Flame className="h-4 w-4 text-red-500" />;
-    if (form > 20) return <TrendingUpIcon className="h-4 w-4 text-green-500" />;
-    if (form > -20) return <Activity className="h-4 w-4 text-yellow-500" />;
-    if (form > -50) return <TrendingDownIcon className="h-4 w-4 text-orange-500" />;
-    return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (form > 50) return <Flame className='h-4 w-4 text-red-500' />;
+    if (form > 20) return <TrendingUpIcon className='h-4 w-4 text-green-500' />;
+    if (form > -20) return <Activity className='h-4 w-4 text-yellow-500' />;
+    if (form > -50)
+      return <TrendingDownIcon className='h-4 w-4 text-orange-500' />;
+    return <TrendingDown className='h-4 w-4 text-red-500' />;
   };
 
   const getConsistencyIcon = (score: number) => {
-    if (score > 80) return <Shield className="h-4 w-4 text-green-500" />;
-    if (score > 60) return <Shield className="h-4 w-4 text-blue-500" />;
-    if (score > 40) return <BarChart3 className="h-4 w-4 text-yellow-500" />;
-    return <BarChart3 className="h-4 w-4 text-red-500" />;
+    if (score > 80) return <Shield className='h-4 w-4 text-green-500' />;
+    if (score > 60) return <Shield className='h-4 w-4 text-blue-500' />;
+    if (score > 40) return <BarChart3 className='h-4 w-4 text-yellow-500' />;
+    return <BarChart3 className='h-4 w-4 text-red-500' />;
   };
 
   const getVolatilityIcon = (volatility: number) => {
-    if (volatility < 30) return <Target className="h-4 w-4 text-green-500" />;
-    if (volatility < 60) return <Activity className="h-4 w-4 text-blue-500" />;
-    if (volatility < 100) return <Zap className="h-4 w-4 text-yellow-500" />;
-    return <Zap className="h-4 w-4 text-red-500" />;
+    if (volatility < 30) return <Target className='h-4 w-4 text-green-500' />;
+    if (volatility < 60) return <Activity className='h-4 w-4 text-blue-500' />;
+    if (volatility < 100) return <Zap className='h-4 w-4 text-yellow-500' />;
+    return <Zap className='h-4 w-4 text-red-500' />;
   };
 
   const getPositionIcon = (position: number) => {
     switch (position) {
-      case 1: return <Trophy className="h-5 w-5 text-yellow-500" />;
-      case 2: return <Medal className="h-5 w-5 text-gray-400" />;
-      case 3: return <Award className="h-5 w-5 text-orange-500" />;
-      default: return <span className="text-sm font-medium text-gray-500">#{position}</span>;
+      case 1:
+        return <Trophy className='h-5 w-5 text-yellow-500' />;
+      case 2:
+        return <Medal className='h-5 w-5 text-gray-400' />;
+      case 3:
+        return <Award className='h-5 w-5 text-orange-500' />;
+      default:
+        return (
+          <span className='text-sm font-medium text-gray-500'>#{position}</span>
+        );
     }
   };
 
   const getPositionColor = (position: number) => {
     switch (position) {
-      case 1: return 'bg-yellow-50 border-yellow-200';
-      case 2: return 'bg-gray-50 border-gray-200';
-      case 3: return 'bg-orange-50 border-orange-200';
-      default: return 'bg-white border-gray-200';
+      case 1:
+        return 'bg-yellow-50 border-yellow-200';
+      case 2:
+        return 'bg-gray-50 border-gray-200';
+      case 3:
+        return 'bg-orange-50 border-orange-200';
+      default:
+        return 'bg-white border-gray-200';
     }
   };
 
@@ -200,22 +227,22 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
     <div className={`space-y-6 ${className}`}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
+          <CardTitle className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <Trophy className='h-5 w-5' />
               Enhanced ELO Leaderboard
             </div>
-            <div className="flex items-center gap-2">
+            <div className='flex items-center gap-2'>
               <Button
                 variant={viewMode === 'table' ? 'default' : 'outline'}
-                size="sm"
+                size='sm'
                 onClick={() => setViewMode('table')}
               >
                 Table
               </Button>
               <Button
                 variant={viewMode === 'cards' ? 'default' : 'outline'}
-                size="sm"
+                size='sm'
                 onClick={() => setViewMode('cards')}
               >
                 Cards
@@ -225,179 +252,222 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
         </CardHeader>
         <CardContent>
           {/* Filters and Search */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <div className='flex flex-col md:flex-row gap-4 mb-6'>
+            <div className='flex-1'>
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
                 <Input
-                  placeholder="Search players or clubs..."
+                  placeholder='Search players or clubs...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className='pl-10'
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <Select value={rankFilter} onValueChange={setRankFilter}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className='w-32'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Ranks</SelectItem>
-                  <SelectItem value="S+">S+ (Legendary)</SelectItem>
-                  <SelectItem value="S">S (Master)</SelectItem>
-                  <SelectItem value="G+">G+ (Elite)</SelectItem>
-                  <SelectItem value="G">G (Expert)</SelectItem>
-                  <SelectItem value="A+">A+ (Advanced)</SelectItem>
-                  <SelectItem value="A">A (Intermediate+)</SelectItem>
-                  <SelectItem value="B+">B+ (Intermediate)</SelectItem>
-                  <SelectItem value="B">B (Beginner+)</SelectItem>
-                  <SelectItem value="C+">C+ (Beginner)</SelectItem>
-                  <SelectItem value="C">C (Novice+)</SelectItem>
-                  <SelectItem value="D+">D+ (Novice)</SelectItem>
-                  <SelectItem value="D">D (Rookie+)</SelectItem>
-                  <SelectItem value="E+">E+ (Rookie)</SelectItem>
-                  <SelectItem value="E">E (Newcomer)</SelectItem>
+                  <SelectItem value='all'>All Ranks</SelectItem>
+                  <SelectItem value='S+'>S+ (Legendary)</SelectItem>
+                  <SelectItem value='S'>S (Master)</SelectItem>
+                  <SelectItem value='G+'>G+ (Elite)</SelectItem>
+                  <SelectItem value='G'>G (Expert)</SelectItem>
+                  <SelectItem value='A+'>A+ (Advanced)</SelectItem>
+                  <SelectItem value='A'>A (Intermediate+)</SelectItem>
+                  <SelectItem value='B+'>B+ (Intermediate)</SelectItem>
+                  <SelectItem value='B'>B (Beginner+)</SelectItem>
+                  <SelectItem value='C+'>C+ (Beginner)</SelectItem>
+                  <SelectItem value='C'>C (Novice+)</SelectItem>
+                  <SelectItem value='D+'>D+ (Novice)</SelectItem>
+                  <SelectItem value='D'>D (Rookie+)</SelectItem>
+                  <SelectItem value='E+'>E+ (Rookie)</SelectItem>
+                  <SelectItem value='E'>E (Newcomer)</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                <SelectTrigger className="w-40">
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
+                <SelectTrigger className='w-40'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rating">Rating</SelectItem>
-                  <SelectItem value="matches">Matches</SelectItem>
-                  <SelectItem value="win_rate">Win Rate</SelectItem>
-                  <SelectItem value="streak">Streak</SelectItem>
-                  <SelectItem value="form">Recent Form</SelectItem>
-                  <SelectItem value="consistency">Consistency</SelectItem>
+                  <SelectItem value='rating'>Rating</SelectItem>
+                  <SelectItem value='matches'>Matches</SelectItem>
+                  <SelectItem value='win_rate'>Win Rate</SelectItem>
+                  <SelectItem value='streak'>Streak</SelectItem>
+                  <SelectItem value='form'>Recent Form</SelectItem>
+                  <SelectItem value='consistency'>Consistency</SelectItem>
                 </SelectContent>
               </Select>
               <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                variant='outline'
+                size='sm'
+                onClick={() =>
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                }
               >
-                {sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
+                {sortOrder === 'asc' ? (
+                  <SortAsc className='h-4 w-4' />
+                ) : (
+                  <SortDesc className='h-4 w-4' />
+                )}
               </Button>
             </div>
           </div>
 
           {/* Table View */}
           {viewMode === 'table' && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className='overflow-x-auto'>
+              <table className='w-full'>
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-medium">Position</th>
-                    <th className="text-left p-3 font-medium">Player</th>
-                    <th className="text-left p-3 font-medium">Rank</th>
-                    <th className="text-left p-3 font-medium">Rating</th>
-                    <th className="text-left p-3 font-medium">Matches</th>
-                    <th className="text-left p-3 font-medium">Win Rate</th>
-                    <th className="text-left p-3 font-medium">Streak</th>
-                    <th className="text-left p-3 font-medium">Form</th>
-                    <th className="text-left p-3 font-medium">Consistency</th>
-                    <th className="text-left p-3 font-medium">Volatility</th>
+                  <tr className='border-b'>
+                    <th className='text-left p-3 font-medium'>Position</th>
+                    <th className='text-left p-3 font-medium'>Player</th>
+                    <th className='text-left p-3 font-medium'>Rank</th>
+                    <th className='text-left p-3 font-medium'>Rating</th>
+                    <th className='text-left p-3 font-medium'>Matches</th>
+                    <th className='text-left p-3 font-medium'>Win Rate</th>
+                    <th className='text-left p-3 font-medium'>Streak</th>
+                    <th className='text-left p-3 font-medium'>Form</th>
+                    <th className='text-left p-3 font-medium'>Consistency</th>
+                    <th className='text-left p-3 font-medium'>Volatility</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredPlayers.map((player, index) => (
-                    <tr 
-                      key={player.user_id} 
+                    <tr
+                      key={player.user_id}
                       className={`border-b hover:bg-gray-50 transition-colors ${getPositionColor(index + 1)}`}
                     >
-                      <td className="p-3">
-                        <div className="flex items-center gap-2">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-2'>
                           {getPositionIcon(index + 1)}
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-3'>
+                          <div className='w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center'>
                             {player.avatar_url ? (
-                              <img src={player.avatar_url} alt={player.username} className="w-8 h-8 rounded-full" />
+                              <img
+                                src={player.avatar_url}
+                                alt={player.username}
+                                className='w-8 h-8 rounded-full'
+                              />
                             ) : (
-                              <Users className="h-4 w-4 text-gray-500" />
+                              <Users className='h-4 w-4 text-gray-500' />
                             )}
                           </div>
                           <div>
-                            <div className="font-medium">{player.username}</div>
+                            <div className='font-medium'>{player.username}</div>
                             {player.club_name && (
-                              <div className="text-sm text-gray-500">{player.club_name}</div>
+                              <div className='text-sm text-gray-500'>
+                                {player.club_name}
+                              </div>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className='p-3'>
                         <Badge className={getRankColor(player.current_rating)}>
                           {getRankName(player.current_rating)}
                         </Badge>
                       </td>
-                      <td className="p-3 font-mono font-semibold">
+                      <td className='p-3 font-mono font-semibold'>
                         {player.current_rating}
                       </td>
-                      <td className="p-3">
-                        {player.matches_played}
-                      </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{(player.win_rate || 0).toFixed(1)}%</span>
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-green-500 h-2 rounded-full" 
+                      <td className='p-3'>{player.matches_played}</td>
+                      <td className='p-3'>
+                        <div className='flex items-center gap-2'>
+                          <span className='font-medium'>
+                            {(player.win_rate || 0).toFixed(1)}%
+                          </span>
+                          <div className='w-16 bg-gray-200 rounded-full h-2'>
+                            <div
+                              className='bg-green-500 h-2 rounded-full'
                               style={{ width: `${player.win_rate || 0}%` }}
                             />
                           </div>
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-1'>
                           {player.current_streak > 0 ? (
-                            <TrendingUp className="h-4 w-4 text-green-500" />
+                            <TrendingUp className='h-4 w-4 text-green-500' />
                           ) : player.current_streak < 0 ? (
-                            <TrendingDown className="h-4 w-4 text-red-500" />
+                            <TrendingDown className='h-4 w-4 text-red-500' />
                           ) : (
-                            <Activity className="h-4 w-4 text-gray-500" />
+                            <Activity className='h-4 w-4 text-gray-500' />
                           )}
-                          <span className={player.current_streak > 0 ? 'text-green-600' : player.current_streak < 0 ? 'text-red-600' : 'text-gray-600'}>
-                            {player.current_streak > 0 ? '+' : ''}{player.current_streak}
+                          <span
+                            className={
+                              player.current_streak > 0
+                                ? 'text-green-600'
+                                : player.current_streak < 0
+                                  ? 'text-red-600'
+                                  : 'text-gray-600'
+                            }
+                          >
+                            {player.current_streak > 0 ? '+' : ''}
+                            {player.current_streak}
                           </span>
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-1'>
                           {getFormIcon(player.recent_form || 0)}
-                          <span className={`font-medium ${
-                            (player.recent_form || 0) > 50 ? 'text-green-600' : 
-                            (player.recent_form || 0) > 20 ? 'text-blue-600' : 
-                            (player.recent_form || 0) > -20 ? 'text-yellow-600' : 
-                            (player.recent_form || 0) > -50 ? 'text-orange-600' : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              (player.recent_form || 0) > 50
+                                ? 'text-green-600'
+                                : (player.recent_form || 0) > 20
+                                  ? 'text-blue-600'
+                                  : (player.recent_form || 0) > -20
+                                    ? 'text-yellow-600'
+                                    : (player.recent_form || 0) > -50
+                                      ? 'text-orange-600'
+                                      : 'text-red-600'
+                            }`}
+                          >
                             {player.recent_form || 0}
                           </span>
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-1'>
                           {getConsistencyIcon(player.consistency_score || 50)}
-                          <span className={`font-medium ${
-                            (player.consistency_score || 50) > 80 ? 'text-green-600' : 
-                            (player.consistency_score || 50) > 60 ? 'text-blue-600' : 
-                            (player.consistency_score || 50) > 40 ? 'text-yellow-600' : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              (player.consistency_score || 50) > 80
+                                ? 'text-green-600'
+                                : (player.consistency_score || 50) > 60
+                                  ? 'text-blue-600'
+                                  : (player.consistency_score || 50) > 40
+                                    ? 'text-yellow-600'
+                                    : 'text-red-600'
+                            }`}
+                          >
                             {player.consistency_score || 50}%
                           </span>
                         </div>
                       </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
+                      <td className='p-3'>
+                        <div className='flex items-center gap-1'>
                           {getVolatilityIcon(player.rating_volatility || 0)}
-                          <span className={`font-medium ${
-                            (player.rating_volatility || 0) < 30 ? 'text-green-600' : 
-                            (player.rating_volatility || 0) < 60 ? 'text-blue-600' : 
-                            (player.rating_volatility || 0) < 100 ? 'text-yellow-600' : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              (player.rating_volatility || 0) < 30
+                                ? 'text-green-600'
+                                : (player.rating_volatility || 0) < 60
+                                  ? 'text-blue-600'
+                                  : (player.rating_volatility || 0) < 100
+                                    ? 'text-yellow-600'
+                                    : 'text-red-600'
+                            }`}
+                          >
                             {player.rating_volatility || 0}
                           </span>
                         </div>
@@ -411,74 +481,107 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
 
           {/* Cards View */}
           {viewMode === 'cards' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               {filteredPlayers.map((player, index) => (
-                <Card key={player.user_id} className={`${getPositionColor(index + 1)} hover:shadow-lg transition-shadow`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
+                <Card
+                  key={player.user_id}
+                  className={`${getPositionColor(index + 1)} hover:shadow-lg transition-shadow`}
+                >
+                  <CardContent className='p-4'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <div className='flex items-center gap-2'>
                         {getPositionIcon(index + 1)}
-                        <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+                        <span className='text-sm font-medium text-gray-500'>
+                          #{index + 1}
+                        </span>
                       </div>
                       <Badge className={getRankColor(player.current_rating)}>
                         {getRankName(player.current_rating)}
                       </Badge>
                     </div>
 
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                    <div className='flex items-center gap-3 mb-4'>
+                      <div className='w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center'>
                         {player.avatar_url ? (
-                          <img src={player.avatar_url} alt={player.username} className="w-12 h-12 rounded-full" />
+                          <img
+                            src={player.avatar_url}
+                            alt={player.username}
+                            className='w-12 h-12 rounded-full'
+                          />
                         ) : (
-                          <Users className="h-6 w-6 text-gray-500" />
+                          <Users className='h-6 w-6 text-gray-500' />
                         )}
                       </div>
                       <div>
-                        <div className="font-semibold text-lg">{player.username}</div>
+                        <div className='font-semibold text-lg'>
+                          {player.username}
+                        </div>
                         {player.club_name && (
-                          <div className="text-sm text-gray-500">{player.club_name}</div>
+                          <div className='text-sm text-gray-500'>
+                            {player.club_name}
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Rating:</span>
-                        <span className="font-mono font-semibold">{player.current_rating}</span>
+                    <div className='space-y-2'>
+                      <div className='flex justify-between'>
+                        <span className='text-gray-600'>Rating:</span>
+                        <span className='font-mono font-semibold'>
+                          {player.current_rating}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Matches:</span>
+                      <div className='flex justify-between'>
+                        <span className='text-gray-600'>Matches:</span>
                         <span>{player.matches_played}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Win Rate:</span>
-                        <span className="font-medium">{(player.win_rate || 0).toFixed(1)}%</span>
+                      <div className='flex justify-between'>
+                        <span className='text-gray-600'>Win Rate:</span>
+                        <span className='font-medium'>
+                          {(player.win_rate || 0).toFixed(1)}%
+                        </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Streak:</span>
-                        <div className="flex items-center gap-1">
+                      <div className='flex justify-between'>
+                        <span className='text-gray-600'>Streak:</span>
+                        <div className='flex items-center gap-1'>
                           {player.current_streak > 0 ? (
-                            <TrendingUp className="h-3 w-3 text-green-500" />
+                            <TrendingUp className='h-3 w-3 text-green-500' />
                           ) : player.current_streak < 0 ? (
-                            <TrendingDown className="h-3 w-3 text-red-500" />
+                            <TrendingDown className='h-3 w-3 text-red-500' />
                           ) : (
-                            <Activity className="h-3 w-3 text-gray-500" />
+                            <Activity className='h-3 w-3 text-gray-500' />
                           )}
-                          <span className={player.current_streak > 0 ? 'text-green-600' : player.current_streak < 0 ? 'text-red-600' : 'text-gray-600'}>
-                            {player.current_streak > 0 ? '+' : ''}{player.current_streak}
+                          <span
+                            className={
+                              player.current_streak > 0
+                                ? 'text-green-600'
+                                : player.current_streak < 0
+                                  ? 'text-red-600'
+                                  : 'text-gray-600'
+                            }
+                          >
+                            {player.current_streak > 0 ? '+' : ''}
+                            {player.current_streak}
                           </span>
                         </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Form:</span>
-                        <div className="flex items-center gap-1">
+                      <div className='flex justify-between'>
+                        <span className='text-gray-600'>Form:</span>
+                        <div className='flex items-center gap-1'>
                           {getFormIcon(player.recent_form || 0)}
-                          <span className={`font-medium ${
-                            (player.recent_form || 0) > 50 ? 'text-green-600' : 
-                            (player.recent_form || 0) > 20 ? 'text-blue-600' : 
-                            (player.recent_form || 0) > -20 ? 'text-yellow-600' : 
-                            (player.recent_form || 0) > -50 ? 'text-orange-600' : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              (player.recent_form || 0) > 50
+                                ? 'text-green-600'
+                                : (player.recent_form || 0) > 20
+                                  ? 'text-blue-600'
+                                  : (player.recent_form || 0) > -20
+                                    ? 'text-yellow-600'
+                                    : (player.recent_form || 0) > -50
+                                      ? 'text-orange-600'
+                                      : 'text-red-600'
+                            }`}
+                          >
                             {player.recent_form || 0}
                           </span>
                         </div>
@@ -492,14 +595,18 @@ export const EnhancedLeaderboard: React.FC<EnhancedLeaderboardProps> = ({
 
           {/* No Results */}
           {filteredPlayers.length === 0 && (
-            <div className="text-center py-8">
-              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No players found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+            <div className='text-center py-8'>
+              <Users className='h-12 w-12 text-gray-400 mx-auto mb-4' />
+              <h3 className='text-lg font-medium text-gray-900 mb-2'>
+                No players found
+              </h3>
+              <p className='text-gray-500'>
+                Try adjusting your search or filter criteria.
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
     </div>
   );
-}; 
+};

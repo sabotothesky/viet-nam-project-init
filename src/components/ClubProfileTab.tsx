@@ -6,9 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Building, Loader2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import GoogleMapsPlacesAutocomplete from './GoogleMapsPlacesAutocomplete';
@@ -84,9 +95,16 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
-  const [selectedGooglePlace, setSelectedGooglePlace] = useState<GooglePlace | null>(null);
+  const [selectedGooglePlace, setSelectedGooglePlace] =
+    useState<GooglePlace | null>(null);
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm();
 
   const selectedProvince = watch('province_id');
   const selectedDistrict = watch('district_id');
@@ -118,7 +136,7 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
 
   const fetchVietnamAdministrative = async () => {
     try {
-      // Since we don't have provinces table in the current schema, 
+      // Since we don't have provinces table in the current schema,
       // I'll create some mock data for Vietnamese provinces
       const mockProvinces = [
         { id: '1', name: 'Hà Nội', code: 'HN' },
@@ -181,7 +199,7 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
 
   const checkClubRegistration = async () => {
     if (!user?.id) return;
-    
+
     try {
       // Since we don't have club_registrations table, we'll simulate it
       // In a real implementation, you would query the actual table
@@ -193,11 +211,11 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
 
   const handleGooglePlaceSelect = (place: GooglePlace) => {
     setSelectedGooglePlace(place);
-    
+
     // Tự động điền thông tin từ Google Maps
     setValue('club_name', place.name);
     setValue('address', place.formatted_address);
-    
+
     // Có thể thêm logic để map địa chỉ với province/district/ward
     // Dựa trên formatted_address từ Google Maps
     toast.success('Đã tự động điền thông tin từ Google Maps');
@@ -206,7 +224,7 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
   const handleClubRegistration = async (formData: any) => {
     setRegistering(true);
     try {
-      // Simulate club registration - in real implementation, 
+      // Simulate club registration - in real implementation,
       // you would insert into a club_registrations table
       const registrationData = {
         user_id: user.id,
@@ -226,11 +244,11 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
         // Thêm thông tin Google Maps nếu có
         google_place_id: selectedGooglePlace?.place_id,
         google_lat: selectedGooglePlace?.geometry.location.lat,
-        google_lng: selectedGooglePlace?.geometry.location.lng
+        google_lng: selectedGooglePlace?.geometry.location.lng,
       };
 
-      console.log('Club registration data:', registrationData);
-      
+      // ...removed console.log('Club registration data:', registrationData)
+
       toast.success('Đăng ký CLB thành công! Chờ xác minh từ admin.');
       await checkClubRegistration();
       onUpdate();
@@ -244,19 +262,27 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'approved': return 'Đã xác minh';
-      case 'pending': return 'Chờ xác minh';
-      case 'rejected': return 'Bị từ chối';
-      default: return 'Chưa đăng ký';
+      case 'approved':
+        return 'Đã xác minh';
+      case 'pending':
+        return 'Chờ xác minh';
+      case 'rejected':
+        return 'Bị từ chối';
+      default:
+        return 'Chưa đăng ký';
     }
   };
 
@@ -268,20 +294,22 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
       <CardContent>
         {/* Club Registration Status */}
         {clubData && (
-          <div className="mb-6 p-4 border rounded-lg">
-            <div className="flex items-center justify-between">
+          <div className='mb-6 p-4 border rounded-lg'>
+            <div className='flex items-center justify-between'>
               <div>
-                <h3 className="font-medium text-gray-900">{clubData.club_name}</h3>
-                <p className="text-sm text-gray-600">{clubData.address}</p>
+                <h3 className='font-medium text-gray-900'>
+                  {clubData.club_name}
+                </h3>
+                <p className='text-sm text-gray-600'>{clubData.address}</p>
               </div>
               <Badge className={getStatusColor(clubData.status)}>
                 {getStatusText(clubData.status)}
               </Badge>
             </div>
-            
+
             {clubData.status === 'rejected' && clubData.rejection_reason && (
-              <div className="mt-3 p-3 bg-red-50 rounded-md">
-                <p className="text-sm text-red-800">
+              <div className='mt-3 p-3 bg-red-50 rounded-md'>
+                <p className='text-sm text-red-800'>
                   <strong>Lý do từ chối:</strong> {clubData.rejection_reason}
                 </p>
               </div>
@@ -290,38 +318,53 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
         )}
 
         {/* Club Registration Form */}
-        <form onSubmit={handleSubmit(handleClubRegistration)} className="space-y-6">
+        <form
+          onSubmit={handleSubmit(handleClubRegistration)}
+          className='space-y-6'
+        >
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <Label htmlFor="club_name">Tên câu lạc bộ *</Label>
+              <Label htmlFor='club_name'>Tên câu lạc bộ *</Label>
               <Input
-                id="club_name"
-                {...register('club_name', { required: 'Vui lòng nhập tên CLB' })}
-                placeholder="Ví dụ: CLB Bida Sài Gòn"
+                id='club_name'
+                {...register('club_name', {
+                  required: 'Vui lòng nhập tên CLB',
+                })}
+                placeholder='Ví dụ: CLB Bida Sài Gòn'
               />
-              {errors.club_name && <p className="mt-1 text-sm text-red-600">{String(errors.club_name.message)}</p>}
+              {errors.club_name && (
+                <p className='mt-1 text-sm text-red-600'>
+                  {String(errors.club_name.message)}
+                </p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="club_type">Loại hình CLB *</Label>
-              <Select onValueChange={(value) => setValue('club_type', value)}>
+              <Label htmlFor='club_type'>Loại hình CLB *</Label>
+              <Select onValueChange={value => setValue('club_type', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn loại hình" />
+                  <SelectValue placeholder='Chọn loại hình' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">Đăng ký CLB mới</SelectItem>
-                  <SelectItem value="existing">CLB đã có trên Google Maps</SelectItem>
+                  <SelectItem value='new'>Đăng ký CLB mới</SelectItem>
+                  <SelectItem value='existing'>
+                    CLB đã có trên Google Maps
+                  </SelectItem>
                 </SelectContent>
               </Select>
-              {errors.club_type && <p className="mt-1 text-sm text-red-600">{String(errors.club_type.message)}</p>}
+              {errors.club_type && (
+                <p className='mt-1 text-sm text-red-600'>
+                  {String(errors.club_type.message)}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Google Maps Places Autocomplete */}
           {clubType === 'existing' && (
             <div>
-              <GoogleMapsPlacesAutocomplete 
+              <GoogleMapsPlacesAutocomplete
                 onPlaceSelect={handleGooglePlaceSelect}
                 disabled={registering}
               />
@@ -331,14 +374,18 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
           {/* Existing Club Selection */}
           {clubType === 'existing' && (
             <div>
-              <Label htmlFor="existing_club_id">Chọn CLB từ danh sách</Label>
-              <Select onValueChange={(value) => setValue('existing_club_id', value)}>
+              <Label htmlFor='existing_club_id'>Chọn CLB từ danh sách</Label>
+              <Select
+                onValueChange={value => setValue('existing_club_id', value)}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn CLB" />
+                  <SelectValue placeholder='Chọn CLB' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sabo-vungtau">SABO Billiards - TP Vũng Tàu</SelectItem>
-                  {clubs.map((club) => (
+                  <SelectItem value='sabo-vungtau'>
+                    SABO Billiards - TP Vũng Tàu
+                  </SelectItem>
+                  {clubs.map(club => (
                     <SelectItem key={club.id} value={club.id}>
                       {club.name}
                     </SelectItem>
@@ -349,50 +396,64 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
           )}
 
           {/* Location */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <div>
-              <Label htmlFor="province_id">Tỉnh/Thành phố *</Label>
-              <Select onValueChange={(value) => setValue('province_id', value)}>
+              <Label htmlFor='province_id'>Tỉnh/Thành phố *</Label>
+              <Select onValueChange={value => setValue('province_id', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn tỉnh/thành" />
+                  <SelectValue placeholder='Chọn tỉnh/thành' />
                 </SelectTrigger>
                 <SelectContent>
-                  {provinces.map((province) => (
+                  {provinces.map(province => (
                     <SelectItem key={province.id} value={province.id}>
                       {province.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.province_id && <p className="mt-1 text-sm text-red-600">{String(errors.province_id.message)}</p>}
+              {errors.province_id && (
+                <p className='mt-1 text-sm text-red-600'>
+                  {String(errors.province_id.message)}
+                </p>
+              )}
             </div>
 
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="district_id">Quận/Huyện *</Label>
+                    <div className='flex items-center space-x-2'>
+                      <Label htmlFor='district_id'>Quận/Huyện *</Label>
                       {!canSelectLocation && (
-                        <Info className="w-4 h-4 text-gray-400" />
+                        <Info className='w-4 h-4 text-gray-400' />
                       )}
                     </div>
-                    <Select 
-                      onValueChange={(value) => setValue('district_id', value)}
+                    <Select
+                      onValueChange={value => setValue('district_id', value)}
                       disabled={!selectedProvince || !canSelectLocation}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={canSelectLocation ? "Chọn quận/huyện" : "Cần xác minh CLB"} />
+                        <SelectValue
+                          placeholder={
+                            canSelectLocation
+                              ? 'Chọn quận/huyện'
+                              : 'Cần xác minh CLB'
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        {districts.map((district) => (
+                        {districts.map(district => (
                           <SelectItem key={district.id} value={district.id}>
                             {district.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.district_id && <p className="mt-1 text-sm text-red-600">{String(errors.district_id.message)}</p>}
+                    {errors.district_id && (
+                      <p className='mt-1 text-sm text-red-600'>
+                        {String(errors.district_id.message)}
+                      </p>
+                    )}
                   </div>
                 </TooltipTrigger>
                 {!canSelectLocation && (
@@ -407,28 +468,38 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="ward_id">Phường/Xã *</Label>
+                    <div className='flex items-center space-x-2'>
+                      <Label htmlFor='ward_id'>Phường/Xã *</Label>
                       {!canSelectLocation && (
-                        <Info className="w-4 h-4 text-gray-400" />
+                        <Info className='w-4 h-4 text-gray-400' />
                       )}
                     </div>
-                    <Select 
-                      onValueChange={(value) => setValue('ward_id', value)}
+                    <Select
+                      onValueChange={value => setValue('ward_id', value)}
                       disabled={!selectedDistrict || !canSelectLocation}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={canSelectLocation ? "Chọn phường/xã" : "Cần xác minh CLB"} />
+                        <SelectValue
+                          placeholder={
+                            canSelectLocation
+                              ? 'Chọn phường/xã'
+                              : 'Cần xác minh CLB'
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        {wards.map((ward) => (
+                        {wards.map(ward => (
                           <SelectItem key={ward.id} value={ward.id}>
                             {ward.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.ward_id && <p className="mt-1 text-sm text-red-600">{String(errors.ward_id.message)}</p>}
+                    {errors.ward_id && (
+                      <p className='mt-1 text-sm text-red-600'>
+                        {String(errors.ward_id.message)}
+                      </p>
+                    )}
                   </div>
                 </TooltipTrigger>
                 {!canSelectLocation && (
@@ -442,96 +513,104 @@ const ClubProfileTab = ({ user, profile, onUpdate }: ClubProfileTabProps) => {
 
           {/* Address */}
           <div>
-            <Label htmlFor="address">Địa chỉ chi tiết *</Label>
+            <Label htmlFor='address'>Địa chỉ chi tiết *</Label>
             <Input
-              id="address"
+              id='address'
               {...register('address', { required: 'Vui lòng nhập địa chỉ' })}
-              placeholder="Số nhà, tên đường..."
+              placeholder='Số nhà, tên đường...'
             />
-            {errors.address && <p className="mt-1 text-sm text-red-600">{String(errors.address.message)}</p>}
+            {errors.address && (
+              <p className='mt-1 text-sm text-red-600'>
+                {String(errors.address.message)}
+              </p>
+            )}
           </div>
 
           {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <Label htmlFor="phone">Số điện thoại *</Label>
+              <Label htmlFor='phone'>Số điện thoại *</Label>
               <Input
-                id="phone"
-                type="tel"
-                {...register('phone', { 
+                id='phone'
+                type='tel'
+                {...register('phone', {
                   required: 'Vui lòng nhập số điện thoại',
                   pattern: {
                     value: /^0\d{9}$/,
-                    message: 'Số điện thoại không đúng định dạng'
-                  }
+                    message: 'Số điện thoại không đúng định dạng',
+                  },
                 })}
-                placeholder="0xxx xxx xxx"
+                placeholder='0xxx xxx xxx'
               />
-              {errors.phone && <p className="mt-1 text-sm text-red-600">{String(errors.phone.message)}</p>}
+              {errors.phone && (
+                <p className='mt-1 text-sm text-red-600'>
+                  {String(errors.phone.message)}
+                </p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor='email'>Email</Label>
               <Input
-                id="email"
-                type="email"
+                id='email'
+                type='email'
                 {...register('email')}
-                placeholder="contact@club.com"
+                placeholder='contact@club.com'
               />
             </div>
           </div>
 
           {/* Club Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <Label htmlFor="table_count">Số bàn bida</Label>
+              <Label htmlFor='table_count'>Số bàn bida</Label>
               <Input
-                id="table_count"
-                type="number"
+                id='table_count'
+                type='number'
                 {...register('table_count')}
-                placeholder="0"
-                min="0"
+                placeholder='0'
+                min='0'
               />
             </div>
 
             <div>
-              <Label htmlFor="hourly_rate">Giá giờ chơi (VNĐ)</Label>
+              <Label htmlFor='hourly_rate'>Giá giờ chơi (VNĐ)</Label>
               <Input
-                id="hourly_rate"
-                type="number"
+                id='hourly_rate'
+                type='number'
                 {...register('hourly_rate')}
-                placeholder="0"
-                min="0"
+                placeholder='0'
+                min='0'
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <Label htmlFor="description">Mô tả CLB</Label>
+            <Label htmlFor='description'>Mô tả CLB</Label>
             <Textarea
-              id="description"
+              id='description'
               {...register('description')}
-              placeholder="Giới thiệu về câu lạc bộ, tiện ích, đặc điểm..."
+              placeholder='Giới thiệu về câu lạc bộ, tiện ích, đặc điểm...'
               rows={4}
             />
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <Button
-              type="submit"
+              type='submit'
               disabled={registering}
-              className="flex items-center"
+              className='flex items-center'
             >
               {registering ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                   Đang xử lý...
                 </>
               ) : (
                 <>
-                  <Building className="w-4 h-4 mr-2" />
+                  <Building className='w-4 h-4 mr-2' />
                   {clubData ? 'Cập nhật thông tin CLB' : 'Đăng ký CLB'}
                 </>
               )}

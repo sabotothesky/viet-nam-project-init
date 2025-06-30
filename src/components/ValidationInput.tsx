@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,7 +21,7 @@ export const ValidationInput = ({
   onChange,
   validation,
   placeholder,
-  required = false
+  required = false,
 }: ValidationInputProps) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -38,7 +37,7 @@ export const ValidationInput = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);
-    
+
     if (touched && validation) {
       const errorMessage = validation(newValue);
       setError(errorMessage);
@@ -46,10 +45,10 @@ export const ValidationInput = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       <Label htmlFor={id}>
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className='text-red-500 ml-1'>*</span>}
       </Label>
       <Input
         id={id}
@@ -60,9 +59,7 @@ export const ValidationInput = ({
         placeholder={placeholder}
         className={error ? 'border-red-500' : ''}
       />
-      {error && touched && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
+      {error && touched && <p className='text-sm text-red-500'>{error}</p>}
     </div>
   );
 };

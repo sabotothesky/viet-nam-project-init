@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,24 +25,25 @@ export const FormInput: React.FC<FormInputProps> = ({
   value,
   onChange,
   register,
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={id}>
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} {required && <span className='text-red-500'>*</span>}
       </Label>
       <Input
         id={id}
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        {...(register && register(id, { required: required ? `Vui lòng nhập ${label.toLowerCase()}` : false }))}
+        onChange={e => onChange?.(e.target.value)}
+        {...(register &&
+          register(id, {
+            required: required ? `Vui lòng nhập ${label.toLowerCase()}` : false,
+          }))}
       />
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className='text-sm text-red-600'>{error}</p>}
     </div>
   );
 };

@@ -20,7 +20,9 @@ interface ChatConversation {
 }
 
 const ChatPage: React.FC = () => {
-  const [selectedChat, setSelectedChat] = useState<ChatConversation | null>(null);
+  const [selectedChat, setSelectedChat] = useState<ChatConversation | null>(
+    null
+  );
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -41,9 +43,9 @@ const ChatPage: React.FC = () => {
           avatar_url: '/avatars/player2.jpg',
           rank: 'B+',
           is_online: true,
-          last_seen: new Date()
-        }
-      ]
+          last_seen: new Date(),
+        },
+      ],
     };
     setSelectedChat(mockConversation);
   };
@@ -52,8 +54,11 @@ const ChatPage: React.FC = () => {
     setShowCreateModal(true);
   };
 
-  const handleSendMessage = (content: string, type: 'text' | 'image' | 'file' = 'text') => {
-    console.log('Sending message:', { content, type });
+  const handleSendMessage = (
+    content: string,
+    type: 'text' | 'image' | 'file' = 'text'
+  ) => {
+    // ...removed console.log('Sending message:', { content, type })
     // Send message to backend
   };
 
@@ -62,9 +67,11 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className='h-screen flex'>
       {/* Chat List - Hidden on mobile when chat is selected */}
-      <div className={`w-full md:w-80 border-r ${selectedChat ? 'hidden md:block' : 'block'}`}>
+      <div
+        className={`w-full md:w-80 border-r ${selectedChat ? 'hidden md:block' : 'block'}`}
+      >
         <ChatList
           onSelectChat={handleSelectChat}
           onCreateNewChat={handleCreateNewChat}
@@ -84,7 +91,7 @@ const ChatPage: React.FC = () => {
       <CreateChatModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        onChatCreated={(chatId) => {
+        onChatCreated={chatId => {
           setShowCreateModal(false);
           handleSelectChat(chatId);
         }}
@@ -93,4 +100,4 @@ const ChatPage: React.FC = () => {
   );
 };
 
-export default ChatPage; 
+export default ChatPage;

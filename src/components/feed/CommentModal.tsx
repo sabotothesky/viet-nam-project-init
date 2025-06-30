@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -37,7 +42,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
   onClose,
   postId,
   commentsCount,
-  onComment
+  onComment,
 }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -57,7 +62,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
               id: '1',
               username: 'player1',
               avatar_url: '/avatars/player1.jpg',
-              rank: 'A+'
+              rank: 'A+',
             },
             content: 'Trận đấu hay quá! Chúc mừng chiến thắng!',
             created_at: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
@@ -70,14 +75,14 @@ export const CommentModal: React.FC<CommentModalProps> = ({
                   id: '2',
                   username: 'player2',
                   avatar_url: '/avatars/player2.jpg',
-                  rank: 'B+'
+                  rank: 'B+',
                 },
                 content: 'Cảm ơn bạn! Trận đấu rất thú vị.',
                 created_at: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
                 likes_count: 2,
-                is_liked: true
-              }
-            ]
+                is_liked: true,
+              },
+            ],
           },
           {
             id: '2',
@@ -85,13 +90,13 @@ export const CommentModal: React.FC<CommentModalProps> = ({
               id: '3',
               username: 'pool_master',
               avatar_url: '/avatars/pool_master.jpg',
-              rank: 'G'
+              rank: 'G',
             },
             content: 'Kỹ thuật đánh rất tốt, đặc biệt là cú đánh ở frame 15.',
             created_at: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
             likes_count: 8,
-            is_liked: false
-          }
+            is_liked: false,
+          },
         ]);
         setIsLoading(false);
       }, 500);
@@ -108,28 +113,32 @@ export const CommentModal: React.FC<CommentModalProps> = ({
         author: {
           id: 'current-user',
           username: 'You',
-          rank: 'A+'
+          rank: 'A+',
         },
         content: newComment,
         created_at: new Date(),
         likes_count: 0,
-        is_liked: false
+        is_liked: false,
       };
       setComments(prev => [newCommentObj, ...prev]);
     }
   };
 
   const handleLikeComment = (commentId: string) => {
-    setComments(prev => prev.map(comment => {
-      if (comment.id === commentId) {
-        return {
-          ...comment,
-          is_liked: !comment.is_liked,
-          likes_count: comment.is_liked ? comment.likes_count - 1 : comment.likes_count + 1
-        };
-      }
-      return comment;
-    }));
+    setComments(prev =>
+      prev.map(comment => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            is_liked: !comment.is_liked,
+            likes_count: comment.is_liked
+              ? comment.likes_count - 1
+              : comment.likes_count + 1,
+          };
+        }
+        return comment;
+      })
+    );
   };
 
   const handleReply = (commentId: string) => {
@@ -143,76 +152,89 @@ export const CommentModal: React.FC<CommentModalProps> = ({
 
   const renderComment = (comment: Comment, isReply = false) => (
     <div key={comment.id} className={`flex gap-3 ${isReply ? 'ml-8' : ''}`}>
-      <Avatar className="h-8 w-8 flex-shrink-0">
+      <Avatar className='h-8 w-8 flex-shrink-0'>
         <AvatarImage src={comment.author.avatar_url} />
         <AvatarFallback>{comment.author.username[0]}</AvatarFallback>
       </Avatar>
-      
-      <div className="flex-1 min-w-0">
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-sm">{comment.author.username}</span>
-            <Badge variant="outline" className="text-xs">{comment.author.rank}</Badge>
-            <span className="text-xs text-gray-500">
-              {formatDistanceToNow(comment.created_at, { addSuffix: true, locale: vi })}
+
+      <div className='flex-1 min-w-0'>
+        <div className='bg-gray-50 rounded-lg p-3'>
+          <div className='flex items-center gap-2 mb-1'>
+            <span className='font-medium text-sm'>
+              {comment.author.username}
+            </span>
+            <Badge variant='outline' className='text-xs'>
+              {comment.author.rank}
+            </Badge>
+            <span className='text-xs text-gray-500'>
+              {formatDistanceToNow(comment.created_at, {
+                addSuffix: true,
+                locale: vi,
+              })}
             </span>
           </div>
-          
-          <p className="text-sm text-gray-800 mb-2">{comment.content}</p>
-          
-          <div className="flex items-center gap-4">
+
+          <p className='text-sm text-gray-800 mb-2'>{comment.content}</p>
+
+          <div className='flex items-center gap-4'>
             <button
               onClick={() => handleLikeComment(comment.id)}
               className={`flex items-center gap-1 text-xs ${
                 comment.is_liked ? 'text-red-500' : 'text-gray-500'
               } hover:text-red-500 transition-colors`}
             >
-              <Heart className={`h-3 w-3 ${comment.is_liked ? 'fill-current' : ''}`} />
+              <Heart
+                className={`h-3 w-3 ${comment.is_liked ? 'fill-current' : ''}`}
+              />
               <span>{comment.likes_count}</span>
             </button>
-            
+
             {!isReply && (
               <button
                 onClick={() => handleReply(comment.id)}
-                className="flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 transition-colors"
+                className='flex items-center gap-1 text-xs text-gray-500 hover:text-blue-500 transition-colors'
               >
-                <Reply className="h-3 w-3" />
+                <Reply className='h-3 w-3' />
                 <span>Trả lời</span>
               </button>
             )}
-            
+
             <button
               onClick={() => handleReportComment(comment.id)}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors"
+              className='flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors'
             >
-              <Flag className="h-3 w-3" />
+              <Flag className='h-3 w-3' />
               <span>Báo cáo</span>
             </button>
           </div>
         </div>
-        
+
         {/* Reply input */}
         {replyTo === comment.id && !isReply && (
-          <div className="mt-3 flex gap-2">
+          <div className='mt-3 flex gap-2'>
             <Input
-              placeholder="Viết trả lời..."
-              className="flex-1 text-sm"
-              onKeyPress={(e) => {
+              placeholder='Viết trả lời...'
+              className='flex-1 text-sm'
+              onKeyPress={e => {
                 if (e.key === 'Enter') {
                   // Handle reply submission
                   setReplyTo(null);
                 }
               }}
             />
-            <Button size="sm" variant="outline" onClick={() => setReplyTo(null)}>
-              <X className="h-3 w-3" />
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => setReplyTo(null)}
+            >
+              <X className='h-3 w-3' />
             </Button>
           </div>
         )}
-        
+
         {/* Replies */}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-3 space-y-3">
+          <div className='mt-3 space-y-3'>
             {comment.replies.map(reply => renderComment(reply, true))}
           </div>
         )}
@@ -222,52 +244,52 @@ export const CommentModal: React.FC<CommentModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className='max-w-2xl max-h-[80vh] flex flex-col'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className='flex items-center gap-2'>
             <span>Bình luận ({commentsCount})</span>
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="flex-1 flex flex-col">
+
+        <div className='flex-1 flex flex-col'>
           {/* Comments list */}
-          <ScrollArea className="flex-1 pr-4">
+          <ScrollArea className='flex-1 pr-4'>
             {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className='flex items-center justify-center py-8'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
               </div>
             ) : comments.length > 0 ? (
-              <div className="space-y-4">
+              <div className='space-y-4'>
                 {comments.map(comment => renderComment(comment))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className='text-center py-8 text-gray-500'>
                 Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
               </div>
             )}
           </ScrollArea>
-          
+
           {/* Comment input */}
-          <div className="border-t pt-4 mt-4">
-            <div className="flex gap-2">
+          <div className='border-t pt-4 mt-4'>
+            <div className='flex gap-2'>
               <Input
-                placeholder="Viết bình luận..."
+                placeholder='Viết bình luận...'
                 value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                onKeyPress={(e) => {
+                onChange={e => setNewComment(e.target.value)}
+                onKeyPress={e => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmitComment();
                   }
                 }}
-                className="flex-1"
+                className='flex-1'
               />
               <Button
                 onClick={handleSubmitComment}
                 disabled={!newComment.trim()}
-                size="sm"
+                size='sm'
               >
-                <Send className="h-4 w-4" />
+                <Send className='h-4 w-4' />
               </Button>
             </div>
           </div>
@@ -275,4 +297,4 @@ export const CommentModal: React.FC<CommentModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-}; 
+};

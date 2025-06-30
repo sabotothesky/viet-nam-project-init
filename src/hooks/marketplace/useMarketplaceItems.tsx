@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MarketplaceItem } from './types';
@@ -21,7 +20,7 @@ export const useMarketplaceItems = () => {
   const fetchItems = async (filters?: ItemFilters) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       let query = supabase
         .from('marketplace_items')
@@ -34,7 +33,9 @@ export const useMarketplaceItems = () => {
       }
 
       if (filters?.search) {
-        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,brand.ilike.%${filters.search}%`);
+        query = query.or(
+          `title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,brand.ilike.%${filters.search}%`
+        );
       }
 
       if (filters?.priceRange) {
@@ -53,12 +54,13 @@ export const useMarketplaceItems = () => {
 
       // Fetch seller information separately for each item
       const enhancedItems: MarketplaceItem[] = [];
-      
+
       for (const item of itemsData || []) {
         // Fetch seller profile information
         const { data: sellerData } = await supabase
           .from('profiles')
-          .select(`
+          .select(
+            `
             id,
             full_name,
             nickname,
@@ -66,28 +68,31 @@ export const useMarketplaceItems = () => {
             club_id,
             province_id,
             provinces:province_id(name, region)
-          `)
+          `
+          )
           .eq('user_id', item.seller_id)
           .single();
 
         const enhancedItem: MarketplaceItem = {
           ...item,
           shipping_available: Math.random() > 0.7, // Mock shipping availability
-          seller: sellerData ? {
-            id: sellerData.id,
-            full_name: sellerData.full_name,
-            nickname: sellerData.nickname,
-            avatar_url: sellerData.avatar_url,
-            club_id: sellerData.club_id,
-            province_id: sellerData.province_id,
-            provinces: sellerData.provinces || null,
-            total_items: Math.floor(Math.random() * 20) + 1,
-            avg_response_time: Math.floor(Math.random() * 5) + 1
-          } : null,
+          seller: sellerData
+            ? {
+                id: sellerData.id,
+                full_name: sellerData.full_name,
+                nickname: sellerData.nickname,
+                avatar_url: sellerData.avatar_url,
+                club_id: sellerData.club_id,
+                province_id: sellerData.province_id,
+                provinces: sellerData.provinces || null,
+                total_items: Math.floor(Math.random() * 20) + 1,
+                avg_response_time: Math.floor(Math.random() * 5) + 1,
+              }
+            : null,
           marketplace_reviews: [],
           images: item.images || [],
           views_count: item.views_count || 0,
-          favorites_count: item.favorites_count || 0
+          favorites_count: item.favorites_count || 0,
         };
 
         enhancedItems.push(enhancedItem);
@@ -115,8 +120,8 @@ export const useMarketplaceItems = () => {
       // Update with incremented count
       const { error } = await supabase
         .from('marketplace_items')
-        .update({ 
-          views_count: (currentItem.views_count || 0) + 1
+        .update({
+          views_count: (currentItem.views_count || 0) + 1,
         })
         .eq('id', itemId);
 
@@ -131,6 +136,6 @@ export const useMarketplaceItems = () => {
     loading,
     error,
     fetchItems,
-    incrementViews
+    incrementViews,
   };
 };

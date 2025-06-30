@@ -1,10 +1,15 @@
-
 import React from 'react';
 import { Button as ShadcnButton } from '@/components/ui/button';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
   disabled?: boolean;

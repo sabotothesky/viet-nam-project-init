@@ -82,14 +82,14 @@ export const usePayment = (userId?: string) => {
   // Fetch wallet
   const fetchWallet = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const mockWallet: Wallet = {
         id: '1',
         user_id: userId,
@@ -98,12 +98,14 @@ export const usePayment = (userId?: string) => {
         total_deposits: 5000000,
         total_withdrawals: 1500000,
         total_transfers: 1000000,
-        last_updated: new Date()
+        last_updated: new Date(),
       };
-      
+
       setWallet(mockWallet);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải thông tin ví');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải thông tin ví'
+      );
     } finally {
       setLoading(false);
     }
@@ -112,14 +114,14 @@ export const usePayment = (userId?: string) => {
   // Fetch transactions
   const fetchTransactions = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock payment methods
       const mockPaymentMethods: PaymentMethod[] = [
         {
@@ -131,13 +133,13 @@ export const usePayment = (userId?: string) => {
           is_enabled: true,
           fees: {
             percentage: 0,
-            fixed: 0
+            fixed: 0,
           },
           processing_time: '1-2 giờ',
           limits: {
             min: 50000,
-            max: 100000000
-          }
+            max: 100000000,
+          },
         },
         {
           id: '2',
@@ -148,13 +150,13 @@ export const usePayment = (userId?: string) => {
           is_enabled: true,
           fees: {
             percentage: 0.5,
-            fixed: 0
+            fixed: 0,
           },
           processing_time: '5-10 phút',
           limits: {
             min: 10000,
-            max: 50000000
-          }
+            max: 50000000,
+          },
         },
         {
           id: '3',
@@ -165,13 +167,13 @@ export const usePayment = (userId?: string) => {
           is_enabled: true,
           fees: {
             percentage: 0,
-            fixed: 0
+            fixed: 0,
           },
           processing_time: 'Tức thì',
           limits: {
             min: 1000,
-            max: 10000000
-          }
+            max: 10000000,
+          },
         },
         {
           id: '4',
@@ -182,18 +184,18 @@ export const usePayment = (userId?: string) => {
           is_enabled: false,
           fees: {
             percentage: 2.5,
-            fixed: 0
+            fixed: 0,
           },
           processing_time: '1-3 ngày',
           limits: {
             min: 100000,
-            max: 50000000
-          }
-        }
+            max: 50000000,
+          },
+        },
       ];
-      
+
       setPaymentMethods(mockPaymentMethods);
-      
+
       // Mock transactions
       const mockTransactions: Transaction[] = [
         {
@@ -211,7 +213,7 @@ export const usePayment = (userId?: string) => {
           net_amount: 1000000,
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
           updated_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
-          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2)
+          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
         },
         {
           id: '2',
@@ -228,7 +230,7 @@ export const usePayment = (userId?: string) => {
           net_amount: 500000,
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
           updated_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
-          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5)
+          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5),
         },
         {
           id: '3',
@@ -245,11 +247,11 @@ export const usePayment = (userId?: string) => {
           net_amount: 100500,
           metadata: {
             tournament_id: '1',
-            tournament_name: 'Giải đấu mùa xuân 2024'
+            tournament_name: 'Giải đấu mùa xuân 2024',
           },
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1),
           updated_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1),
-          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1)
+          completed_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1),
         },
         {
           id: '4',
@@ -266,132 +268,164 @@ export const usePayment = (userId?: string) => {
           net_amount: 200000,
           metadata: {
             recipient_id: '2',
-            recipient_username: 'player2'
+            recipient_username: 'player2',
           },
           created_at: new Date(Date.now() - 1000 * 60 * 60 * 2),
-          updated_at: new Date(Date.now() - 1000 * 60 * 60 * 2)
-        }
+          updated_at: new Date(Date.now() - 1000 * 60 * 60 * 2),
+        },
       ];
-      
+
       setTransactions(mockTransactions);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải lịch sử giao dịch');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải lịch sử giao dịch'
+      );
     } finally {
       setLoading(false);
     }
   }, [userId]);
 
   // Create transaction
-  const createTransaction = useCallback(async (data: CreateTransactionData) => {
-    if (!userId || !wallet) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const paymentMethod = paymentMethods.find(pm => pm.id === data.payment_method_id);
-      if (!paymentMethod) {
-        throw new Error('Phương thức thanh toán không hợp lệ');
-      }
-      
-      const fees = (data.amount * paymentMethod.fees.percentage / 100) + paymentMethod.fees.fixed;
-      const netAmount = data.amount + fees;
-      
-      const newTransaction: Transaction = {
-        id: Date.now().toString(),
-        user_id: userId,
-        type: data.type,
-        amount: data.amount,
-        currency: data.currency,
-        payment_method_id: data.payment_method_id,
-        payment_method: paymentMethod,
-        status: 'pending',
-        description: data.description,
-        reference_id: `${data.type.toUpperCase()}${Date.now()}`,
-        fees,
-        net_amount: netAmount,
-        metadata: data.metadata,
-        created_at: new Date(),
-        updated_at: new Date()
-      };
-      
-      setTransactions(prev => [newTransaction, ...prev]);
-      
-      // Update wallet balance for certain transaction types
-      if (data.type === 'deposit') {
-        setWallet(prev => prev ? {
-          ...prev,
-          balance: prev.balance + data.amount,
-          total_deposits: prev.total_deposits + data.amount,
-          last_updated: new Date()
-        } : null);
-      } else if (data.type === 'withdrawal') {
-        if (wallet.balance < data.amount) {
-          throw new Error('Số dư không đủ');
+  const createTransaction = useCallback(
+    async (data: CreateTransactionData) => {
+      if (!userId || !wallet) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const paymentMethod = paymentMethods.find(
+          pm => pm.id === data.payment_method_id
+        );
+        if (!paymentMethod) {
+          throw new Error('Phương thức thanh toán không hợp lệ');
         }
-        setWallet(prev => prev ? {
-          ...prev,
-          balance: prev.balance - data.amount,
-          total_withdrawals: prev.total_withdrawals + data.amount,
-          last_updated: new Date()
-        } : null);
+
+        const fees =
+          (data.amount * paymentMethod.fees.percentage) / 100 +
+          paymentMethod.fees.fixed;
+        const netAmount = data.amount + fees;
+
+        const newTransaction: Transaction = {
+          id: Date.now().toString(),
+          user_id: userId,
+          type: data.type,
+          amount: data.amount,
+          currency: data.currency,
+          payment_method_id: data.payment_method_id,
+          payment_method: paymentMethod,
+          status: 'pending',
+          description: data.description,
+          reference_id: `${data.type.toUpperCase()}${Date.now()}`,
+          fees,
+          net_amount: netAmount,
+          metadata: data.metadata,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+
+        setTransactions(prev => [newTransaction, ...prev]);
+
+        // Update wallet balance for certain transaction types
+        if (data.type === 'deposit') {
+          setWallet(prev =>
+            prev
+              ? {
+                  ...prev,
+                  balance: prev.balance + data.amount,
+                  total_deposits: prev.total_deposits + data.amount,
+                  last_updated: new Date(),
+                }
+              : null
+          );
+        } else if (data.type === 'withdrawal') {
+          if (wallet.balance < data.amount) {
+            throw new Error('Số dư không đủ');
+          }
+          setWallet(prev =>
+            prev
+              ? {
+                  ...prev,
+                  balance: prev.balance - data.amount,
+                  total_withdrawals: prev.total_withdrawals + data.amount,
+                  last_updated: new Date(),
+                }
+              : null
+          );
+        }
+
+        return newTransaction;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể tạo giao dịch'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      
-      return newTransaction;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tạo giao dịch');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, wallet, paymentMethods]);
+    },
+    [userId, wallet, paymentMethods]
+  );
 
   // Get transaction by ID
-  const getTransactionById = useCallback((transactionId: string) => {
-    return transactions.find(transaction => transaction.id === transactionId);
-  }, [transactions]);
+  const getTransactionById = useCallback(
+    (transactionId: string) => {
+      return transactions.find(transaction => transaction.id === transactionId);
+    },
+    [transactions]
+  );
 
   // Get transactions by type
-  const getTransactionsByType = useCallback((type: Transaction['type']) => {
-    return transactions.filter(transaction => transaction.type === type);
-  }, [transactions]);
+  const getTransactionsByType = useCallback(
+    (type: Transaction['type']) => {
+      return transactions.filter(transaction => transaction.type === type);
+    },
+    [transactions]
+  );
 
   // Get transactions by status
-  const getTransactionsByStatus = useCallback((status: Transaction['status']) => {
-    return transactions.filter(transaction => transaction.status === status);
-  }, [transactions]);
+  const getTransactionsByStatus = useCallback(
+    (status: Transaction['status']) => {
+      return transactions.filter(transaction => transaction.status === status);
+    },
+    [transactions]
+  );
 
   // Get recent transactions
-  const getRecentTransactions = useCallback((limit: number = 10) => {
-    return transactions
-      .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
-      .slice(0, limit);
-  }, [transactions]);
+  const getRecentTransactions = useCallback(
+    (limit: number = 10) => {
+      return transactions
+        .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+        .slice(0, limit);
+    },
+    [transactions]
+  );
 
   // Get transaction statistics
   const getTransactionStats = useCallback(() => {
     if (!transactions.length) return null;
-    
-    const completedTransactions = transactions.filter(t => t.status === 'completed');
+
+    const completedTransactions = transactions.filter(
+      t => t.status === 'completed'
+    );
     const totalDeposits = completedTransactions
       .filter(t => t.type === 'deposit')
       .reduce((sum, t) => sum + t.amount, 0);
     const totalWithdrawals = completedTransactions
       .filter(t => t.type === 'withdrawal')
       .reduce((sum, t) => sum + t.amount, 0);
-    const totalFees = completedTransactions
-      .reduce((sum, t) => sum + t.fees, 0);
-    
+    const totalFees = completedTransactions.reduce((sum, t) => sum + t.fees, 0);
+
     return {
       total_transactions: transactions.length,
       completed_transactions: completedTransactions.length,
       total_deposits,
       total_withdrawals,
       total_fees: totalFees,
-      success_rate: completedTransactions.length / transactions.length
+      success_rate: completedTransactions.length / transactions.length,
     };
   }, [transactions]);
 
@@ -401,20 +435,35 @@ export const usePayment = (userId?: string) => {
   }, [paymentMethods]);
 
   // Calculate fees for a transaction
-  const calculateFees = useCallback((amount: number, paymentMethodId: string) => {
-    const paymentMethod = paymentMethods.find(pm => pm.id === paymentMethodId);
-    if (!paymentMethod) return 0;
-    
-    return (amount * paymentMethod.fees.percentage / 100) + paymentMethod.fees.fixed;
-  }, [paymentMethods]);
+  const calculateFees = useCallback(
+    (amount: number, paymentMethodId: string) => {
+      const paymentMethod = paymentMethods.find(
+        pm => pm.id === paymentMethodId
+      );
+      if (!paymentMethod) return 0;
+
+      return (
+        (amount * paymentMethod.fees.percentage) / 100 +
+        paymentMethod.fees.fixed
+      );
+    },
+    [paymentMethods]
+  );
 
   // Check if amount is within limits
-  const checkAmountLimits = useCallback((amount: number, paymentMethodId: string) => {
-    const paymentMethod = paymentMethods.find(pm => pm.id === paymentMethodId);
-    if (!paymentMethod) return false;
-    
-    return amount >= paymentMethod.limits.min && amount <= paymentMethod.limits.max;
-  }, [paymentMethods]);
+  const checkAmountLimits = useCallback(
+    (amount: number, paymentMethodId: string) => {
+      const paymentMethod = paymentMethods.find(
+        pm => pm.id === paymentMethodId
+      );
+      if (!paymentMethod) return false;
+
+      return (
+        amount >= paymentMethod.limits.min && amount <= paymentMethod.limits.max
+      );
+    },
+    [paymentMethods]
+  );
 
   useEffect(() => {
     fetchWallet();
@@ -437,6 +486,6 @@ export const usePayment = (userId?: string) => {
     getTransactionStats,
     getAvailablePaymentMethods,
     calculateFees,
-    checkAmountLimits
+    checkAmountLimits,
   };
 };

@@ -1,2 +1,2 @@
 export { TournamentCreator } from './TournamentCreator';
-export { TournamentBracket } from './TournamentBracket'; 
+export { TournamentBracket } from './TournamentBracket';

@@ -74,7 +74,7 @@ export const DEFAULT_ELO_CONFIG: EloConfig = {
   upsetMultiplier: 1.3,
   qualityMatchBonus: 0.15,
   consistencyBonus: 0.1,
-  formBonus: 0.05
+  formBonus: 0.05,
 };
 
 /**
@@ -105,8 +105,20 @@ export const calculateEloRating = (
   const baseChange2 = k2 * (actual2 - expected2);
 
   // 5. Calculate advanced bonus factors
-  const bonus1 = calculateAdvancedBonus(player1, player2, match, actual1, config);
-  const bonus2 = calculateAdvancedBonus(player2, player1, match, actual2, config);
+  const bonus1 = calculateAdvancedBonus(
+    player1,
+    player2,
+    match,
+    actual1,
+    config
+  );
+  const bonus2 = calculateAdvancedBonus(
+    player2,
+    player1,
+    match,
+    actual2,
+    config
+  );
 
   // 6. Calculate volatility adjustments
   const volatility1 = calculateVolatilityAdjustment(player1, baseChange1);
@@ -115,14 +127,18 @@ export const calculateEloRating = (
   // 7. Calculate final ratings with bounds
   const totalChange1 = baseChange1 + bonus1 + volatility1;
   const totalChange2 = baseChange2 + bonus2 + volatility2;
-  
-  const newRating1 = Math.max(config.ratingFloor, 
-    Math.min(config.ratingCeiling, 
+
+  const newRating1 = Math.max(
+    config.ratingFloor,
+    Math.min(
+      config.ratingCeiling,
       Math.round(player1.current_rating + totalChange1)
     )
   );
-  const newRating2 = Math.max(config.ratingFloor, 
-    Math.min(config.ratingCeiling, 
+  const newRating2 = Math.max(
+    config.ratingFloor,
+    Math.min(
+      config.ratingCeiling,
       Math.round(player2.current_rating + totalChange2)
     )
   );
@@ -147,7 +163,7 @@ export const calculateEloRating = (
     volatility_player1: Math.round(volatility1),
     volatility_player2: Math.round(volatility2),
     confidence_interval: confidence,
-    match_quality_score: matchQuality
+    match_quality_score: matchQuality,
   };
 };
 
@@ -155,8 +171,8 @@ export const calculateEloRating = (
  * Dynamic K-factor calculation based on multiple factors
  */
 export const getDynamicKFactor = (
-  player: PlayerStats, 
-  match: EloMatch, 
+  player: PlayerStats,
+  match: EloMatch,
   config: EloConfig
 ): number => {
   let kFactor = config.baseKFactor;
@@ -181,13 +197,16 @@ export const getDynamicKFactor = (
 
   // Challenge multiplier based on bet amount
   if (match.match_type === 'challenge' && match.challenge_bet) {
-    const betMultiplier = Math.min(1.5, 1 + (match.challenge_bet / 1000));
+    const betMultiplier = Math.min(1.5, 1 + match.challenge_bet / 1000);
     kFactor = Math.round(kFactor * betMultiplier);
   }
 
   // Streak multiplier
   if (player.current_streak > 3) {
-    const streakMultiplier = Math.min(config.streakMultiplier, 1 + (player.current_streak * 0.1));
+    const streakMultiplier = Math.min(
+      config.streakMultiplier,
+      1 + player.current_streak * 0.1
+    );
     kFactor = Math.round(kFactor * streakMultiplier);
   }
 
@@ -204,7 +223,7 @@ export const getDynamicKFactor = (
  */
 export const adjustRatingForForm = (player: PlayerStats): number => {
   if (!player.recent_form) return player.current_rating;
-  
+
   // Adjust rating by up to ±50 points based on form
   const formAdjustment = (player.recent_form / 100) * 50;
   return player.current_rating + formAdjustment;
@@ -248,7 +267,9 @@ export const calculateAdvancedBonus = (
   // 3. Quality match bonus
   if (match.is_quality_match && match.quality_score) {
     const qualityMultiplier = match.quality_score / 10;
-    bonus += Math.round(baseRating * config.qualityMatchBonus * qualityMultiplier);
+    bonus += Math.round(
+      baseRating * config.qualityMatchBonus * qualityMultiplier
+    );
   }
 
   // 4. Upset bonus (beating higher rated player)
@@ -256,7 +277,9 @@ export const calculateAdvancedBonus = (
     const ratingDiff = opponent.current_rating - player.current_rating;
     if (ratingDiff > 100) {
       const upsetMultiplier = Math.min(0.2, ratingDiff / 1000);
-      bonus += Math.round(ratingDiff * upsetMultiplier * config.upsetMultiplier);
+      bonus += Math.round(
+        ratingDiff * upsetMultiplier * config.upsetMultiplier
+      );
     }
   }
 
@@ -283,11 +306,11 @@ export const calculateAdvancedBonus = (
  * Volatility adjustment based on player history
  */
 export const calculateVolatilityAdjustment = (
-  player: PlayerStats, 
+  player: PlayerStats,
   baseChange: number
 ): number => {
   if (!player.rating_volatility) return 0;
-  
+
   // Higher volatility players get more extreme changes
   const volatilityFactor = Math.min(1.5, player.rating_volatility / 100);
   return Math.round(baseChange * (volatilityFactor - 1));
@@ -298,11 +321,16 @@ export const calculateVolatilityAdjustment = (
  */
 export const getTournamentTierMultiplier = (tier?: string): number => {
   switch (tier) {
-    case 'international': return 2.0;
-    case 'national': return 1.5;
-    case 'regional': return 1.3;
-    case 'local': return 1.1;
-    default: return 1.2;
+    case 'international':
+      return 2.0;
+    case 'national':
+      return 1.5;
+    case 'regional':
+      return 1.3;
+    case 'local':
+      return 1.1;
+    default:
+      return 1.2;
   }
 };
 
@@ -319,7 +347,8 @@ export const calculateMatchQuality = (
 
   // Rating difference factor
   const ratingDiff = Math.abs(player1.current_rating - player2.current_rating);
-  if (ratingDiff < 100) quality += 2; // Close match
+  if (ratingDiff < 100)
+    quality += 2; // Close match
   else if (ratingDiff < 300) quality += 1; // Moderate difference
 
   // Upset factor
@@ -365,18 +394,18 @@ export const calculateConfidenceInterval = (
  */
 export const getRankFromRating = (rating: number): string => {
   if (rating >= 2800) return 'S+'; // Legendary
-  if (rating >= 2600) return 'S';  // Master
+  if (rating >= 2600) return 'S'; // Master
   if (rating >= 2400) return 'G+'; // Elite
-  if (rating >= 2200) return 'G';  // Expert
+  if (rating >= 2200) return 'G'; // Expert
   if (rating >= 2000) return 'A+'; // Advanced
-  if (rating >= 1800) return 'A';  // Intermediate+
+  if (rating >= 1800) return 'A'; // Intermediate+
   if (rating >= 1600) return 'B+'; // Intermediate
-  if (rating >= 1400) return 'B';  // Beginner+
+  if (rating >= 1400) return 'B'; // Beginner+
   if (rating >= 1200) return 'C+'; // Beginner
-  if (rating >= 1000) return 'C';  // Novice+
-  if (rating >= 800) return 'D+';  // Novice
-  if (rating >= 600) return 'D';   // Rookie+
-  if (rating >= 400) return 'E+';  // Rookie
+  if (rating >= 1000) return 'C'; // Novice+
+  if (rating >= 800) return 'D+'; // Novice
+  if (rating >= 600) return 'D'; // Rookie+
+  if (rating >= 400) return 'E+'; // Rookie
   return 'E'; // Newcomer
 };
 
@@ -385,21 +414,36 @@ export const getRankFromRating = (rating: number): string => {
  */
 export const getRatingFromRank = (rank: string): number => {
   switch (rank) {
-    case 'S+': return 2800;
-    case 'S': return 2600;
-    case 'G+': return 2400;
-    case 'G': return 2200;
-    case 'A+': return 2000;
-    case 'A': return 1800;
-    case 'B+': return 1600;
-    case 'B': return 1400;
-    case 'C+': return 1200;
-    case 'C': return 1000;
-    case 'D+': return 800;
-    case 'D': return 600;
-    case 'E+': return 400;
-    case 'E': return 200;
-    default: return 1000;
+    case 'S+':
+      return 2800;
+    case 'S':
+      return 2600;
+    case 'G+':
+      return 2400;
+    case 'G':
+      return 2200;
+    case 'A+':
+      return 2000;
+    case 'A':
+      return 1800;
+    case 'B+':
+      return 1600;
+    case 'B':
+      return 1400;
+    case 'C+':
+      return 1200;
+    case 'C':
+      return 1000;
+    case 'D+':
+      return 800;
+    case 'D':
+      return 600;
+    case 'E+':
+      return 400;
+    case 'E':
+      return 200;
+    default:
+      return 1000;
   }
 };
 
@@ -421,20 +465,22 @@ export const calculatePerformanceRating = (
 ): number => {
   const total = wins + losses;
   if (total === 0) return 1000;
-  
+
   const winRate = wins / total;
   const performanceRating = averageOpponentRating + 400 * (winRate - 0.5);
-  
+
   // Adjust for recent form
   const recentWeight = Math.min(1, total / recentMatches);
-  return Math.round(performanceRating * recentWeight + 1000 * (1 - recentWeight));
+  return Math.round(
+    performanceRating * recentWeight + 1000 * (1 - recentWeight)
+  );
 };
 
 /**
  * Enhanced upset detection
  */
 export const isUpset = (winnerRating: number, loserRating: number): boolean => {
-  return winnerRating < loserRating && (loserRating - winnerRating) > 150;
+  return winnerRating < loserRating && loserRating - winnerRating > 150;
 };
 
 /**
@@ -442,15 +488,16 @@ export const isUpset = (winnerRating: number, loserRating: number): boolean => {
  */
 export const calculateVolatility = (ratingHistory: number[]): number => {
   if (ratingHistory.length < 3) return 0;
-  
+
   const changes = [];
   for (let i = 1; i < ratingHistory.length; i++) {
     changes.push(Math.abs(ratingHistory[i] - ratingHistory[i - 1]));
   }
-  
+
   const mean = changes.reduce((a, b) => a + b, 0) / changes.length;
-  const variance = changes.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / changes.length;
-  
+  const variance =
+    changes.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / changes.length;
+
   return Math.round(Math.sqrt(variance));
 };
 
@@ -462,10 +509,10 @@ export const calculateRecentForm = (
   maxMatches: number = 10
 ): number => {
   if (recentResults.length === 0) return 0;
-  
+
   const recent = recentResults.slice(-maxMatches);
   let form = 0;
-  
+
   recent.forEach(result => {
     if (result.won) {
       form += 10 + Math.max(0, result.ratingChange / 10);
@@ -473,7 +520,7 @@ export const calculateRecentForm = (
       form -= 10 + Math.max(0, -result.ratingChange / 10);
     }
   });
-  
+
   return Math.max(-100, Math.min(100, form / recent.length));
 };
 
@@ -482,10 +529,10 @@ export const calculateRecentForm = (
  */
 export const calculateConsistencyScore = (ratingHistory: number[]): number => {
   if (ratingHistory.length < 5) return 50;
-  
+
   const volatility = calculateVolatility(ratingHistory);
-  const consistency = Math.max(0, 100 - (volatility / 2));
-  
+  const consistency = Math.max(0, 100 - volatility / 2);
+
   return Math.round(consistency);
 };
 
@@ -506,30 +553,39 @@ export const predictMatchResult = (
   recommendedBet?: number;
 } => {
   // Adjust ratings for form
-  const adjustedRating1 = player1Stats ? adjustRatingForForm(player1Stats) : player1Rating;
-  const adjustedRating2 = player2Stats ? adjustRatingForForm(player2Stats) : player2Rating;
-  
+  const adjustedRating1 = player1Stats
+    ? adjustRatingForForm(player1Stats)
+    : player1Rating;
+  const adjustedRating2 = player2Stats
+    ? adjustRatingForForm(player2Stats)
+    : player2Rating;
+
   const p1Expected = getExpectedScore(adjustedRating1, adjustedRating2);
   const p2Expected = 1 - p1Expected;
-  
+
   // Calculate confidence based on experience
-  const totalMatches = (player1Stats?.matches_played || 0) + (player2Stats?.matches_played || 0);
-  const confidence = Math.min(0.95, 0.7 + (totalMatches / 1000));
-  
+  const totalMatches =
+    (player1Stats?.matches_played || 0) + (player2Stats?.matches_played || 0);
+  const confidence = Math.min(0.95, 0.7 + totalMatches / 1000);
+
   // Calculate upset potential
   const ratingDiff = Math.abs(adjustedRating1 - adjustedRating2);
   const upsetPotential = Math.max(0, (ratingDiff - 200) / 100);
-  
+
   // Calculate recommended bet for challenges
-  const recommendedBet = calculateRecommendedBet(adjustedRating1, adjustedRating2, p1Expected);
-  
+  const recommendedBet = calculateRecommendedBet(
+    adjustedRating1,
+    adjustedRating2,
+    p1Expected
+  );
+
   return {
     player1WinProbability: Math.round(p1Expected * 100),
     player2WinProbability: Math.round(p2Expected * 100),
     expectedScore: `${Math.round(p1Expected * 10)}-${Math.round(p2Expected * 10)}`,
     confidence: Math.round(confidence * 100),
     upsetPotential: Math.round(upsetPotential * 100),
-    recommendedBet
+    recommendedBet,
   };
 };
 
@@ -543,10 +599,11 @@ export const calculateRecommendedBet = (
 ): number => {
   const ratingDiff = Math.abs(rating1 - rating2);
   const baseBet = Math.max(100, Math.min(1000, ratingDiff * 2));
-  
+
   // Adjust based on expected win rate
-  const winRateAdjustment = expectedWinRate > 0.6 ? 1.2 : expectedWinRate < 0.4 ? 0.8 : 1;
-  
+  const winRateAdjustment =
+    expectedWinRate > 0.6 ? 1.2 : expectedWinRate < 0.4 ? 0.8 : 1;
+
   return Math.round(baseBet * winRateAdjustment);
 };
 
@@ -561,7 +618,7 @@ export const updatePlayerStats = (
 ): PlayerStats => {
   const newStreak = isWinner ? player.current_streak + 1 : 0;
   const newRating = player.current_rating + ratingChange;
-  
+
   return {
     ...player,
     current_rating: newRating,
@@ -569,7 +626,7 @@ export const updatePlayerStats = (
     current_streak: newStreak,
     last_match_date: match.match_date,
     highest_rating: Math.max(player.highest_rating || newRating, newRating),
-    lowest_rating: Math.min(player.lowest_rating || newRating, newRating)
+    lowest_rating: Math.min(player.lowest_rating || newRating, newRating),
   };
 };
 
@@ -588,7 +645,9 @@ export const calculateEloEfficiency = (
 /**
  * Get rank progression path
  */
-export const getRankProgression = (currentRating: number): {
+export const getRankProgression = (
+  currentRating: number
+): {
   currentRank: string;
   nextRank: string;
   pointsToNext: number;
@@ -597,14 +656,14 @@ export const getRankProgression = (currentRating: number): {
   const currentRank = getRankFromRating(currentRating);
   const nextRankRating = getRatingFromRank(currentRank) + 200;
   const pointsToNext = nextRankRating - currentRating;
-  
+
   // Estimate matches needed (assuming average 15 points per match)
   const estimatedMatches = Math.ceil(pointsToNext / 15);
-  
+
   return {
     currentRank,
     nextRank: getRankFromRating(nextRankRating),
     pointsToNext,
-    estimatedMatches
+    estimatedMatches,
   };
-}; 
+};

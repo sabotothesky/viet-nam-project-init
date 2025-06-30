@@ -1,7 +1,12 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Camera, User } from 'lucide-react';
 
 interface AvatarSelectorProps {
@@ -9,7 +14,10 @@ interface AvatarSelectorProps {
   onAvatarSelect: (avatarUrl: string) => void;
 }
 
-const AvatarSelector = ({ currentAvatar, onAvatarSelect }: AvatarSelectorProps) => {
+const AvatarSelector = ({
+  currentAvatar,
+  onAvatarSelect,
+}: AvatarSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Chibi billiard character avatars
@@ -36,36 +44,36 @@ const AvatarSelector = ({ currentAvatar, onAvatarSelect }: AvatarSelectorProps) 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <Camera className="h-4 w-4" />
+        <Button variant='outline' size='sm' className='flex items-center gap-2'>
+          <Camera className='h-4 w-4' />
           Thay đổi ảnh
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className='max-w-2xl'>
         <DialogHeader>
           <DialogTitle>Chọn Avatar Chibi Bida</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-4 gap-4 p-4">
+        <div className='grid grid-cols-4 gap-4 p-4'>
           {avatarOptions.map((avatar, index) => (
             <button
               key={index}
               onClick={() => handleAvatarSelect(avatar)}
               className={`relative rounded-lg overflow-hidden border-2 transition-all hover:scale-105 ${
-                currentAvatar === avatar 
-                  ? 'border-blue-500 ring-2 ring-blue-200' 
+                currentAvatar === avatar
+                  ? 'border-blue-500 ring-2 ring-blue-200'
                   : 'border-gray-200 hover:border-blue-300'
               }`}
             >
               <img
                 src={avatar}
                 alt={`Avatar ${index + 1}`}
-                className="w-full h-20 object-cover"
+                className='w-full h-20 object-cover'
               />
             </button>
           ))}
         </div>
-        <div className="flex justify-center pt-4">
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+        <div className='flex justify-center pt-4'>
+          <Button variant='outline' onClick={() => setIsOpen(false)}>
             Đóng
           </Button>
         </div>

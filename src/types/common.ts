@@ -326,7 +326,13 @@ export interface CardProps extends BaseComponentProps {
 }
 
 export interface ButtonProps extends BaseComponentProps {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   disabled?: boolean;
   loading?: boolean;
@@ -348,8 +354,17 @@ export interface InputProps extends BaseComponentProps {
 export interface UseAuthReturn {
   user: UserProfile | null;
   session: any | null;
-  signUp: (email: string, password: string, fullName: string, phone: string, clubId?: string) => Promise<{ error: ApiError | null }>;
-  signIn: (emailOrPhone: string, password: string) => Promise<{ error: ApiError | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string,
+    clubId?: string
+  ) => Promise<{ error: ApiError | null }>;
+  signIn: (
+    emailOrPhone: string,
+    password: string
+  ) => Promise<{ error: ApiError | null }>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -367,4 +382,4 @@ export interface UseMutationReturn<T, V> {
   loading: boolean;
   error: string | null;
   reset: () => void;
-} 
+}

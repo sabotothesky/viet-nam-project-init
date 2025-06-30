@@ -9,14 +9,15 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const PWAInstallPrompt = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
     const handler = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      
+
       // Show prompt after user has been active for 30 seconds
       setTimeout(() => {
         if (!localStorage.getItem('pwa-install-dismissed')) {
@@ -34,11 +35,11 @@ const PWAInstallPrompt = () => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
-      console.log('PWA installed');
+      // ...removed console.log('PWA installed')
     }
-    
+
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
@@ -51,22 +52,22 @@ const PWAInstallPrompt = () => {
   if (!showPrompt || !deferredPrompt) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 md:bottom-4 md:left-auto md:right-4 md:max-w-sm">
-      <Card className="shadow-lg">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-1">
-              <h3 className="font-semibold text-sm mb-1">Cài đặt SABO POOL</h3>
-              <p className="text-xs text-gray-600 mb-3">
+    <div className='fixed bottom-20 left-4 right-4 z-50 md:bottom-4 md:left-auto md:right-4 md:max-w-sm'>
+      <Card className='shadow-lg'>
+        <CardContent className='p-4'>
+          <div className='flex items-start gap-3'>
+            <div className='flex-1'>
+              <h3 className='font-semibold text-sm mb-1'>Cài đặt SABO POOL</h3>
+              <p className='text-xs text-gray-600 mb-3'>
                 Thêm vào màn hình chính để truy cập nhanh hơn
               </p>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleInstall} className="flex-1">
-                  <Download className="h-4 w-4 mr-1" />
+              <div className='flex gap-2'>
+                <Button size='sm' onClick={handleInstall} className='flex-1'>
+                  <Download className='h-4 w-4 mr-1' />
                   Cài đặt
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleDismiss}>
-                  <X className="h-4 w-4" />
+                <Button size='sm' variant='outline' onClick={handleDismiss}>
+                  <X className='h-4 w-4' />
                 </Button>
               </div>
             </div>

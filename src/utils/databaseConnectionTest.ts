@@ -23,35 +23,38 @@ export interface DatabaseConnectionReport {
 class DatabaseConnectionTester {
   private results: ConnectionTestResult[] = [];
 
-  private async runTest(testName: string, testFn: () => Promise<any>): Promise<ConnectionTestResult> {
+  private async runTest(
+    testName: string,
+    testFn: () => Promise<any>
+  ): Promise<ConnectionTestResult> {
     const startTime = Date.now();
     const timestamp = new Date().toISOString();
-    
+
     try {
       const data = await testFn();
       const duration = Date.now() - startTime;
-      
+
       const result: ConnectionTestResult = {
         test: testName,
         success: true,
         data,
         duration,
-        timestamp
+        timestamp,
       };
-      
+
       this.results.push(result);
       return result;
     } catch (error: any) {
       const duration = Date.now() - startTime;
-      
+
       const result: ConnectionTestResult = {
         test: testName,
         success: false,
         error: error.message,
         duration,
-        timestamp
+        timestamp,
       };
-      
+
       this.results.push(result);
       return result;
     }
@@ -59,7 +62,10 @@ class DatabaseConnectionTester {
 
   async testBasicConnection(): Promise<ConnectionTestResult> {
     return this.runTest('Basic Connection', async () => {
-      const { data, error } = await supabase.from('profiles').select('count').limit(1);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('count')
+        .limit(1);
       if (error) throw error;
       return data;
     });
@@ -75,15 +81,17 @@ class DatabaseConnectionTester {
 
   async testUserProfileAccess(): Promise<ConnectionTestResult> {
     return this.runTest('User Profile Access', async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (user) {
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('user_id', user.id)
           .single();
-        
+
         if (error) throw error;
         return data;
       } else {
@@ -98,7 +106,7 @@ class DatabaseConnectionTester {
         .from('clubs')
         .select('id, name, address')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -110,7 +118,7 @@ class DatabaseConnectionTester {
         .from('tournaments')
         .select('id, name, start_date, end_date')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -122,7 +130,7 @@ class DatabaseConnectionTester {
         .from('challenges')
         .select('id, challenger_id, challenged_id, status')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -134,7 +142,7 @@ class DatabaseConnectionTester {
         .from('notifications')
         .select('id, title, message, type')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -146,7 +154,7 @@ class DatabaseConnectionTester {
         .from('matches')
         .select('id, player1_id, player2_id, winner_id, status')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -154,15 +162,17 @@ class DatabaseConnectionTester {
 
   async testWalletAccess(): Promise<ConnectionTestResult> {
     return this.runTest('Wallet Access', async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (user) {
         const { data, error } = await supabase
           .from('wallets')
           .select('*')
           .eq('user_id', user.id)
           .single();
-        
+
         if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
         return data || { message: 'No wallet found' };
       } else {
@@ -177,7 +187,7 @@ class DatabaseConnectionTester {
         .from('marketplace_items')
         .select('id, title, price, status')
         .limit(5);
-      
+
       if (error) throw error;
       return data;
     });
@@ -192,12 +202,16 @@ class DatabaseConnectionTester {
 
         const subscription = supabase
           .channel('test-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
-            clearTimeout(timeout);
-            subscription.unsubscribe();
-            resolve({ message: 'Real-time subscription working' });
-          })
-          .subscribe((status) => {
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'profiles' },
+            () => {
+              clearTimeout(timeout);
+              subscription.unsubscribe();
+              resolve({ message: 'Real-time subscription working' });
+            }
+          )
+          .subscribe(status => {
             if (status === 'SUBSCRIBED') {
               clearTimeout(timeout);
               subscription.unsubscribe();
@@ -214,8 +228,10 @@ class DatabaseConnectionTester {
   async testDatabaseFunctions(): Promise<ConnectionTestResult> {
     return this.runTest('Database Functions', async () => {
       // Test a simple function call
-      const { data, error } = await supabase.rpc('is_admin', { user_uuid: null });
-      
+      const { data, error } = await supabase.rpc('is_admin', {
+        user_uuid: null,
+      });
+
       if (error) throw error;
       return { isAdmin: data };
     });
@@ -224,7 +240,7 @@ class DatabaseConnectionTester {
   async testFileStorage(): Promise<ConnectionTestResult> {
     return this.runTest('File Storage', async () => {
       const { data, error } = await supabase.storage.listBuckets();
-      
+
       if (error) throw error;
       return { buckets: data.map(bucket => bucket.name) };
     });
@@ -252,8 +268,8 @@ class DatabaseConnectionTester {
         success: false,
         error: error.message,
         duration: 5000,
-        timestamp: new Date().toISOString()
-      }))
+        timestamp: new Date().toISOString(),
+      })),
     ];
 
     await Promise.allSettled(tests);
@@ -261,7 +277,8 @@ class DatabaseConnectionTester {
     const passed = this.results.filter(r => r.success).length;
     const failed = this.results.filter(r => !r.success).length;
     const total = this.results.length;
-    const averageResponseTime = this.results.reduce((sum, r) => sum + r.duration, 0) / total;
+    const averageResponseTime =
+      this.results.reduce((sum, r) => sum + r.duration, 0) / total;
 
     return {
       overall: failed === 0,
@@ -270,8 +287,8 @@ class DatabaseConnectionTester {
         total,
         passed,
         failed,
-        averageResponseTime: Math.round(averageResponseTime)
-      }
+        averageResponseTime: Math.round(averageResponseTime),
+      },
     };
   }
 
@@ -287,6 +304,7 @@ class DatabaseConnectionTester {
 export const databaseConnectionTester = new DatabaseConnectionTester();
 
 // Convenience function for quick testing
-export const runDatabaseConnectionTest = async (): Promise<DatabaseConnectionReport> => {
-  return databaseConnectionTester.runAllTests();
-}; 
+export const runDatabaseConnectionTest =
+  async (): Promise<DatabaseConnectionReport> => {
+    return databaseConnectionTester.runAllTests();
+  };

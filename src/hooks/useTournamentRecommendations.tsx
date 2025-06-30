@@ -42,7 +42,9 @@ interface TournamentRecommendation {
 
 export const useTournamentRecommendations = () => {
   const { user } = useAuth();
-  const [tournaments, setTournaments] = useState<TournamentRecommendation[]>([]);
+  const [tournaments, setTournaments] = useState<TournamentRecommendation[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
 
@@ -60,35 +62,49 @@ export const useTournamentRecommendations = () => {
         .select('*')
         .eq('user_id', user?.id)
         .single();
-      
+
       setUserLocation(data);
     } catch (error) {
-      console.log('No user location found');
+      // ...removed console.log('No user location found')
     }
   };
 
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
     const R = 6371; // Earth's radius in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
-  const calculateTournamentScore = (tournament: Tournament, userLocation: UserLocation, userInteractions: any[]) => {
+  const calculateTournamentScore = (
+    tournament: Tournament,
+    userLocation: UserLocation,
+    userInteractions: any[]
+  ) => {
     let score = 0;
 
     // 1. Distance Score (40% weight) - Gần hơn = điểm cao hơn
     if (userLocation && tournament.club.latitude && tournament.club.longitude) {
       const distance = calculateDistance(
-        userLocation.latitude, userLocation.longitude,
-        tournament.club.latitude, tournament.club.longitude
+        userLocation.latitude,
+        userLocation.longitude,
+        tournament.club.latitude,
+        tournament.club.longitude
       );
       const maxDistance = userLocation.max_distance_km || 20;
-      score += Math.max(0, (maxDistance - distance) / maxDistance * 400);
+      score += Math.max(0, ((maxDistance - distance) / maxDistance) * 400);
       tournament.distance_km = Math.round(distance * 10) / 10;
     }
 
@@ -98,10 +114,11 @@ export const useTournamentRecommendations = () => {
     );
     if (userInteraction) {
       score += Math.min(userInteraction.interaction_score, 350);
-      
+
       // Bonus cho tương tác gần đây
       const daysSinceLastInteraction = Math.floor(
-        (Date.now() - new Date(userInteraction.last_interaction).getTime()) / (1000 * 60 * 60 * 24)
+        (Date.now() - new Date(userInteraction.last_interaction).getTime()) /
+          (1000 * 60 * 60 * 24)
       );
       if (daysSinceLastInteraction < 30) {
         score += 50; // Bonus cho tương tác trong 30 ngày qua
@@ -113,14 +130,16 @@ export const useTournamentRecommendations = () => {
     score += normalizedPrizePool;
 
     // 4. Tournament Attractiveness (5% weight)
-    const participationRatio = tournament.current_participants / tournament.max_participants;
+    const participationRatio =
+      tournament.current_participants / tournament.max_participants;
     if (participationRatio >= 0.3 && participationRatio <= 0.8) {
       score += 50; // Sweet spot participation
     }
 
     // Bonus cho tournament sắp bắt đầu đăng ký
     const daysUntilStart = Math.floor(
-      (new Date(tournament.registration_start).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (new Date(tournament.registration_start).getTime() - Date.now()) /
+        (1000 * 60 * 60 * 24)
     );
     if (daysUntilStart >= 0 && daysUntilStart <= 7) {
       score += 30; // Bonus cho tournament sắp mở đăng ký
@@ -149,7 +168,8 @@ export const useTournamentRecommendations = () => {
       // Load tournaments
       const { data: tournamentsData } = await supabase
         .from('tournaments')
-        .select(`
+        .select(
+          `
           *,
           clubs!inner(
             id,
@@ -161,7 +181,8 @@ export const useTournamentRecommendations = () => {
             available_tables,
             is_sabo_owned
           )
-        `)
+        `
+        )
         .in('status', ['upcoming', 'registration_open'])
         .gte('registration_end', new Date().toISOString())
         .order('start_date', { ascending: true });
@@ -169,7 +190,11 @@ export const useTournamentRecommendations = () => {
       if (tournamentsData) {
         // Calculate recommendation scores and map to proper format
         const scoredTournaments = tournamentsData.map(tournament => {
-          const score = calculateTournamentScore(tournament, userLocation, userInteractions || []);
+          const score = calculateTournamentScore(
+            tournament,
+            userLocation,
+            userInteractions || []
+          );
           return {
             id: tournament.id,
             title: tournament.name || 'Tournament',
@@ -178,8 +203,10 @@ export const useTournamentRecommendations = () => {
             game_format: tournament.game_format || '8_ball',
             max_participants: tournament.max_participants || 32,
             current_participants: tournament.current_participants || 0,
-            registration_start: tournament.registration_start || tournament.start_date,
-            registration_end: tournament.registration_deadline || tournament.end_date,
+            registration_start:
+              tournament.registration_start || tournament.start_date,
+            registration_end:
+              tournament.registration_deadline || tournament.end_date,
             tournament_start: tournament.start_date,
             tournament_end: tournament.end_date,
             club_id: tournament.club_id,
@@ -194,7 +221,7 @@ export const useTournamentRecommendations = () => {
             rules: tournament.rules || '',
             contact_info: tournament.contact_info || {},
             club: tournament.clubs,
-            recommendation_score: score
+            recommendation_score: score,
           } as TournamentRecommendation;
         });
 
@@ -212,33 +239,37 @@ export const useTournamentRecommendations = () => {
     }
   };
 
-  const trackUserClubInteraction = async (clubId: string, interactionType: string, metadata = {}) => {
+  const trackUserClubInteraction = async (
+    clubId: string,
+    interactionType: string,
+    metadata = {}
+  ) => {
     if (!user?.id) return;
 
     try {
       const interactionScores = {
-        'tournament_join': 50,
-        'match_played': 30,
-        'check_in': 10,
-        'review': 20,
-        'favorite': 40,
-        'visit': 5
+        tournament_join: 50,
+        match_played: 30,
+        check_in: 10,
+        review: 20,
+        favorite: 40,
+        visit: 5,
       };
 
-      const scoreToAdd = interactionScores[interactionType as keyof typeof interactionScores] || 5;
+      const scoreToAdd =
+        interactionScores[interactionType as keyof typeof interactionScores] ||
+        5;
 
       // Try to upsert the interaction
-      const { error } = await supabase
-        .from('user_club_interactions')
-        .upsert({
-          user_id: user.id,
-          club_id: clubId,
-          interaction_type: interactionType,
-          interaction_count: 1,
-          interaction_score: scoreToAdd,
-          last_interaction: new Date().toISOString(),
-          metadata: metadata
-        });
+      const { error } = await supabase.from('user_club_interactions').upsert({
+        user_id: user.id,
+        club_id: clubId,
+        interaction_type: interactionType,
+        interaction_count: 1,
+        interaction_score: scoreToAdd,
+        last_interaction: new Date().toISOString(),
+        metadata: metadata,
+      });
 
       if (error) {
         // If upsert failed due to unique constraint, increment existing record
@@ -246,7 +277,7 @@ export const useTournamentRecommendations = () => {
           p_user_id: user.id,
           p_club_id: clubId,
           p_interaction_type: interactionType,
-          p_score_increment: scoreToAdd
+          p_score_increment: scoreToAdd,
         });
       }
 
@@ -263,7 +294,8 @@ export const useTournamentRecommendations = () => {
     try {
       let query = supabase
         .from('tournaments')
-        .select(`
+        .select(
+          `
           *,
           clubs!inner(
             id,
@@ -275,7 +307,8 @@ export const useTournamentRecommendations = () => {
             available_tables,
             is_sabo_owned
           )
-        `)
+        `
+        )
         .in('status', ['upcoming', 'registration_open'])
         .gte('registration_end', new Date().toISOString());
 
@@ -297,34 +330,40 @@ export const useTournamentRecommendations = () => {
       }
 
       const { data } = await query.limit(20);
-      
+
       if (data) {
-        return data.map(tournament => ({
-          id: tournament.id,
-          title: tournament.name || 'Tournament',
-          description: tournament.description || '',
-          tournament_type: tournament.tournament_type || 'single_elimination',
-          game_format: tournament.game_format || '8_ball',
-          max_participants: tournament.max_participants || 32,
-          current_participants: tournament.current_participants || 0,
-          registration_start: tournament.registration_start || tournament.start_date,
-          registration_end: tournament.registration_deadline || tournament.end_date,
-          tournament_start: tournament.start_date,
-          tournament_end: tournament.end_date,
-          club_id: tournament.club_id,
-          venue_address: tournament.venue_address || '',
-          entry_fee_points: tournament.entry_fee || 0,
-          total_prize_pool: tournament.prize_pool || 0,
-          first_prize: tournament.first_prize || 0,
-          second_prize: tournament.second_prize || 0,
-          third_prize: tournament.third_prize || 0,
-          status: tournament.status,
-          banner_image: tournament.banner_image || '',
-          rules: tournament.rules || '',
-          contact_info: tournament.contact_info || {},
-          club: tournament.clubs,
-          recommendation_score: 0
-        } as TournamentRecommendation));
+        return data.map(
+          tournament =>
+            ({
+              id: tournament.id,
+              title: tournament.name || 'Tournament',
+              description: tournament.description || '',
+              tournament_type:
+                tournament.tournament_type || 'single_elimination',
+              game_format: tournament.game_format || '8_ball',
+              max_participants: tournament.max_participants || 32,
+              current_participants: tournament.current_participants || 0,
+              registration_start:
+                tournament.registration_start || tournament.start_date,
+              registration_end:
+                tournament.registration_deadline || tournament.end_date,
+              tournament_start: tournament.start_date,
+              tournament_end: tournament.end_date,
+              club_id: tournament.club_id,
+              venue_address: tournament.venue_address || '',
+              entry_fee_points: tournament.entry_fee || 0,
+              total_prize_pool: tournament.prize_pool || 0,
+              first_prize: tournament.first_prize || 0,
+              second_prize: tournament.second_prize || 0,
+              third_prize: tournament.third_prize || 0,
+              status: tournament.status,
+              banner_image: tournament.banner_image || '',
+              rules: tournament.rules || '',
+              contact_info: tournament.contact_info || {},
+              club: tournament.clubs,
+              recommendation_score: 0,
+            }) as TournamentRecommendation
+        );
       }
     } catch (error) {
       console.error('Error loading tournaments by filter:', error);
@@ -339,6 +378,6 @@ export const useTournamentRecommendations = () => {
     userLocation,
     loadTournamentRecommendations,
     trackUserClubInteraction,
-    getTournamentsByFilter
+    getTournamentsByFilter,
   };
 };

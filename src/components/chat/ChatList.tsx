@@ -4,14 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Search, 
-  MoreVertical, 
-  Edit, 
-  Users,
-  Filter,
-  Plus
-} from 'lucide-react';
+import { Search, MoreVertical, Edit, Users, Filter, Plus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
@@ -50,12 +43,14 @@ interface ChatListProps {
 
 export const ChatList: React.FC<ChatListProps> = ({
   onSelectChat,
-  onCreateNewChat
+  onCreateNewChat,
 }) => {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'unread' | 'pinned'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'unread' | 'pinned'
+  >('all');
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -63,7 +58,7 @@ export const ChatList: React.FC<ChatListProps> = ({
       try {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         setConversations([
           {
             id: '1',
@@ -75,8 +70,8 @@ export const ChatList: React.FC<ChatListProps> = ({
                 avatar_url: '/avatars/player2.jpg',
                 rank: 'B+',
                 is_online: true,
-                last_seen: new Date()
-              }
+                last_seen: new Date(),
+              },
             ],
             last_message: {
               id: 'msg1',
@@ -84,11 +79,11 @@ export const ChatList: React.FC<ChatListProps> = ({
               sender_id: '2',
               created_at: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
               is_read: false,
-              type: 'text'
+              type: 'text',
             },
             unread_count: 2,
             is_pinned: true,
-            updated_at: new Date(Date.now() - 1000 * 60 * 5)
+            updated_at: new Date(Date.now() - 1000 * 60 * 5),
           },
           {
             id: '2',
@@ -100,8 +95,8 @@ export const ChatList: React.FC<ChatListProps> = ({
                 avatar_url: '/avatars/pool_master.jpg',
                 rank: 'A',
                 is_online: false,
-                last_seen: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
-              }
+                last_seen: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+              },
             ],
             last_message: {
               id: 'msg2',
@@ -109,11 +104,11 @@ export const ChatList: React.FC<ChatListProps> = ({
               sender_id: 'current-user',
               created_at: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
               is_read: true,
-              type: 'text'
+              type: 'text',
             },
             unread_count: 0,
             is_pinned: false,
-            updated_at: new Date(Date.now() - 1000 * 60 * 15)
+            updated_at: new Date(Date.now() - 1000 * 60 * 15),
           },
           {
             id: '3',
@@ -125,7 +120,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                 avatar_url: '/avatars/champion.jpg',
                 rank: 'G',
                 is_online: true,
-                last_seen: new Date()
+                last_seen: new Date(),
               },
               {
                 id: '5',
@@ -133,8 +128,8 @@ export const ChatList: React.FC<ChatListProps> = ({
                 avatar_url: '/avatars/newbie.jpg',
                 rank: 'C',
                 is_online: false,
-                last_seen: new Date(Date.now() - 1000 * 60 * 60) // 1 hour ago
-              }
+                last_seen: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+              },
             ],
             last_message: {
               id: 'msg3',
@@ -142,12 +137,12 @@ export const ChatList: React.FC<ChatListProps> = ({
               sender_id: '4',
               created_at: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
               is_read: false,
-              type: 'text'
+              type: 'text',
             },
             unread_count: 1,
             is_pinned: false,
-            updated_at: new Date(Date.now() - 1000 * 60 * 60)
-          }
+            updated_at: new Date(Date.now() - 1000 * 60 * 60),
+          },
         ]);
       } catch (error) {
         console.error('Failed to fetch conversations:', error);
@@ -161,14 +156,19 @@ export const ChatList: React.FC<ChatListProps> = ({
 
   const filteredConversations = conversations
     .filter(conversation => {
-      const matchesSearch = conversation.participants.some(user =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-      ) || conversation.last_message.content.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFilter = selectedFilter === 'all' || 
+      const matchesSearch =
+        conversation.participants.some(user =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        ) ||
+        conversation.last_message.content
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+      const matchesFilter =
+        selectedFilter === 'all' ||
         (selectedFilter === 'unread' && conversation.unread_count > 0) ||
         (selectedFilter === 'pinned' && conversation.is_pinned);
-      
+
       return matchesSearch && matchesFilter;
     })
     .sort((a, b) => {
@@ -190,31 +190,31 @@ export const ChatList: React.FC<ChatListProps> = ({
   const getConversationAvatar = (conversation: ChatConversation) => {
     if (conversation.type === 'group') {
       return (
-        <div className="relative">
-          <Avatar className="h-12 w-12">
+        <div className='relative'>
+          <Avatar className='h-12 w-12'>
             <AvatarImage src={conversation.participants[0]?.avatar_url} />
             <AvatarFallback>
-              <Users className="h-6 w-6" />
+              <Users className='h-6 w-6' />
             </AvatarFallback>
           </Avatar>
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center">
-            <span className="text-xs text-white font-bold">
+          <div className='absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center'>
+            <span className='text-xs text-white font-bold'>
               {conversation.participants.length}
             </span>
           </div>
         </div>
       );
     }
-    
+
     const user = conversation.participants[0];
     return (
-      <div className="relative">
-        <Avatar className="h-12 w-12">
+      <div className='relative'>
+        <Avatar className='h-12 w-12'>
           <AvatarImage src={user?.avatar_url} />
           <AvatarFallback>{user?.username[0]}</AvatarFallback>
         </Avatar>
         {user?.is_online && (
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+          <div className='absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white'></div>
         )}
       </div>
     );
@@ -222,58 +222,58 @@ export const ChatList: React.FC<ChatListProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className='flex items-center justify-center py-8'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className='h-full flex flex-col'>
       {/* Header */}
-      <div className="p-4 border-b">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">Tin nhắn</h2>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={onCreateNewChat}>
-              <Plus className="h-4 w-4" />
+      <div className='p-4 border-b'>
+        <div className='flex items-center justify-between mb-4'>
+          <h2 className='text-xl font-bold'>Tin nhắn</h2>
+          <div className='flex items-center gap-2'>
+            <Button variant='outline' size='sm' onClick={onCreateNewChat}>
+              <Plus className='h-4 w-4' />
             </Button>
-            <Button variant="outline" size="sm">
-              <Edit className="h-4 w-4" />
+            <Button variant='outline' size='sm'>
+              <Edit className='h-4 w-4' />
             </Button>
           </div>
         </div>
-        
+
         {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <div className='relative mb-4'>
+          <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
           <Input
-            placeholder="Tìm kiếm tin nhắn..."
+            placeholder='Tìm kiếm tin nhắn...'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            onChange={e => setSearchTerm(e.target.value)}
+            className='pl-10'
           />
         </div>
-        
+
         {/* Filters */}
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button
             variant={selectedFilter === 'all' ? 'default' : 'outline'}
-            size="sm"
+            size='sm'
             onClick={() => setSelectedFilter('all')}
           >
             Tất cả
           </Button>
           <Button
             variant={selectedFilter === 'unread' ? 'default' : 'outline'}
-            size="sm"
+            size='sm'
             onClick={() => setSelectedFilter('unread')}
           >
             Chưa đọc
           </Button>
           <Button
             variant={selectedFilter === 'pinned' ? 'default' : 'outline'}
-            size="sm"
+            size='sm'
             onClick={() => setSelectedFilter('pinned')}
           >
             Ghim
@@ -282,51 +282,59 @@ export const ChatList: React.FC<ChatListProps> = ({
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className='flex-1 overflow-y-auto'>
         {filteredConversations.length > 0 ? (
-          <div className="space-y-1">
-            {filteredConversations.map((conversation) => (
+          <div className='space-y-1'>
+            {filteredConversations.map(conversation => (
               <Card
                 key={conversation.id}
-                className="cursor-pointer hover:bg-gray-50 transition-colors border-0 rounded-none border-b"
+                className='cursor-pointer hover:bg-gray-50 transition-colors border-0 rounded-none border-b'
                 onClick={() => onSelectChat(conversation.id)}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
+                <CardContent className='p-4'>
+                  <div className='flex items-center gap-3'>
                     {getConversationAvatar(conversation)}
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium truncate">
+
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center justify-between mb-1'>
+                        <h3 className='font-medium truncate'>
                           {getConversationTitle(conversation)}
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className='flex items-center gap-2'>
                           {conversation.is_pinned && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
                           )}
-                          <span className="text-xs text-gray-500">
-                            {formatDistanceToNow(conversation.last_message.created_at, { 
-                              addSuffix: true, 
-                              locale: vi 
-                            })}
+                          <span className='text-xs text-gray-500'>
+                            {formatDistanceToNow(
+                              conversation.last_message.created_at,
+                              {
+                                addSuffix: true,
+                                locale: vi,
+                              }
+                            )}
                           </span>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-gray-600 truncate flex-1">
-                          {conversation.last_message.sender_id === 'current-user' && 'Bạn: '}
+
+                      <div className='flex items-center justify-between'>
+                        <p className='text-sm text-gray-600 truncate flex-1'>
+                          {conversation.last_message.sender_id ===
+                            'current-user' && 'Bạn: '}
                           {conversation.last_message.content}
                         </p>
-                        
-                        <div className="flex items-center gap-2 ml-2">
+
+                        <div className='flex items-center gap-2 ml-2'>
                           {conversation.unread_count > 0 && (
-                            <Badge className="bg-red-500 text-white text-xs">
+                            <Badge className='bg-red-500 text-white text-xs'>
                               {conversation.unread_count}
                             </Badge>
                           )}
-                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                            <MoreVertical className="h-4 w-4" />
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            className='h-6 w-6 p-0'
+                          >
+                            <MoreVertical className='h-4 w-4' />
                           </Button>
                         </div>
                       </div>
@@ -337,11 +345,13 @@ export const ChatList: React.FC<ChatListProps> = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            {searchTerm ? 'Không tìm thấy cuộc trò chuyện nào' : 'Chưa có cuộc trò chuyện nào'}
+          <div className='text-center py-8 text-gray-500'>
+            {searchTerm
+              ? 'Không tìm thấy cuộc trò chuyện nào'
+              : 'Chưa có cuộc trò chuyện nào'}
           </div>
         )}
       </div>
     </div>
   );
-}; 
+};

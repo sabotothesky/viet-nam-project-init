@@ -121,7 +121,7 @@ export const useSeasons = (userId?: string) => {
   const fetchSeasons = useCallback(async (filters?: SeasonFilters) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       let query = supabase
         .from('seasons')
@@ -136,11 +136,11 @@ export const useSeasons = (userId?: string) => {
       }
 
       const { data, error } = await query;
-      
+
       if (error) throw error;
-      
+
       setSeasons(data || []);
-      
+
       // Set current season (ongoing)
       const ongoing = data?.find(s => s.status === 'ongoing');
       if (ongoing) {
@@ -156,16 +156,16 @@ export const useSeasons = (userId?: string) => {
   const createSeason = useCallback(async (seasonData: Partial<Season>) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data, error } = await supabase
         .from('seasons')
         .insert([seasonData])
         .select()
         .single();
-      
+
       if (error) throw error;
-      
+
       setSeasons(prev => [data, ...prev]);
       return data;
     } catch (err) {
@@ -176,58 +176,67 @@ export const useSeasons = (userId?: string) => {
     }
   }, []);
 
-  const updateSeason = useCallback(async (id: string, updates: Partial<Season>) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const { data, error } = await supabase
-        .from('seasons')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      setSeasons(prev => prev.map(s => s.id === id ? data : s));
-      
-      // Update current season if this is the ongoing one
-      if (data.status === 'ongoing') {
-        setCurrentSeason(data);
-      } else if (currentSeason?.id === id) {
-        setCurrentSeason(null);
+  const updateSeason = useCallback(
+    async (id: string, updates: Partial<Season>) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from('seasons')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setSeasons(prev => prev.map(s => (s.id === id ? data : s)));
+
+        // Update current season if this is the ongoing one
+        if (data.status === 'ongoing') {
+          setCurrentSeason(data);
+        } else if (currentSeason?.id === id) {
+          setCurrentSeason(null);
+        }
+
+        return data;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to update season'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update season');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [currentSeason]);
+    },
+    [currentSeason]
+  );
 
   const fetchSeasonStandings = useCallback(async (seasonId: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const { data, error } = await supabase
         .from('season_standings')
-        .select(`
+        .select(
+          `
           *,
           user:user_profiles(*)
-        `)
+        `
+        )
         .eq('season_id', seasonId)
         .order('current_rank', { ascending: true });
-      
+
       if (error) throw error;
-      
+
       setStandings(data || []);
       return data || [];
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch season standings');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch season standings'
+      );
       return [];
     } finally {
       setLoading(false);
@@ -236,7 +245,7 @@ export const useSeasons = (userId?: string) => {
 
   const getCurrentSeasonStandings = useCallback(async () => {
     if (!currentSeason) return [];
-    
+
     return await fetchSeasonStandings(currentSeason.id);
   }, [currentSeason, fetchSeasonStandings]);
 
@@ -246,117 +255,156 @@ export const useSeasons = (userId?: string) => {
         .from('season_standings')
         .select('*')
         .eq('season_id', seasonId);
-      
+
       if (error) throw error;
-      
+
       const stats = {
         totalParticipants: data?.length || 0,
-        totalEloPoints: data?.reduce((sum, standing) => sum + standing.total_elo_points, 0) || 0,
-        averageEloPoints: data?.length ? 
-          data.reduce((sum, standing) => sum + standing.total_elo_points, 0) / data.length : 0,
-        totalTournaments: data?.reduce((sum, standing) => sum + standing.tournaments_played, 0) || 0,
-        totalPrizeMoney: data?.reduce((sum, standing) => sum + (standing.total_prize_money || 0), 0) || 0
+        totalEloPoints:
+          data?.reduce((sum, standing) => sum + standing.total_elo_points, 0) ||
+          0,
+        averageEloPoints: data?.length
+          ? data.reduce((sum, standing) => sum + standing.total_elo_points, 0) /
+            data.length
+          : 0,
+        totalTournaments:
+          data?.reduce(
+            (sum, standing) => sum + standing.tournaments_played,
+            0
+          ) || 0,
+        totalPrizeMoney:
+          data?.reduce(
+            (sum, standing) => sum + (standing.total_prize_money || 0),
+            0
+          ) || 0,
       };
-      
+
       return stats;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch season statistics');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch season statistics'
+      );
       return null;
     }
   }, []);
 
-  const getPlayerSeasonHistory = useCallback(async (userId: string, seasonId?: string) => {
-    try {
-      let query = supabase
-        .from('season_standings')
-        .select(`
+  const getPlayerSeasonHistory = useCallback(
+    async (userId: string, seasonId?: string) => {
+      try {
+        let query = supabase
+          .from('season_standings')
+          .select(
+            `
           *,
           season:seasons(*)
-        `)
-        .eq('user_id', userId);
+        `
+          )
+          .eq('user_id', userId);
 
-      if (seasonId) {
-        query = query.eq('season_id', seasonId);
+        if (seasonId) {
+          query = query.eq('season_id', seasonId);
+        }
+
+        const { data, error } = await query.order('season.year', {
+          ascending: false,
+        });
+
+        if (error) throw error;
+        return data || [];
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to fetch player season history'
+        );
+        return [];
       }
+    },
+    []
+  );
 
-      const { data, error } = await query.order('season.year', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch player season history');
-      return [];
-    }
-  }, []);
+  const recalculateSeasonRankings = useCallback(
+    async (seasonId: string) => {
+      setLoading(true);
+      setError(null);
 
-  const recalculateSeasonRankings = useCallback(async (seasonId: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const { error } = await supabase.rpc('recalculate_rankings');
-      
-      if (error) throw error;
-      
-      // Refresh standings
-      await fetchSeasonStandings(seasonId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to recalculate rankings');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchSeasonStandings]);
+      try {
+        const { error } = await supabase.rpc('recalculate_rankings');
 
-  const endSeason = useCallback(async (seasonId: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Update season status to completed
-      const { error } = await supabase
-        .from('seasons')
-        .update({ 
-          status: 'completed',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', seasonId);
-      
-      if (error) throw error;
-      
-      // Recalculate final rankings
-      await recalculateSeasonRankings(seasonId);
-      
-      // Update seasons list
-      await fetchSeasons();
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to end season');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchSeasons, recalculateSeasonRankings]);
+        if (error) throw error;
 
-  const getSeasonLeaderboard = useCallback(async (seasonId: string, limit: number = 10) => {
-    try {
-      const { data, error } = await supabase
-        .from('season_standings')
-        .select(`
+        // Refresh standings
+        await fetchSeasonStandings(seasonId);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to recalculate rankings'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchSeasonStandings]
+  );
+
+  const endSeason = useCallback(
+    async (seasonId: string) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Update season status to completed
+        const { error } = await supabase
+          .from('seasons')
+          .update({
+            status: 'completed',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', seasonId);
+
+        if (error) throw error;
+
+        // Recalculate final rankings
+        await recalculateSeasonRankings(seasonId);
+
+        // Update seasons list
+        await fetchSeasons();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to end season');
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchSeasons, recalculateSeasonRankings]
+  );
+
+  const getSeasonLeaderboard = useCallback(
+    async (seasonId: string, limit: number = 10) => {
+      try {
+        const { data, error } = await supabase
+          .from('season_standings')
+          .select(
+            `
           *,
           user:user_profiles(*)
-        `)
-        .eq('season_id', seasonId)
-        .order('current_rank', { ascending: true })
-        .limit(limit);
-      
-      if (error) throw error;
-      return data || [];
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch leaderboard');
-      return [];
-    }
-  }, []);
+        `
+          )
+          .eq('season_id', seasonId)
+          .order('current_rank', { ascending: true })
+          .limit(limit);
+
+        if (error) throw error;
+        return data || [];
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch leaderboard'
+        );
+        return [];
+      }
+    },
+    []
+  );
 
   const getSeasonProgress = useCallback(async (seasonId: string) => {
     try {
@@ -366,38 +414,46 @@ export const useSeasons = (userId?: string) => {
         .select('*')
         .eq('id', seasonId)
         .single();
-      
+
       if (!season) return null;
-      
+
       // Get tournaments in this season
       const { data: tournaments } = await supabase
         .from('tournaments')
         .select('id, status')
         .eq('season_id', seasonId);
-      
+
       const totalTournaments = tournaments?.length || 0;
-      const completedTournaments = tournaments?.filter(t => t.status === 'completed').length || 0;
-      const ongoingTournaments = tournaments?.filter(t => t.status === 'ongoing').length || 0;
-      
+      const completedTournaments =
+        tournaments?.filter(t => t.status === 'completed').length || 0;
+      const ongoingTournaments =
+        tournaments?.filter(t => t.status === 'ongoing').length || 0;
+
       // Calculate progress
       const startDate = new Date(season.start_date);
       const endDate = new Date(season.end_date);
       const currentDate = new Date();
-      
-      const totalDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-      const elapsedDays = Math.max(0, (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      const totalDays =
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+      const elapsedDays = Math.max(
+        0,
+        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
       const progressPercentage = Math.min(100, (elapsedDays / totalDays) * 100);
-      
+
       return {
         season,
         totalTournaments,
         completedTournaments,
         ongoingTournaments,
         progressPercentage,
-        daysRemaining: Math.max(0, totalDays - elapsedDays)
+        daysRemaining: Math.max(0, totalDays - elapsedDays),
       };
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch season progress');
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch season progress'
+      );
       return null;
     }
   }, []);
@@ -407,10 +463,10 @@ export const useSeasons = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // Mock participants data
       const mockParticipants: SeasonParticipant[] = [
         {
@@ -421,7 +477,7 @@ export const useSeasons = (userId?: string) => {
             id: '1',
             username: 'pool_master',
             avatar_url: '/avatars/pool_master.jpg',
-            rank: 'A+'
+            rank: 'A+',
           },
           registration_date: new Date('2024-02-20'),
           status: 'active',
@@ -439,9 +495,9 @@ export const useSeasons = (userId?: string) => {
               description: 'Thắng 5 trận liên tiếp',
               icon_url: '/achievements/winning_streak.png',
               points: 10,
-              earned_at: new Date('2024-03-15')
-            }
-          ]
+              earned_at: new Date('2024-03-15'),
+            },
+          ],
         },
         {
           id: '2',
@@ -451,7 +507,7 @@ export const useSeasons = (userId?: string) => {
             id: '2',
             username: 'champion',
             avatar_url: '/avatars/champion.jpg',
-            rank: 'G'
+            rank: 'G',
           },
           registration_date: new Date('2024-02-18'),
           status: 'active',
@@ -462,13 +518,15 @@ export const useSeasons = (userId?: string) => {
           win_rate: 0.857,
           elo_rating: 1900,
           points: 80,
-          achievements: []
-        }
+          achievements: [],
+        },
       ];
-      
+
       setParticipants(mockParticipants);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải danh sách tham gia');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải danh sách tham gia'
+      );
     } finally {
       setLoading(false);
     }
@@ -479,10 +537,10 @@ export const useSeasons = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 600));
-      
+
       // Mock matches data
       const mockMatches: SeasonMatch[] = [
         {
@@ -492,13 +550,13 @@ export const useSeasons = (userId?: string) => {
           player1: {
             id: '1',
             username: 'pool_master',
-            avatar_url: '/avatars/pool_master.jpg'
+            avatar_url: '/avatars/pool_master.jpg',
           },
           player2_id: '2',
           player2: {
             id: '2',
             username: 'champion',
-            avatar_url: '/avatars/champion.jpg'
+            avatar_url: '/avatars/champion.jpg',
           },
           round: 1,
           match_number: 1,
@@ -508,7 +566,7 @@ export const useSeasons = (userId?: string) => {
           status: 'completed',
           venue: 'Club Bida ABC',
           created_at: new Date('2024-03-10'),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         {
           id: '2',
@@ -517,13 +575,13 @@ export const useSeasons = (userId?: string) => {
           player1: {
             id: '3',
             username: 'veteran',
-            avatar_url: '/avatars/veteran.jpg'
+            avatar_url: '/avatars/veteran.jpg',
           },
           player2_id: '4',
           player2: {
             id: '4',
             username: 'newbie',
-            avatar_url: '/avatars/newbie.jpg'
+            avatar_url: '/avatars/newbie.jpg',
           },
           round: 1,
           match_number: 2,
@@ -533,13 +591,15 @@ export const useSeasons = (userId?: string) => {
           status: 'completed',
           venue: 'Club Bida XYZ',
           created_at: new Date('2024-03-12'),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
       ];
-      
+
       setMatches(mockMatches);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải trận đấu mùa giải');
+      setError(
+        err instanceof Error ? err.message : 'Không thể tải trận đấu mùa giải'
+      );
     } finally {
       setLoading(false);
     }
@@ -550,10 +610,10 @@ export const useSeasons = (userId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const newSeason: Season = {
         id: Date.now().toString(),
         name: data.name,
@@ -569,9 +629,9 @@ export const useSeasons = (userId?: string) => {
         current_participants: 0,
         registration_deadline: data.registration_deadline,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
-      
+
       setSeasons(prev => [newSeason, ...prev]);
       return newSeason;
     } catch (err) {
@@ -583,90 +643,118 @@ export const useSeasons = (userId?: string) => {
   }, []);
 
   // Register for season
-  const registerForSeason = useCallback(async (seasonId: string) => {
-    if (!userId) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Update season participants count
-      setSeasons(prev => 
-        prev.map(season => 
-          season.id === seasonId 
-            ? { ...season, current_participants: season.current_participants + 1 }
-            : season
-        )
-      );
-      
-      // Add participant
-      const newParticipant: SeasonParticipant = {
-        id: Date.now().toString(),
-        season_id: seasonId,
-        user_id: userId,
-        user: {
-          id: userId,
-          username: 'current_user',
-          avatar_url: '/avatars/current_user.jpg',
-          rank: 'A'
-        },
-        registration_date: new Date(),
-        status: 'registered',
-        current_rank: 0,
-        total_matches: 0,
-        wins: 0,
-        losses: 0,
-        win_rate: 0,
-        elo_rating: 1500,
-        points: 0,
-        achievements: []
-      };
-      
-      setParticipants(prev => [...prev, newParticipant]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể đăng ký mùa giải');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  const registerForSeason = useCallback(
+    async (seasonId: string) => {
+      if (!userId) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Update season participants count
+        setSeasons(prev =>
+          prev.map(season =>
+            season.id === seasonId
+              ? {
+                  ...season,
+                  current_participants: season.current_participants + 1,
+                }
+              : season
+          )
+        );
+
+        // Add participant
+        const newParticipant: SeasonParticipant = {
+          id: Date.now().toString(),
+          season_id: seasonId,
+          user_id: userId,
+          user: {
+            id: userId,
+            username: 'current_user',
+            avatar_url: '/avatars/current_user.jpg',
+            rank: 'A',
+          },
+          registration_date: new Date(),
+          status: 'registered',
+          current_rank: 0,
+          total_matches: 0,
+          wins: 0,
+          losses: 0,
+          win_rate: 0,
+          elo_rating: 1500,
+          points: 0,
+          achievements: [],
+        };
+
+        setParticipants(prev => [...prev, newParticipant]);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Không thể đăng ký mùa giải'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId]
+  );
 
   // Get season by ID
-  const getSeasonById = useCallback((seasonId: string) => {
-    return seasons.find(season => season.id === seasonId);
-  }, [seasons]);
+  const getSeasonById = useCallback(
+    (seasonId: string) => {
+      return seasons.find(season => season.id === seasonId);
+    },
+    [seasons]
+  );
 
   // Get seasons by status
-  const getSeasonsByStatus = useCallback((status: Season['status']) => {
-    return seasons.filter(season => season.status === status);
-  }, [seasons]);
+  const getSeasonsByStatus = useCallback(
+    (status: Season['status']) => {
+      return seasons.filter(season => season.status === status);
+    },
+    [seasons]
+  );
 
   // Get user's seasons
-  const getUserSeasons = useCallback((targetUserId: string) => {
-    return participants.filter(participant => participant.user_id === targetUserId);
-  }, [participants]);
+  const getUserSeasons = useCallback(
+    (targetUserId: string) => {
+      return participants.filter(
+        participant => participant.user_id === targetUserId
+      );
+    },
+    [participants]
+  );
 
   // Get season statistics
-  const getSeasonStats = useCallback((seasonId: string) => {
-    const season = getSeasonById(seasonId);
-    const seasonParticipants = participants.filter(p => p.season_id === seasonId);
-    const seasonMatches = matches.filter(m => m.season_id === seasonId);
-    
-    if (!season) return null;
-    
-    return {
-      total_participants: seasonParticipants.length,
-      total_matches: seasonMatches.length,
-      completed_matches: seasonMatches.filter(m => m.status === 'completed').length,
-      average_elo: seasonParticipants.length > 0 
-        ? seasonParticipants.reduce((sum, p) => sum + p.elo_rating, 0) / seasonParticipants.length 
-        : 0,
-      registration_progress: (season.current_participants / season.max_participants) * 100
-    };
-  }, [seasons, participants, matches, getSeasonById]);
+  const getSeasonStats = useCallback(
+    (seasonId: string) => {
+      const season = getSeasonById(seasonId);
+      const seasonParticipants = participants.filter(
+        p => p.season_id === seasonId
+      );
+      const seasonMatches = matches.filter(m => m.season_id === seasonId);
+
+      if (!season) return null;
+
+      return {
+        total_participants: seasonParticipants.length,
+        total_matches: seasonMatches.length,
+        completed_matches: seasonMatches.filter(m => m.status === 'completed')
+          .length,
+        average_elo:
+          seasonParticipants.length > 0
+            ? seasonParticipants.reduce((sum, p) => sum + p.elo_rating, 0) /
+              seasonParticipants.length
+            : 0,
+        registration_progress:
+          (season.current_participants / season.max_participants) * 100,
+      };
+    },
+    [seasons, participants, matches, getSeasonById]
+  );
 
   useEffect(() => {
     fetchSeasons();
@@ -689,6 +777,6 @@ export const useSeasons = (userId?: string) => {
     getSeasonById,
     getSeasonsByStatus,
     getUserSeasons,
-    getSeasonStats
+    getSeasonStats,
   };
-}; 
+};
