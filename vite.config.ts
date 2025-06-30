@@ -6,7 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/sabo-pool-arena-hub/', // Set base path for GitHub Pages
+  base: '/sabo-pool-arena-hub-main/', // Set base path for GitHub Pages
   server: {
     host: "::",
     port: 8080,
