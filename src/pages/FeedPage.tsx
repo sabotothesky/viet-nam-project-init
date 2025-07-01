@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Plus,
@@ -171,8 +172,8 @@ const FeedPage = () => {
                       id: tournament.id,
                       name: tournament.name,
                       description: tournament.description || '',
-                      start_date: tournament.start_date,
-                      club_name: tournament.clubs?.name || 'Unknown Club',
+                      start_date: tournament.tournament_start,
+                      club_name: tournament.club?.name || 'Unknown Club',
                       max_participants: tournament.max_participants,
                       current_participants: tournament.current_participants,
                       prize_pool: tournament.prize_pool,
@@ -201,9 +202,10 @@ const FeedPage = () => {
                   // Transform the challenge data to match EnhancedChallengeCard expectations
                   const transformedChallenge = {
                     ...challenge,
+                    proposed_datetime: challenge.proposed_datetime || new Date().toISOString(),
                     club: challenge.club
                       ? {
-                          id: challenge.proposed_club_id || 'unknown',
+                          id: challenge.club_id || 'unknown',
                           name: challenge.club.name || 'Unknown Club',
                           address: challenge.club.address || 'Unknown Address',
                         }
@@ -217,7 +219,7 @@ const FeedPage = () => {
                           avatar_url: challenge.challenger_profile.avatar_url,
                           current_rank:
                             challenge.challenger_profile.current_rank || 'K1',
-                          ranking_points: 0, // Default value since it doesn't exist in the type
+                          ranking_points: challenge.challenger_profile.ranking_points || 0,
                         }
                       : undefined,
                   };

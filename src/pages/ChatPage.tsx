@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChatList } from '@/components/chat/ChatList';
 import { ChatWindow } from '@/components/chat/ChatWindow';
@@ -58,7 +59,6 @@ const ChatPage: React.FC = () => {
     content: string,
     type: 'text' | 'image' | 'file' = 'text'
   ) => {
-    // ...removed console.log('Sending message:', { content, type })
     // Send message to backend
   };
 
@@ -81,9 +81,9 @@ const ChatPage: React.FC = () => {
       {/* Chat Window */}
       <div className={`flex-1 ${selectedChat ? 'block' : 'hidden md:block'}`}>
         <ChatWindow
-          conversation={selectedChat}
-          onBack={handleBack}
-          onSendMessage={handleSendMessage}
+          chatId={selectedChat?.id || ''}
+          currentUserId='current-user-id'
+          onClose={handleBack}
         />
       </div>
 

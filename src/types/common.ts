@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email?: string;
@@ -50,6 +49,17 @@ export interface UserProfile {
   ranking_points?: number;
   created_at?: string;
   updated_at?: string;
+  min_bet_points?: number;
+  max_bet_points?: number;
+  bio?: string;
+  date_of_birth?: string;
+  phone?: string;
+  address?: string;
+  province_id?: string;
+  district_id?: string;
+  ward_id?: string;
+  preferred_play_times?: string[];
+  preferred_club_id?: string;
 }
 
 export interface Post {
@@ -119,11 +129,16 @@ export interface Challenge {
   bet_points: number;
   message?: string;
   proposed_datetime?: string;
+  confirmed_datetime?: string;
+  proposed_club_id?: string;
+  confirmed_club_id?: string;
   club_id?: string;
   challenger_profile?: UserProfile;
   challenged_profile?: UserProfile;
   club?: {
+    id: string;
     name: string;
+    address: string;
   };
   challenger?: {
     user_id: string;
@@ -241,6 +256,8 @@ export interface Tournament {
   total_prize_pool?: number;
   venue?: string;
   match_type?: string;
+  start_date?: string;
+  clubs?: { name: string };
 }
 
 export interface TournamentFormData {
@@ -266,6 +283,41 @@ export interface UserLocation {
   longitude: number;
   address?: string;
   max_distance_km?: number;
+}
+
+export interface Season {
+  id: string;
+  name: string;
+  year: number;
+  start_date: string;
+  end_date: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
+  description?: string;
+  total_prize_pool: number;
+  total_tournaments: number;
+  total_participants: number;
+  current_participants?: number;
+  max_participants?: number;
+  type?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SeasonStanding {
+  id: string;
+  season_id: string;
+  user_id: string;
+  total_elo_points: number;
+  tournaments_played: number;
+  best_finish: number;
+  total_prize_money: number;
+  current_rank: number;
+  previous_rank?: number;
+  rank_change?: number;
+  created_at: string;
+  updated_at: string;
+  season?: Season;
+  user?: UserProfile;
 }
 
 export interface Match {

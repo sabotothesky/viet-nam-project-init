@@ -544,6 +544,20 @@ export const useTournaments = (userId?: string) => {
     [tournaments]
   );
 
+  const joinTournament = useMutation({
+    mutationFn: async ({ tournamentId }: { tournamentId: string }) => {
+      return await registerForTournament(tournamentId);
+    },
+    onSuccess: () => {
+      toast.success('Successfully registered for tournament!');
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+    onError: (error) => {
+      toast.error('Failed to register for tournament');
+      console.error('Tournament registration error:', error);
+    },
+  });
+
   useEffect(() => {
     fetchTournaments();
   }, [fetchTournaments]);
@@ -552,6 +566,7 @@ export const useTournaments = (userId?: string) => {
     tournaments,
     loading,
     error,
+    joinTournament,
     fetchTournaments,
     createTournament,
     updateTournament,
