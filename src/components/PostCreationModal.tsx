@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Camera, Trophy, Zap, Star } from 'lucide-react';
 import {
@@ -18,12 +19,21 @@ import {
 import { Badge } from '@/components/ui/badge';
 import UserAvatar from './UserAvatar';
 import { useAuth } from '@/hooks/useAuth';
-import { Post } from '@/types/common';
+
+interface PostData {
+  content: string;
+  type: 'general' | 'match_result' | 'achievement' | 'tournament_win';
+  stats?: {
+    score?: string;
+    opponent?: string;
+    achievement?: string;
+  };
+}
 
 interface PostCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (postData: Post) => void;
+  onSubmit: (postData: PostData) => void;
 }
 
 const PostCreationModal = ({
@@ -54,7 +64,7 @@ const PostCreationModal = ({
   };
 
   const handleSubmit = () => {
-    const postData = {
+    const postData: PostData = {
       content,
       type: postType,
       stats:
@@ -116,7 +126,7 @@ const PostCreationModal = ({
           {/* Post Type Selection */}
           <Select
             value={postType}
-            onValueChange={(value: string) => setPostType(value)}
+            onValueChange={(value: 'general' | 'match_result' | 'achievement' | 'tournament_win') => setPostType(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder='Chọn loại bài viết' />
@@ -166,7 +176,7 @@ const PostCreationModal = ({
               </div>
               <Select
                 value={matchData.result}
-                onValueChange={(value: string) =>
+                onValueChange={(value: 'win' | 'loss') =>
                   setMatchData(prev => ({ ...prev, result: value }))
                 }
               >

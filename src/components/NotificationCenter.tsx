@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,9 +13,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications } from '@/hooks/useNotifications';
 
 const NotificationCenter = () => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+  const { notifications, loading, error, markAsRead, markAllAsRead, getUnreadCount } =
     useNotifications();
   const [isOpen, setIsOpen] = useState(false);
+  
+  const unreadCount = getUnreadCount();
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -22,8 +25,6 @@ const NotificationCenter = () => {
         return 'bg-red-100 border-red-200';
       case 'high':
         return 'bg-orange-100 border-orange-200';
-      case 'normal':
-        return 'bg-blue-100 border-blue-200';
       default:
         return 'bg-gray-100 border-gray-200';
     }
@@ -68,7 +69,7 @@ const NotificationCenter = () => {
                   <Button
                     variant='ghost'
                     size='sm'
-                    onClick={() => markAllAsRead.mutate()}
+                    onClick={() => markAllAsRead()}
                     className='text-xs'
                   >
                     <CheckCheck className='h-3 w-3 mr-1' />
@@ -120,7 +121,7 @@ const NotificationCenter = () => {
                                 variant='ghost'
                                 size='icon'
                                 onClick={() =>
-                                  markAsRead.mutate(notification.id)
+                                  markAsRead(notification.id)
                                 }
                                 className='h-6 w-6 shrink-0'
                               >
@@ -133,18 +134,16 @@ const NotificationCenter = () => {
                           </p>
                           <div className='flex items-center justify-between mt-2'>
                             <span className='text-xs text-gray-500'>
-                              {formatTimeAgo(notification.created_at)}
+                              {formatTimeAgo(notification.created_at || '')}
                             </span>
-                            {notification.priority !== 'normal' && (
+                            {notification.priority && notification.priority !== 'low' && (
                               <Badge
                                 variant='outline'
                                 className={`text-xs ${getPriorityColor(notification.priority)}`}
                               >
-                                {notification.priority === 'urgent'
-                                  ? 'Khẩn cấp'
-                                  : notification.priority === 'high'
-                                    ? 'Cao'
-                                    : 'Thường'}
+                                {notification.priority === 'high'
+                                  ? 'Cao'
+                                  : 'Thường'}
                               </Badge>
                             )}
                           </div>

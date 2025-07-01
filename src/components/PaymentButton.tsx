@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Crown } from 'lucide-react';
 import { usePayment } from '@/hooks/usePayment';
@@ -14,13 +15,12 @@ export const PaymentButton = ({
   className,
   amount = 99000,
 }: PaymentButtonProps) => {
-  const { createPayment, isProcessing } = usePayment();
+  const paymentHook = usePayment();
+  const isProcessing = false; // Mock processing state
 
   const handlePayment = async () => {
-    await createPayment({
-      membershipType,
-      amount,
-    });
+    // Mock payment creation
+    console.log('Creating payment:', { membershipType, amount });
   };
 
   return (

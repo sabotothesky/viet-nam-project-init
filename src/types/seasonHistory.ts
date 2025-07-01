@@ -6,6 +6,7 @@ export interface SeasonHistory {
   ranking_points: number;
   season_name: string;
   season_year: number;
+  created_at?: string;
 }
 
 export interface SeasonHistoryFilters {
@@ -35,6 +36,17 @@ export interface SeasonProgress {
   days_remaining?: number;
 }
 
+export interface PlayerChange {
+  player_name: string;
+  nickname?: string;
+  rank_change: number;
+  current_rank?: number;
+  previous_rank?: number;
+  current_points?: number;
+  previous_points?: number;
+  points_change?: number;
+}
+
 export interface SeasonComparison {
   current_season: {
     rank: number;
@@ -61,8 +73,13 @@ export interface SeasonComparison {
     points_change: number;
     games_change: number;
   };
-  top_players_change?: Array<{
-    player_name: string;
-    rank_change: number;
-  }>;
+  top_players_change?: PlayerChange[];
+}
+
+export interface UserBestSeason {
+  season_name: string;
+  season_year: number;
+  final_rank: number;
+  ranking_points: number;
+  achievement_level: string;
 }
