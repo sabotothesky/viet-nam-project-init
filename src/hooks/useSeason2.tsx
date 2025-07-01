@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from 'react';
 import { Season2, Season2Leaderboard, Season2Stats, Season2LeaderboardEntry } from '../types/season2';
 
@@ -135,8 +136,9 @@ export const useSeason2 = () => {
 
   const getUserProgress = async (userId: string) => {
     try {
-      // Mock user progress
+      // Mock user progress - now includes all required properties
       const mockProgress: Season2LeaderboardEntry = {
+        id: `progress-${userId}`,
         rank: 25,
         user_id: userId,
         nickname: 'TestUser',
@@ -147,7 +149,16 @@ export const useSeason2 = () => {
         losses: 5,
         points: 1200,
         win_rate: 66.7,
-        form: '+3'
+        form: '+3',
+        total_elo_points: 1200,
+        tournaments_played: 3,
+        user: {
+          id: userId,
+          full_name: 'Test User',
+          avatar_url: '',
+          current_rank: 'D1',
+          nickname: 'TestUser'
+        }
       };
       setUserProgress(mockProgress);
       return mockProgress;
@@ -159,6 +170,7 @@ export const useSeason2 = () => {
 
   const getUserRank = (targetUserId?: string): Season2LeaderboardEntry => {
     return userProgress || {
+      id: targetUserId || 'default',
       rank: 0,
       user_id: targetUserId || '',
       nickname: '',
@@ -169,7 +181,9 @@ export const useSeason2 = () => {
       losses: 0,
       points: 0,
       win_rate: 0,
-      form: ''
+      form: '',
+      total_elo_points: 0,
+      tournaments_played: 0
     };
   };
 
