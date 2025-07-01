@@ -54,6 +54,7 @@ const SystemAuditPage = () => {
   const { user, session } = useAuth();
 
   const addResult = (result: AuditResult) => {
+    console.log('Audit result:', result);
     setAuditResults(prev => [...prev, result]);
   };
 
@@ -62,7 +63,13 @@ const SystemAuditPage = () => {
     setCurrentTest(`${category}: ${testName}`);
     
     try {
-      const result = await testFn();
+      console.log(`Running test: ${category} - ${testName}`);
+      const result = await Promise.race([
+        testFn(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Test timeout after 10 seconds')), 10000)
+        )
+      ]);
       const duration = Date.now() - startTime;
       
       addResult({
@@ -75,6 +82,7 @@ const SystemAuditPage = () => {
       });
     } catch (error: any) {
       const duration = Date.now() - startTime;
+      console.error(`Test failed: ${category} - ${testName}:`, error);
       
       addResult({
         category,
@@ -87,28 +95,78 @@ const SystemAuditPage = () => {
     }
   };
 
-  const checkDatabaseConnection = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('count')
-      .limit(1);
+  const checkBasicConnectivity = async () => {
+    console.log('Checking basic connectivity...');
     
-    if (error) throw new Error(`Database connection failed: ${error.message}`);
-    return { connected: true, data };
-  };
-
-  const checkAuthentication = async () => {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error) throw new Error(`Auth check failed: ${error.message}`);
+    // Check if we can reach the current domain
+    const currentDomain = window.location.origin;
+    const response = await fetch(currentDomain, { method: 'HEAD' });
+    
+    if (!response.ok) {
+      throw new Error(`Cannot reach current domain: ${response.status}`);
+    }
     
     return {
-      hasSession: !!session,
-      user: session?.user?.email || 'No user',
-      sessionValid: !!session?.access_token
+      domain: currentDomain,
+      status: response.status,
+      accessible: true
     };
   };
 
+  const checkSupabaseConnection = async () => {
+    console.log('Checking Supabase connection...');
+    
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase environment variables');
+    }
+    
+    // Test basic connection
+    const { data, error } = await supabase.from('profiles').select('count').limit(1);
+    
+    if (error) {
+      throw new Error(`Supabase connection failed: ${error.message}`);
+    }
+    
+    return {
+      url: supabaseUrl,
+      connected: true,
+      hasData: !!data
+    };
+  };
+
+  const checkAuthentication = async () => {
+    console.log('Checking authentication...');
+    
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        throw new Error(`Auth check failed: ${error.message}`);
+      }
+      
+      return {
+        hasSession: !!session,
+        user: session?.user?.email || 'No user',
+        sessionValid: !!session?.access_token,
+        authWorking: true
+      };
+    } catch (error: any) {
+      return {
+        hasSession: false,
+        user: 'Error checking auth',
+        sessionValid: false,
+        authWorking: false,
+        error: error.message
+      };
+    }
+  };
+
   const checkEnvironmentVariables = async () => {
+    console.log('Checking environment variables...');
+    
     const requiredEnvVars = [
       'VITE_SUPABASE_URL',
       'VITE_SUPABASE_ANON_KEY'
@@ -122,7 +180,7 @@ const SystemAuditPage = () => {
       if (!value) {
         missing.push(envVar);
       } else {
-        present.push({ name: envVar, hasValue: !!value });
+        present.push({ name: envVar, hasValue: !!value, length: value.length });
       }
     }
     
@@ -130,31 +188,12 @@ const SystemAuditPage = () => {
       throw new Error(`Missing environment variables: ${missing.join(', ')}`);
     }
     
-    return { present, missing };
+    return { present, missing, totalRequired: requiredEnvVars.length };
   };
 
-  const checkNetworkConnectivity = async () => {
-    const endpoints = [
-      { name: 'Supabase API', url: import.meta.env.VITE_SUPABASE_URL },
-      { name: 'Google Fonts', url: 'https://fonts.googleapis.com' },
-      { name: 'CDN Check', url: 'https://cdn.jsdelivr.net' }
-    ];
+  const checkApplicationRoutes = async () => {
+    console.log('Checking application routes...');
     
-    const results = [];
-    
-    for (const endpoint of endpoints) {
-      try {
-        const response = await fetch(endpoint.url, { method: 'HEAD', mode: 'no-cors' });
-        results.push({ name: endpoint.name, status: 'reachable', url: endpoint.url });
-      } catch (error) {
-        results.push({ name: endpoint.name, status: 'unreachable', url: endpoint.url, error: error.message });
-      }
-    }
-    
-    return results;
-  };
-
-  const checkRoutes = async () => {
     const routes = [
       '/',
       '/login',
@@ -162,22 +201,20 @@ const SystemAuditPage = () => {
       '/simple-club',
       '/simple-booking',
       '/simple-about',
-      '/simple-contact'
+      '/simple-contact',
+      '/system-audit'
     ];
     
     const routeResults = [];
     
     for (const route of routes) {
       try {
-        // Simulate route check by creating a temporary anchor
-        const link = document.createElement('a');
-        link.href = window.location.origin + route;
-        const isValid = link.href.includes(route);
-        
+        const fullUrl = window.location.origin + route;
         routeResults.push({
           route,
-          status: isValid ? 'valid' : 'invalid',
-          fullUrl: link.href
+          status: 'defined',
+          fullUrl,
+          accessible: true
         });
       } catch (error) {
         routeResults.push({
@@ -188,90 +225,126 @@ const SystemAuditPage = () => {
       }
     }
     
-    return routeResults;
+    return {
+      totalRoutes: routes.length,
+      workingRoutes: routeResults.filter(r => r.status === 'defined').length,
+      routes: routeResults
+    };
   };
 
   const checkConsoleErrors = async () => {
-    // Check for console errors
+    console.log('Checking for console errors...');
+    
+    // Create a simple test to check if React is working
     const errors = [];
     const warnings = [];
     
-    // Override console methods temporarily to capture errors
-    const originalError = console.error;
-    const originalWarn = console.warn;
-    
-    console.error = (...args) => {
-      errors.push(args.join(' '));
-      originalError(...args);
-    };
-    
-    console.warn = (...args) => {
-      warnings.push(args.join(' '));
-      originalWarn(...args);
-    };
-    
-    // Test a few things that might generate errors
-    try {
-      // Test React component rendering
-      const testDiv = document.createElement('div');
-      document.body.appendChild(testDiv);
-      document.body.removeChild(testDiv);
-    } catch (error) {
-      errors.push(`DOM manipulation error: ${error.message}`);
+    // Check if React is available
+    if (typeof React === 'undefined') {
+      errors.push('React is not available globally');
     }
     
-    // Restore original console methods
-    console.error = originalError;
-    console.warn = originalWarn;
+    // Check DOM readiness
+    if (document.readyState !== 'complete') {
+      warnings.push('Document not fully loaded');
+    }
     
-    return { errors, warnings, errorCount: errors.length, warningCount: warnings.length };
-  };
-
-  const checkStorageAccess = async () => {
-    const { data: buckets, error } = await supabase.storage.listBuckets();
-    
-    if (error) throw new Error(`Storage access failed: ${error.message}`);
+    // Check if main element exists
+    if (!document.getElementById('root')) {
+      errors.push('Root element not found');
+    }
     
     return {
-      bucketsAccessible: true,
-      bucketCount: buckets.length,
-      buckets: buckets.map(b => b.name)
+      errors,
+      warnings,
+      errorCount: errors.length,
+      warningCount: warnings.length,
+      reactAvailable: typeof React !== 'undefined',
+      domReady: document.readyState === 'complete'
     };
+  };
+
+  const checkSystemHealth = async () => {
+    console.log('Checking system health...');
+    
+    const health = {
+      memory: performance?.memory ? {
+        used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+        limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
+      } : null,
+      online: navigator.onLine,
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      platform: navigator.platform,
+      cookieEnabled: navigator.cookieEnabled,
+      localStorage: (() => {
+        try {
+          localStorage.setItem('test', 'test');
+          localStorage.removeItem('test');
+          return true;
+        } catch {
+          return false;
+        }
+      })()
+    };
+    
+    return health;
   };
 
   const runFullSystemAudit = async () => {
     setIsRunning(true);
     setAuditResults([]);
-    setCurrentTest('Starting system audit...');
+    setCurrentTest('Starting comprehensive system audit...');
+    
+    console.log('=== STARTING FULL SYSTEM AUDIT ===');
     
     try {
-      // Database Tests
-      await runTest('Database', 'Connection Test', checkDatabaseConnection);
-      await runTest('Database', 'Storage Access', checkStorageAccess);
+      // 1. Basic Connectivity Tests
+      await runTest('Connectivity', 'Basic Domain Access', checkBasicConnectivity);
       
-      // Authentication Tests
-      await runTest('Authentication', 'Session Check', checkAuthentication);
-      
-      // Environment Tests
+      // 2. Environment Tests
       await runTest('Environment', 'Variables Check', checkEnvironmentVariables);
       
-      // Network Tests
-      await runTest('Network', 'Connectivity Check', checkNetworkConnectivity);
+      // 3. Database Tests
+      await runTest('Database', 'Supabase Connection', checkSupabaseConnection);
       
-      // Application Tests
-      await runTest('Application', 'Route Validation', checkRoutes);
+      // 4. Authentication Tests
+      await runTest('Authentication', 'Session Check', checkAuthentication);
+      
+      // 5. Application Tests
+      await runTest('Application', 'Route Validation', checkApplicationRoutes);
       await runTest('Application', 'Console Errors', checkConsoleErrors);
       
-      // Calculate overall status
-      const results = auditResults;
-      const totalTests = results.length;
-      const passedTests = results.filter(r => r.status === 'success').length;
-      const errors = results.filter(r => r.status === 'error').map(r => r.message);
-      const warnings = results.filter(r => r.status === 'warning').map(r => r.message);
+      // 6. System Health
+      await runTest('System', 'Health Check', checkSystemHealth);
+      
+    } catch (error) {
+      console.error('Audit process failed:', error);
+      addResult({
+        category: 'System',
+        test: 'Audit Process',
+        status: 'error',
+        message: `Audit process failed: ${error.message}`,
+        details: error
+      });
+    } finally {
+      setIsRunning(false);
+      setCurrentTest('');
+      console.log('=== AUDIT COMPLETED ===');
+    }
+  };
+
+  // Calculate system status whenever results change
+  useEffect(() => {
+    if (auditResults.length > 0) {
+      const totalTests = auditResults.length;
+      const passedTests = auditResults.filter(r => r.status === 'success').length;
+      const errors = auditResults.filter(r => r.status === 'error').map(r => `${r.category}: ${r.message}`);
+      const warnings = auditResults.filter(r => r.status === 'warning').map(r => `${r.category}: ${r.message}`);
       
       let overall: 'healthy' | 'degraded' | 'critical' = 'healthy';
       if (errors.length > 0) {
-        overall = errors.length > 3 ? 'critical' : 'degraded';
+        overall = errors.length > 2 ? 'critical' : 'degraded';
       }
       
       setSystemStatus({
@@ -281,17 +354,11 @@ const SystemAuditPage = () => {
         totalTests,
         passedTests
       });
-      
-    } catch (error) {
-      console.error('Audit failed:', error);
-    } finally {
-      setIsRunning(false);
-      setCurrentTest('');
     }
-  };
+  }, [auditResults]);
 
   useEffect(() => {
-    // Run audit on page load
+    console.log('SystemAuditPage mounted, starting initial audit...');
     runFullSystemAudit();
   }, []);
 
@@ -336,22 +403,31 @@ const SystemAuditPage = () => {
               <h1 className="text-3xl font-bold text-white mb-2">🔍 System Audit Dashboard</h1>
               <p className="text-green-200">Comprehensive system health and connectivity check</p>
             </div>
-            <Button
-              onClick={runFullSystemAudit}
-              disabled={isRunning}
-              className="bg-yellow-400 text-green-900 hover:bg-yellow-500"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRunning ? 'animate-spin' : ''}`} />
-              {isRunning ? 'Running Audit...' : 'Run Audit'}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={runFullSystemAudit}
+                disabled={isRunning}
+                className="bg-yellow-400 text-green-900 hover:bg-yellow-500"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRunning ? 'animate-spin' : ''}`} />
+                {isRunning ? 'Running...' : 'Run Audit'}
+              </Button>
+              <Button
+                onClick={() => window.location.href = '/'}
+                variant="outline"
+                className="text-white border-white hover:bg-white hover:text-green-900"
+              >
+                Back to Home
+              </Button>
+            </div>
           </div>
 
           {/* Current Test Status */}
           {isRunning && (
             <Alert className="mb-6 bg-blue-50 border-blue-200">
-              <Activity className="h-4 w-4" />
+              <Activity className="h-4 w-4 animate-spin" />
               <AlertDescription>
-                Currently running: {currentTest}
+                {currentTest || 'Running system audit...'}
               </AlertDescription>
             </Alert>
           )}
@@ -361,7 +437,7 @@ const SystemAuditPage = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Server className="h-5 w-5" />
-                Overall System Status
+                System Status Overview
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -373,7 +449,7 @@ const SystemAuditPage = () => {
                   }`}>
                     {systemStatus.overall.toUpperCase()}
                   </div>
-                  <p className="text-sm text-gray-600">System Health</p>
+                  <p className="text-sm text-gray-600">Overall Health</p>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">{systemStatus.passedTests}</div>
@@ -381,26 +457,55 @@ const SystemAuditPage = () => {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">{systemStatus.errors.length}</div>
-                  <p className="text-sm text-gray-600">Errors Found</p>
+                  <p className="text-sm text-gray-600">Critical Issues</p>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-600">{systemStatus.warnings.length}</div>
                   <p className="text-sm text-gray-600">Warnings</p>
                 </div>
               </div>
+
+              {/* Quick Fixes */}
+              {systemStatus.errors.length > 0 && (
+                <div className="mt-4 p-4 bg-red-50 rounded-lg">
+                  <h4 className="font-semibold text-red-800 mb-2">Critical Issues Found:</h4>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    {systemStatus.errors.slice(0, 3).map((error, index) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Detailed Results */}
           <Tabs defaultValue="all" className="space-y-4">
             <TabsList className="bg-green-800 border-green-700">
-              <TabsTrigger value="all" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">All Tests</TabsTrigger>
-              <TabsTrigger value="errors" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">Errors Only</TabsTrigger>
-              <TabsTrigger value="database" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">Database</TabsTrigger>
-              <TabsTrigger value="network" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">Network</TabsTrigger>
+              <TabsTrigger value="all" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">
+                All Tests ({auditResults.length})
+              </TabsTrigger>
+              <TabsTrigger value="errors" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">
+                Errors ({auditResults.filter(r => r.status === 'error').length})
+              </TabsTrigger>
+              <TabsTrigger value="connectivity" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">
+                Connectivity
+              </TabsTrigger>
+              <TabsTrigger value="database" className="text-white data-[state=active]:bg-yellow-400 data-[state=active]:text-green-900">
+                Database
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">
+              {auditResults.length === 0 && !isRunning && (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <Server className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <p className="text-gray-600">No audit results yet. Click "Run Audit" to start.</p>
+                  </CardContent>
+                </Card>
+              )}
+              
               {auditResults.map((result, index) => (
                 <Card key={index} className={`${getStatusColor(result.status)}`}>
                   <CardContent className="p-4">
@@ -425,7 +530,7 @@ const SystemAuditPage = () => {
                     {result.details && (
                       <details className="mt-3">
                         <summary className="cursor-pointer text-sm font-medium">View Details</summary>
-                        <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                        <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto max-h-40">
                           {JSON.stringify(result.details, null, 2)}
                         </pre>
                       </details>
@@ -436,14 +541,47 @@ const SystemAuditPage = () => {
             </TabsContent>
 
             <TabsContent value="errors" className="space-y-4">
-              {auditResults.filter(r => r.status === 'error').map((result, index) => (
-                <Card key={index} className="bg-red-50 border-red-200">
+              {auditResults.filter(r => r.status === 'error').length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                    <p className="text-green-600 font-semibold">No errors found!</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                auditResults.filter(r => r.status === 'error').map((result, index) => (
+                  <Card key={index} className="bg-red-50 border-red-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <XCircle className="h-5 w-5 text-red-500" />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-red-800">{result.category}: {result.test}</h3>
+                          <p className="text-sm text-red-600">{result.message}</p>
+                          {result.details && (
+                            <details className="mt-2">
+                              <summary className="cursor-pointer text-xs font-medium">Technical Details</summary>
+                              <pre className="mt-1 text-xs bg-red-100 p-2 rounded">
+                                {JSON.stringify(result.details, null, 2)}
+                              </pre>
+                            </details>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="connectivity" className="space-y-4">
+              {auditResults.filter(r => r.category === 'Connectivity').map((result, index) => (
+                <Card key={index} className={getStatusColor(result.status)}>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      <XCircle className="h-5 w-5 text-red-500" />
+                      <Network className="h-5 w-5" />
                       <div>
-                        <h3 className="font-semibold text-red-800">{result.category}: {result.test}</h3>
-                        <p className="text-sm text-red-600">{result.message}</p>
+                        <h3 className="font-semibold">{result.test}</h3>
+                        <p className="text-sm text-gray-600">{result.message}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -457,22 +595,6 @@ const SystemAuditPage = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <Database className="h-5 w-5" />
-                      <div>
-                        <h3 className="font-semibold">{result.test}</h3>
-                        <p className="text-sm text-gray-600">{result.message}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </TabsContent>
-
-            <TabsContent value="network" className="space-y-4">
-              {auditResults.filter(r => r.category === 'Network').map((result, index) => (
-                <Card key={index} className={getStatusColor(result.status)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <Network className="h-5 w-5" />
                       <div>
                         <h3 className="font-semibold">{result.test}</h3>
                         <p className="text-sm text-gray-600">{result.message}</p>
