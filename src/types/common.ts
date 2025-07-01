@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email?: string;
@@ -34,7 +33,7 @@ export interface AuthContextType {
 
 export interface UserProfile {
   id: string;
-  user_id: string; // Make this required instead of optional
+  user_id: string;
   first_name?: string;
   last_name?: string;
   full_name: string;
@@ -72,7 +71,6 @@ export interface UserProfile {
   };
   created_at: string;
   updated_at: string;
-  // Add missing properties
   clbVerified?: boolean;
   elo?: number;
 }
@@ -223,7 +221,7 @@ export interface ProfileFormData {
 export interface Club {
   id: string;
   name: string;
-  address: string; // Make this required instead of optional
+  address: string;
   phone?: string;
   description?: string;
   created_at: string;
@@ -234,7 +232,6 @@ export interface Club {
   available_tables?: number;
   priority_score?: number;
   hourly_rate?: number;
-  // Add missing properties
   logo_url?: string;
   email?: string;
   table_count?: number;

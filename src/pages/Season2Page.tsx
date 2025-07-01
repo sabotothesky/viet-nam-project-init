@@ -30,30 +30,30 @@ export const Season2Page: React.FC = () => {
   const {
     seasonInfo,
     prizes,
-    getSeason2Leaderboard,
-    getUserSeason2Stats,
+    leaderboard,
     loading,
   } = useSeason2();
   const { user } = useAuth();
-  const [leaderboard, setLeaderboard] = React.useState<any[]>([]);
   const [userStats, setUserStats] = React.useState<any | null>(null);
   const [activeTab, setActiveTab] = React.useState('info');
 
   React.useEffect(() => {
     if (user && seasonInfo) {
-      loadLeaderboard();
       loadUserStats();
     }
   }, [user, seasonInfo]);
 
-  const loadLeaderboard = async () => {
-    const data = await getSeason2Leaderboard();
-    setLeaderboard(data);
-  };
-
   const loadUserStats = async () => {
-    const stats = await getUserSeason2Stats();
-    setUserStats(stats);
+    if (user && leaderboard) {
+      const userEntry = leaderboard.find(entry => entry.user_id === user.id);
+      if (userEntry) {
+        setUserStats({
+          total_elo_points: userEntry.total_elo_points,
+          tournaments_played: userEntry.tournaments_played,
+          user: userEntry.user,
+        });
+      }
+    }
   };
 
   const getRankBadge = (rank: number) => {
