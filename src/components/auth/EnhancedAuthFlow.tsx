@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Phone, Mail, Lock, User, MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import { useEmailNotifications } from '@/hooks/useEmailNotifications';
 import { toast } from 'sonner';
 
 interface EnhancedAuthFlowProps {
@@ -22,6 +24,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
 }) => {
   const { signIn, signUp, loading } = useAuth();
   const { requestLocationPermission } = useUserLocation();
+  const { sendTournamentConfirmation } = useEmailNotifications();
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState<'auth' | 'profile' | 'location'>('auth');
   const [authData, setAuthData] = useState({
@@ -84,9 +87,13 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
     if (!validateForm(false)) return;
 
     try {
-      await signIn(authData.email, authData.password);
-      toast.success('Đăng nhập thành công!');
-      onSuccess?.();
+      const { error } = await signIn(authData.email, authData.password);
+      if (error) {
+        toast.error(error.message || 'Đăng nhập thất bại');
+      } else {
+        toast.success('🎉 Đăng nhập thành công! Chào mừng trở lại SABO Pool Arena!');
+        onSuccess?.();
+      }
     } catch (error: any) {
       toast.error(error.message || 'Đăng nhập thất bại');
     }
@@ -97,12 +104,17 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
 
     if (!validateForm(true)) return;
 
-    try {
-      // Fixed: Use correct number of parameters for signUp (email, password)
-      await signUp(authData.email, authData.password);
-
-      setStep('location');
-      toast.success('Đăng ký thành công!');
+    try {      
+      const { error } = await signUp(authData.email, authData.password);
+      if (error) {
+        toast.error(error.message || 'Đăng ký thất bại');
+      } else {
+        setStep('location');
+        toast.success('🎉 Đăng ký thành công! Email xác thực đã được gửi đến hộp thư của bạn.');
+        
+        // Auto-trigger welcome email (handled by useEmailNotifications hook)
+        console.log('New user registered, welcome email will be sent automatically');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Đăng ký thất bại');
     }
@@ -111,14 +123,17 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
   const handleLocationSetup = async () => {
     try {
       await requestLocationPermission();
+      toast.success('🎯 Vị trí đã được thiết lập! Bạn sẽ nhận được đề xuất giải đấu phù hợp.');
       onSuccess?.();
     } catch (error) {
-      // Có thể bỏ qua lỗi location và tiếp tục
+      // Location is optional, continue anyway
+      toast.info('Bạn có thể thiết lập vị trí sau trong phần cài đặt.');
       onSuccess?.();
     }
   };
 
   const skipLocationSetup = () => {
+    toast.info('Đã bỏ qua thiết lập vị trí. Bạn có thể cài đặt sau.');
     onSuccess?.();
   };
 
@@ -134,11 +149,18 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
           <CardHeader className='text-center pb-4'>
             <CardTitle className='text-2xl font-bold text-gray-900'>
               {step === 'auth'
-                ? 'Chào mừng đến SABO'
+                ? '🎱 Chào mừng đến SABO'
                 : step === 'location'
-                  ? 'Cài đặt vị trí'
-                  : 'Hoàn tất đăng ký'}
+                  ? '📍 Cài đặt vị trí'
+                  : '📝 Hoàn tất đăng ký'}
             </CardTitle>
+            <p className='text-gray-600 text-sm mt-2'>
+              {step === 'auth'
+                ? 'Nền tảng thi đấu Billiards hàng đầu Việt Nam'
+                : step === 'location'
+                  ? 'Giúp chúng tôi đề xuất giải đấu phù hợp cho bạn'
+                  : 'Chỉ còn vài bước nữa thôi!'}
+            </p>
           </CardHeader>
 
           <CardContent>
@@ -221,10 +243,17 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
 
                         <Button
                           type='submit'
-                          className='w-full'
+                          className='w-full bg-blue-600 hover:bg-blue-700'
                           disabled={loading}
                         >
-                          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                          {loading ? (
+                            <>
+                              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
+                              Đang đăng nhập...
+                            </>
+                          ) : (
+                            '🚀 Đăng nhập'
+                          )}
                         </Button>
                       </form>
                     </TabsContent>
@@ -232,7 +261,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                     <TabsContent value='signup' className='space-y-4'>
                       <form onSubmit={handleSignUp} className='space-y-4'>
                         <div>
-                          <Label htmlFor='fullName'>Họ và tên</Label>
+                          <Label htmlFor='fullName'>Họ và tên *</Label>
                           <div className='relative'>
                             <User className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
                             <Input
@@ -256,7 +285,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                         </div>
 
                         <div>
-                          <Label htmlFor='phone'>Số điện thoại</Label>
+                          <Label htmlFor='phone'>Số điện thoại *</Label>
                           <div className='relative'>
                             <Phone className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
                             <Input
@@ -280,7 +309,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                         </div>
 
                         <div>
-                          <Label htmlFor='signupEmail'>Email</Label>
+                          <Label htmlFor='signupEmail'>Email *</Label>
                           <div className='relative'>
                             <Mail className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
                             <Input
@@ -305,7 +334,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                         </div>
 
                         <div>
-                          <Label htmlFor='signupPassword'>Mật khẩu</Label>
+                          <Label htmlFor='signupPassword'>Mật khẩu *</Label>
                           <div className='relative'>
                             <Lock className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
                             <Input
@@ -342,7 +371,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
 
                         <div>
                           <Label htmlFor='confirmPassword'>
-                            Xác nhận mật khẩu
+                            Xác nhận mật khẩu *
                           </Label>
                           <div className='relative'>
                             <Lock className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
@@ -369,10 +398,17 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
 
                         <Button
                           type='submit'
-                          className='w-full'
+                          className='w-full bg-green-600 hover:bg-green-700'
                           disabled={loading}
                         >
-                          {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                          {loading ? (
+                            <>
+                              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
+                              Đang đăng ký...
+                            </>
+                          ) : (
+                            '🎉 Tạo tài khoản'
+                          )}
                         </Button>
                       </form>
                     </TabsContent>
@@ -393,7 +429,7 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                   </div>
                   <div>
                     <h3 className='text-lg font-semibold mb-2'>
-                      Cho phép truy cập vị trí
+                      📍 Cho phép truy cập vị trí
                     </h3>
                     <p className='text-gray-600 text-sm'>
                       Chúng tôi sử dụng vị trí của bạn để đề xuất các giải đấu
@@ -402,20 +438,20 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
                   </div>
                   <Alert>
                     <AlertDescription>
-                      Thông tin vị trí của bạn sẽ được bảo mật và chỉ dùng để
-                      cải thiện trải nghiệm.
+                      🔒 Thông tin vị trí của bạn sẽ được bảo mật và chỉ dùng để
+                      cải thiện trải nghiệm sử dụng.
                     </AlertDescription>
                   </Alert>
                   <div className='space-y-3'>
-                    <Button onClick={handleLocationSetup} className='w-full'>
-                      Cho phép truy cập vị trí
+                    <Button onClick={handleLocationSetup} className='w-full bg-blue-600 hover:bg-blue-700'>
+                      🎯 Cho phép truy cập vị trí
                     </Button>
                     <Button
                       onClick={skipLocationSetup}
                       variant='outline'
                       className='w-full'
                     >
-                      Bỏ qua (có thể cài đặt sau)
+                      ⏭️ Bỏ qua (có thể cài đặt sau)
                     </Button>
                   </div>
                 </motion.div>
