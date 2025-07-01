@@ -1,9 +1,9 @@
+
 import { useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdmin } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 import AdminSidebar from './AdminSidebar';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -11,7 +11,7 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { user, loading: authLoading } = useAuth();
-  const { isAdmin, loading: adminLoading } = useAdmin();
+  const { data: isAdmin, isLoading: adminLoading } = useAdminCheck();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   if (authLoading || adminLoading) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
-        <LoadingSpinner size='lg' />
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
       </div>
     );
   }
