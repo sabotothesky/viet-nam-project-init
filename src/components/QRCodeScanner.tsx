@@ -10,7 +10,7 @@ import {
 import { Badge } from './ui/badge';
 import { useQRSystem } from '../hooks/useQRSystem';
 import { useAuth } from '../hooks/useAuth';
-import { TableQRCode } from '../types/qr';
+import { TableQRCode, CreateQuickMatchRequest } from '../types/qr';
 import { toast } from '../hooks/use-toast';
 
 interface QRCodeScannerProps {
@@ -107,10 +107,10 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
     if (!scannedTable || !selectedPlayer || !user) return;
 
     const request: CreateQuickMatchRequest = {
-      table_id: scannedTable.id,
+      player1_id: user.id,
       player2_id: selectedPlayer,
-      game_type: gameType,
-      bet_points: betPoints,
+      table_id: scannedTable.id,
+      bet_amount: betPoints,
     };
 
     const match = await createQuickMatch(request);

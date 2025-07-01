@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { RankRequest, CreateRankRequestData, RankRequestFilters } from '@/types/rankRequests';
 
@@ -130,7 +129,8 @@ export const useRankRequests = () => {
     total: requests.length,
     pending: getPendingRequests().length,
     approved: getApprovedRequests().length,
-    rejected: getRejectedRequests().length
+    rejected: getRejectedRequests().length,
+    on_site_test: requests.filter(req => req.status === 'on_site_test').length
   };
 
   useEffect(() => {

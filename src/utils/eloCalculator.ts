@@ -1,4 +1,3 @@
-
 export interface EloConfig {
   k_factor: number;
   rating_floor: number;
@@ -28,6 +27,29 @@ export interface EloResult {
   expected_score_2: number;
   k_factor_1: number;
   k_factor_2: number;
+}
+
+export interface PlayerStats {
+  id: string;
+  user_id: string;
+  username: string;
+  current_rating: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  total_games: number;
+  matches_played: number;
+  win_rate: number;
+  current_streak: number;
+  best_streak: number;
+  elo_rating: number;
+  rank: string;
+  recent_form?: number;
+  consistency_score?: number;
+  rating_volatility?: number;
+  highest_rating?: number;
+  lowest_rating?: number;
+  average_opponent_rating?: number;
 }
 
 // Basic Elo calculation function
@@ -229,4 +251,14 @@ export const calculateConsistencyScore = (ratingHistory: number[]): number => {
   // Normalize to 0-100 scale
   const consistencyScore = Math.max(0, 100 - (standardDeviation / mean) * 100);
   return Math.round(consistencyScore);
+};
+
+export const predictMatchResult = (player1Rating: number, player2Rating: number): { player1WinProbability: number; player2WinProbability: number } => {
+  const player1WinProbability = calculateWinProbability(player1Rating, player2Rating);
+  const player2WinProbability = 1 - player1WinProbability;
+  
+  return {
+    player1WinProbability,
+    player2WinProbability
+  };
 };
