@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { RankRequest, CreateRankRequestData, RankRequestFilters } from '@/types/rankRequests';
 
@@ -7,11 +8,11 @@ export const useRankRequests = () => {
   const [error, setError] = useState('');
   const [filters, setFilters] = useState<RankRequestFilters>({
     status: undefined,
-    rank: undefined,
+    club_id: undefined,
     dateRange: undefined
   });
 
-  const fetchRankRequests = async () => {
+  const fetchRankRequests = async (filterOptions?: RankRequestFilters) => {
     setLoading(true);
     try {
       // Mock data
@@ -19,8 +20,8 @@ export const useRankRequests = () => {
         {
           id: '1',
           user_id: 'user1',
-          current_rank: 'K1',
-          requested_rank: 'K2',
+          requested_rank: 1500,
+          club_id: 'club1',
           status: 'pending',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -36,12 +37,11 @@ export const useRankRequests = () => {
 
   const createRankRequest = async (data: CreateRankRequestData) => {
     try {
-      // Mock implementation
       const newRequest: RankRequest = {
         id: Date.now().toString(),
         user_id: data.user_id || 'current_user',
-        current_rank: data.current_rank,
         requested_rank: data.requested_rank,
+        club_id: data.club_id,
         status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -52,12 +52,12 @@ export const useRankRequests = () => {
     }
   };
 
-  const updateRankRequest = async (id: string, status: string) => {
+  const updateRankRequest = async (id: string, updateData: any) => {
     try {
       setRequests(prev => 
         prev.map(req => 
           req.id === id 
-            ? { ...req, status, updated_at: new Date().toISOString() }
+            ? { ...req, ...updateData, updated_at: new Date().toISOString() }
             : req
         )
       );
@@ -75,11 +75,11 @@ export const useRankRequests = () => {
   };
 
   const approveRankRequest = async (id: string) => {
-    return updateRankRequest(id, 'approved');
+    return updateRankRequest(id, { status: 'approved' });
   };
 
   const rejectRankRequest = async (id: string) => {
-    return updateRankRequest(id, 'rejected');
+    return updateRankRequest(id, { status: 'rejected' });
   };
 
   const getUserRankRequests = (userId: string) => {
@@ -104,14 +104,14 @@ export const useRankRequests = () => {
     return ranks.slice(currentIndex + 1);
   };
 
-  // Add missing properties that components are trying to use
-  const rankRequests = requests; // Alias for backward compatibility
+  const rankRequests = requests;
   
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending': return 'Đang chờ';
       case 'approved': return 'Đã duyệt';
       case 'rejected': return 'Từ chối';
+      case 'on_site_test': return 'Kiểm tra tại chỗ';
       default: return status;
     }
   };
@@ -121,6 +121,7 @@ export const useRankRequests = () => {
       case 'pending': return 'text-yellow-600 bg-yellow-100';
       case 'approved': return 'text-green-600 bg-green-100';
       case 'rejected': return 'text-red-600 bg-red-100';
+      case 'on_site_test': return 'text-blue-600 bg-blue-100';
       default: return 'text-gray-600 bg-gray-100';
     }
   };
@@ -153,7 +154,6 @@ export const useRankRequests = () => {
     getApprovedRequests,
     getRejectedRequests,
     getEligibleRanks,
-    // Add missing properties
     rankRequests,
     getStatusText,
     getStatusColor,

@@ -1,3 +1,5 @@
+
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -14,6 +16,7 @@ import { toast } from '../hooks/use-toast';
 
 export const Season2Info: React.FC = () => {
   const {
+    season2,
     seasonInfo,
     prizes,
     loading,
@@ -21,14 +24,14 @@ export const Season2Info: React.FC = () => {
     registerForSeason2,
   } = useSeason2();
   const { user } = useAuth();
-  const [eligibility, setEligibility] = React.useState<{
+  const [eligibility, setEligibility] = useState<{
     eligible: boolean;
     reason?: string;
     currentRank?: string;
   } | null>(null);
-  const [checkingEligibility, setCheckingEligibility] = React.useState(false);
+  const [checkingEligibility, setCheckingEligibility] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       checkUserEligibility();
     }
@@ -48,11 +51,14 @@ export const Season2Info: React.FC = () => {
         title: 'Đăng ký thành công',
         description: 'Bạn đã được đăng ký tham gia Season 2 - 2025!',
       });
-      checkUserEligibility(); // Refresh eligibility
+      checkUserEligibility();
     }
   };
 
-  if (!seasonInfo) {
+  // Use season2 data if seasonInfo is not available
+  const currentSeasonInfo = seasonInfo || season2;
+
+  if (!currentSeasonInfo) {
     return (
       <Card>
         <CardContent className='p-6'>
@@ -72,37 +78,37 @@ export const Season2Info: React.FC = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2 text-2xl'>
             <Trophy className='w-8 h-8' />
-            {seasonInfo.season_name}
+            {currentSeasonInfo.season_name}
           </CardTitle>
           <CardDescription className='text-blue-100'>
             Thời gian:{' '}
-            {new Date(seasonInfo.start_date).toLocaleDateString('vi-VN')} -{' '}
-            {new Date(seasonInfo.end_date).toLocaleDateString('vi-VN')}
+            {new Date(currentSeasonInfo.start_date).toLocaleDateString('vi-VN')} -{' '}
+            {new Date(currentSeasonInfo.end_date).toLocaleDateString('vi-VN')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
             <div className='text-center'>
               <div className='text-2xl font-bold'>
-                {seasonInfo.total_participants}
+                {currentSeasonInfo.total_participants || 0}
               </div>
               <div className='text-sm text-blue-100'>Người tham gia</div>
             </div>
             <div className='text-center'>
               <div className='text-2xl font-bold'>
-                {seasonInfo.total_matches}
+                {currentSeasonInfo.total_matches || 0}
               </div>
               <div className='text-sm text-blue-100'>Trận đấu</div>
             </div>
             <div className='text-center'>
               <div className='text-2xl font-bold'>
-                {seasonInfo.registration_fee.toLocaleString()}đ
+                {(currentSeasonInfo.registration_fee || 0).toLocaleString()}đ
               </div>
               <div className='text-sm text-blue-100'>Phí đăng ký</div>
             </div>
             <div className='text-center'>
               <Badge variant='secondary' className='text-blue-600'>
-                {seasonInfo.status === 'active'
+                {currentSeasonInfo.status === 'active'
                   ? 'Đang diễn ra'
                   : 'Đã kết thúc'}
               </Badge>

@@ -2,194 +2,180 @@
 import { useState } from 'react';
 import { 
   SeasonHistory, 
+  SeasonHistoryFilters, 
   CurrentSeason, 
   SeasonProgress, 
   SeasonComparison, 
-  UserBestSeason 
+  PlayerHistoryResponse, 
+  BestSeasonData 
 } from '../types/seasonHistory';
 
 export const useSeasonHistory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const getCurrentSeason = async (): Promise<CurrentSeason | null> => {
+  const getSeasonHistory = async (
+    filters: SeasonHistoryFilters,
+    page: number,
+    limit: number
+  ): Promise<{ data: SeasonHistory[]; count: number; stats: any }> => {
     setLoading(true);
     try {
-      // Mock current season data
+      // Mock implementation
+      const mockData: SeasonHistory[] = [];
+      const mockStats = {
+        totalPlayers: 0,
+        totalMatches: 0,
+        averageRating: 0
+      };
+      
       return {
-        season_name: 'Spring',
+        data: mockData,
+        count: 0,
+        stats: mockStats
+      };
+    } catch (err) {
+      setError('Failed to fetch season history');
+      return { data: [], count: 0, stats: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSeasonStats = async (seasonName: string, seasonYear: number) => {
+    try {
+      // Mock implementation
+      return {
+        totalPlayers: 0,
+        totalMatches: 0,
+        averageRating: 0
+      };
+    } catch (err) {
+      setError('Failed to fetch season stats');
+      return null;
+    }
+  };
+
+  const getAvailableSeasons = async (): Promise<Array<{ season_name: string; season_year: number }>> => {
+    try {
+      // Mock implementation
+      return [
+        { season_name: 'S2', season_year: 2024 },
+        { season_name: 'S1', season_year: 2024 }
+      ];
+    } catch (err) {
+      setError('Failed to fetch available seasons');
+      return [];
+    }
+  };
+
+  const getCurrentSeason = async (): Promise<CurrentSeason> => {
+    try {
+      // Mock implementation
+      return {
+        season_name: 'S2',
         season_year: 2024,
         start_date: '2024-01-01',
-        end_date: '2024-03-31',
-        status: 'ongoing' as const,
-        days_remaining: 45
+        end_date: '2024-12-31',
+        status: 'active',
+        total_participants: 150
       };
     } catch (err) {
       setError('Failed to fetch current season');
-      return null;
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
-  const getSeasonProgress = async (seasonName: string, seasonYear: number): Promise<SeasonProgress | null> => {
-    setLoading(true);
+  const getSeasonProgress = async (seasonName: string, seasonYear: number): Promise<SeasonProgress> => {
     try {
-      // Mock progress data
+      // Mock implementation
       return {
-        current_rank: 15,
-        total_points: 1250,
-        games_played: 45,
-        wins: 32,
-        losses: 13,
-        win_rate: 71.1,
-        progress_percentage: 65,
-        days_elapsed: 45,
-        days_remaining: 45
+        season_name: seasonName,
+        season_year: seasonYear,
+        user_rank: 1,
+        total_participants: 150,
+        matches_played: 10,
+        wins: 7,
+        losses: 3,
+        points: 1200,
+        rating_change: 50
       };
     } catch (err) {
       setError('Failed to fetch season progress');
-      return null;
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
-  const getSeasonComparison = async (): Promise<SeasonComparison | null> => {
-    setLoading(true);
+  const getSeasonComparison = async (): Promise<SeasonComparison> => {
     try {
-      // Mock comparison data
+      // Mock implementation
       return {
         current_season: {
-          rank: 15,
-          points: 1250,
-          games: 45,
-          season_name: 'Spring',
+          season_name: 'S2',
           season_year: 2024,
-          total_players: 500,
-          highest_points: 2500,
-          average_points: 800
+          rank: 1,
+          points: 1200,
+          matches_played: 10
         },
         previous_season: {
-          rank: 20,
+          season_name: 'S1',
+          season_year: 2024,
+          rank: 2,
           points: 1100,
-          games: 40,
-          season_name: 'Winter',
-          season_year: 2023,
-          total_players: 450,
-          highest_points: 2300,
-          average_points: 750
+          matches_played: 8
         },
         improvement: {
-          rank_change: 5,
-          points_change: 150,
-          games_change: 5
-        },
-        top_players_change: [
-          {
-            player_name: 'Player1',
-            nickname: 'Pro1',
-            rank_change: 2,
-            current_rank: 1,
-            previous_rank: 3,
-            current_points: 2500,
-            previous_points: 2300,
-            points_change: 200
-          }
-        ]
+          rank_change: 1,
+          points_change: 100,
+          matches_change: 2
+        }
       };
     } catch (err) {
       setError('Failed to fetch season comparison');
-      return null;
-    } finally {
-      setLoading(false);
+      throw err;
     }
   };
 
-  const searchPlayerHistory = async (nickname: string): Promise<SeasonHistory[]> => {
-    setLoading(true);
+  const searchPlayerHistory = async (nickname: string): Promise<PlayerHistoryResponse> => {
     try {
-      // Mock player history data
-      return [
-        {
-          id: '1',
-          nickname: nickname,
-          final_rank: 12,
-          ranking_points: 1350,
-          season_name: 'Spring',
-          season_year: 2024,
-          created_at: '2024-03-15T10:00:00Z'
-        },
-        {
-          id: '2',
-          nickname: nickname,
-          final_rank: 18,
-          ranking_points: 1150,
-          season_name: 'Winter',
-          season_year: 2023,
-          created_at: '2023-12-15T10:00:00Z'
-        }
-      ];
-    } catch (err) {
-      setError('Failed to search player history');
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getUserBestSeason = async (nickname: string): Promise<UserBestSeason | null> => {
-    setLoading(true);
-    try {
-      // Mock best season data
+      // Mock implementation
       return {
-        season_name: 'Spring',
-        season_year: 2024,
-        final_rank: 12,
-        ranking_points: 1350,
-        achievement_level: 'Advanced'
+        player_history: [],
+        total_seasons: 0
       };
     } catch (err) {
-      setError('Failed to fetch user best season');
-      return null;
-    } finally {
-      setLoading(false);
+      setError('Failed to search player history');
+      throw err;
     }
   };
 
-  // Add missing methods that components are trying to use
-  const getSeasonHistory = async (): Promise<SeasonHistory[]> => {
-    return searchPlayerHistory('current_user');
-  };
-
-  const getSeasonStats = async () => {
-    return {
-      total_seasons: 4,
-      best_rank: 12,
-      total_points: 1350,
-      average_rank: 15
-    };
-  };
-
-  const getAvailableSeasons = async () => {
-    return [
-      { season_name: 'Spring', season_year: 2024 },
-      { season_name: 'Winter', season_year: 2023 },
-      { season_name: 'Fall', season_year: 2023 },
-      { season_name: 'Summer', season_year: 2023 }
-    ];
+  const getUserBestSeason = async (nickname: string): Promise<BestSeasonData> => {
+    try {
+      // Mock implementation
+      return {
+        season_name: 'S2',
+        season_year: 2024,
+        best_rank: 1,
+        points: 1200,
+        matches_played: 10,
+        win_rate: 70
+      };
+    } catch (err) {
+      setError('Failed to fetch best season');
+      throw err;
+    }
   };
 
   return {
     loading,
     error,
+    getSeasonHistory,
+    getSeasonStats,
+    getAvailableSeasons,
     getCurrentSeason,
     getSeasonProgress,
     getSeasonComparison,
     searchPlayerHistory,
     getUserBestSeason,
-    getSeasonHistory,
-    getSeasonStats,
-    getAvailableSeasons,
   };
 };

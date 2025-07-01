@@ -1,3 +1,4 @@
+
 export interface RankRequest {
   id: string;
   user_id: string;
@@ -41,6 +42,7 @@ export interface RankRequest {
 export interface CreateRankRequestData {
   requested_rank: number;
   club_id: string;
+  user_id?: string;
 }
 
 export interface UpdateRankRequestData {
@@ -63,4 +65,5 @@ export interface RankRequestFilters {
   user_id?: string;
   date_from?: string;
   date_to?: string;
+  dateRange?: string;
 }
