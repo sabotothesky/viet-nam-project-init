@@ -403,4 +403,3 @@ export interface Match {
     elo_rating: number;
   };
 }
-
