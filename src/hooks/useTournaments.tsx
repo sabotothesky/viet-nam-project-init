@@ -54,10 +54,10 @@ export interface CreateTournamentData {
   prize_pool: number;
   max_participants: number;
   venue_name: string;
-  tournament_start: Date;
-  tournament_end: Date;
-  registration_start: Date;
-  registration_end: Date;
+  tournament_start: string;
+  tournament_end: string;
+  registration_start: string;
+  registration_end: string;
   rules: string;
   venue_address?: string;
 }
