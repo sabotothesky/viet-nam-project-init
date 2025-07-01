@@ -15,12 +15,12 @@ export interface PlayerRanking {
 
 export interface QRCode {
   id: string;
-  user_id: string;
-  qr_code: string;
-  is_active: boolean;
-  last_used?: string;
+  type: 'player' | 'table' | 'tournament';
+  data: string;
   created_at: string;
-  updated_at: string;
+  expires_at?: string;
+  is_active: boolean;
+  scan_count: number;
 }
 
 export interface TableQRCode {
@@ -212,10 +212,10 @@ export const getRankingConfig = (rankCode: string) => {
 };
 
 export interface CreateQuickMatchRequest {
-  table_id: string;
+  player1_id: string;
   player2_id: string;
-  game_type: '8_ball' | '9_ball' | 'song_to';
-  bet_points?: number;
+  table_id?: string;
+  bet_amount?: number;
 }
 
 export interface ConfirmMatchResultRequest {
@@ -269,4 +269,12 @@ export interface UserProfile {
   experience_years?: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface QRScanHistory {
+  id: string;
+  qr_code_id: string;
+  scanned_by: string;
+  scanned_at: string;
+  location?: string;
 }

@@ -38,6 +38,7 @@ export interface UserProfile {
   current_rank?: string;
   club_id?: string;
   clbVerified?: boolean;
+  elo?: number; // Add elo property
   created_at?: string;
   updated_at?: string;
 }

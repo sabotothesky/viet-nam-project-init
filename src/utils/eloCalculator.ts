@@ -1,247 +1,161 @@
-
-export const calculateEloRating = (
-  playerRating: number,
-  opponentRating: number,
-  result: 'win' | 'loss' | 'draw',
-  kFactor: number = 32
-): number => {
-  const expectedScore = 1 / (1 + Math.pow(10, (opponentRating - playerRating) / 400));
-  
-  let actualScore: number;
-  switch (result) {
-    case 'win':
-      actualScore = 1;
-      break;
-    case 'loss':
-      actualScore = 0;
-      break;
-    case 'draw':
-      actualScore = 0.5;
-      break;
-  }
-  
-  return Math.round(playerRating + kFactor * (actualScore - expectedScore));
-};
-
-export const getRankFromRating = (rating: number): string => {
-  if (rating >= 2800) return 'S+';
-  if (rating >= 2600) return 'S';
-  if (rating >= 2400) return 'G+';
-  if (rating >= 2200) return 'G';
-  if (rating >= 2000) return 'A+';
-  if (rating >= 1800) return 'A';
-  if (rating >= 1600) return 'B+';
-  if (rating >= 1400) return 'B';
-  if (rating >= 1200) return 'C+';
-  if (rating >= 1000) return 'C';
-  if (rating >= 800) return 'D+';
-  if (rating >= 600) return 'D';
-  if (rating >= 400) return 'E+';
-  return 'E';
-};
-
-export const getRatingFromRank = (rank: string): number => {
-  switch (rank) {
-    case 'S+': return 2800;
-    case 'S': return 2600;
-    case 'G+': return 2400;
-    case 'G': return 2200;
-    case 'A+': return 2000;
-    case 'A': return 1800;
-    case 'B+': return 1600;
-    case 'B': return 1400;
-    case 'C+': return 1200;
-    case 'C': return 1000;
-    case 'D+': return 800;
-    case 'D': return 600;
-    case 'E+': return 400;
-    default: return 200;
-  }
-};
-
-export const getRankColor = (rank: string): string => {
-  switch (rank) {
-    case 'S+': return 'text-purple-600';
-    case 'S': return 'text-purple-600';
-    case 'G+': return 'text-red-600';
-    case 'G': return 'text-red-600';
-    case 'A+': return 'text-orange-600';
-    case 'A': return 'text-orange-600';
-    case 'B+': return 'text-blue-600';
-    case 'B': return 'text-blue-600';
-    case 'C+': return 'text-green-600';
-    case 'C': return 'text-green-600';
-    case 'D+': return 'text-gray-600';
-    case 'D': return 'text-gray-600';
-    case 'E+': return 'text-gray-400';
-    default: return 'text-gray-400';
-  }
-};
-
-export const getExpectedScore = (playerRating: number, opponentRating: number): number => {
-  return 1 / (1 + Math.pow(10, (opponentRating - playerRating) / 400));
-};
-
-export const getPerformanceRating = (results: Array<{ opponentRating: number; result: 'win' | 'loss' | 'draw' }>): number => {
-  if (results.length === 0) return 0;
-  
-  const totalScore = results.reduce((sum, game) => {
-    switch (game.result) {
-      case 'win': return sum + 1;
-      case 'draw': return sum + 0.5;
-      case 'loss': return sum + 0;
-    }
-  }, 0);
-  
-  const averageOpponentRating = results.reduce((sum, game) => sum + game.opponentRating, 0) / results.length;
-  const scorePercentage = totalScore / results.length;
-  
-  if (scorePercentage === 1) return averageOpponentRating + 400;
-  if (scorePercentage === 0) return averageOpponentRating - 400;
-  
-  const logOdds = Math.log(scorePercentage / (1 - scorePercentage));
-  return Math.round(averageOpponentRating + 400 * logOdds / Math.LN10);
-};
-
-export interface EloMatch {
-  playerRating: number;
-  opponentRating: number;
-  result: 'win' | 'loss' | 'draw';
-  kFactor?: number;
-  winner_id?: string;
-  match_type?: string;
-  tournament_tier?: string;
-  challenge_bet?: number;
-  quality_score?: number;
-  upset_factor?: number;
-  is_tournament?: boolean;
-  is_streak_bonus?: boolean;
-  is_quality_match?: boolean;
+export interface EloConfig {
+  k_factor: number;
+  rating_floor: number;
+  rating_ceiling: number;
+  volatility_adjustment: boolean;
+  streak_bonus: boolean;
+  tournament_bonus: boolean;
+  upset_bonus: boolean;
+  quality_match_bonus: boolean;
 }
 
-export interface PlayerStats {
-  id: string;
-  user_id: string;
-  username: string;
-  current_rating: number;
-  wins: number;
-  losses: number;
-  draws: number;
-  total_games: number;
-  matches_played: number;
-  win_rate: number;
-  current_streak: number;
-  best_streak: number;
-  elo_rating: number;
-  rank: string;
-  recent_form?: number;
-  consistency_score?: number;
-  rating_volatility?: number;
-  highest_rating?: number;
-  lowest_rating?: number;
-  average_opponent_rating?: number;
+export interface EloMatch {
+  player1_rating: number;
+  player2_rating: number;
+  player1_matches: number;
+  player2_matches: number;
+  player1_streak: number;
+  player2_streak: number;
+  player1_volatility: number;
+  player2_volatility: number;
 }
 
 export interface EloResult {
-  newRating: number;
-  ratingChange: number;
-  expectedScore: number;
-  player1_new_rating?: number;
-  player2_new_rating?: number;
-  player1_rating_change?: number;
-  player2_rating_change?: number;
-  k_factor_player1?: number;
-  k_factor_player2?: number;
-  bonus_player1?: number;
-  bonus_player2?: number;
-  volatility_player1?: number;
-  volatility_player2?: number;
-  player1_expected_score?: number;
-  player2_expected_score?: number;
-  match_quality_score?: number;
-  confidence_interval?: number;
+  player1_rating_change: number;
+  player2_rating_change: number;
+  expected_score_1: number;
+  expected_score_2: number;
+  k_factor_1: number;
+  k_factor_2: number;
 }
 
-export interface EloConfig {
-  defaultRating: number;
-  kFactor: number;
-  provisionalGames: number;
-  baseKFactor?: number;
-  tournamentMultiplier?: number;
-  upsetMultiplier?: number;
-  qualityMatchBonus?: number;
-}
-
-export const DEFAULT_ELO_CONFIG: EloConfig = {
-  defaultRating: 1000,
-  kFactor: 32,
-  provisionalGames: 10,
-  baseKFactor: 32,
-  tournamentMultiplier: 1.2,
-  upsetMultiplier: 1.5,
-  qualityMatchBonus: 1.1,
-};
-
-export const getDynamicKFactor = (rating: number, gamesPlayed: number): number => {
-  if (gamesPlayed < DEFAULT_ELO_CONFIG.provisionalGames) return 40;
-  if (rating < 2100) return 32;
-  if (rating < 2400) return 24;
-  return 16;
-};
-
-export const predictMatchResult = (playerRating: number, opponentRating: number, additionalData?: any): {
-  winProbability: number;
-  drawProbability: number;
-  lossProbability: number;
-} => {
-  const expectedScore = getExpectedScore(playerRating, opponentRating);
+// Basic Elo calculation function
+export const calculateElo = (
+  player1Rating: number,
+  player2Rating: number,
+  player1Won: boolean,
+  kFactor: number = 32
+): { newRating1: number; newRating2: number; ratingChange: number } => {
+  const expectedScore1 = 1 / (1 + Math.pow(10, (player2Rating - player1Rating) / 400));
+  const actualScore1 = player1Won ? 1 : 0;
+  
+  const ratingChange = Math.round(kFactor * (actualScore1 - expectedScore1));
+  
   return {
-    winProbability: expectedScore,
-    drawProbability: 0.1,
-    lossProbability: 1 - expectedScore,
+    newRating1: player1Rating + ratingChange,
+    newRating2: player2Rating - ratingChange,
+    ratingChange: Math.abs(ratingChange)
   };
 };
 
-export const calculateRecentForm = (recentResults: Array<'win' | 'loss' | 'draw'>): number => {
-  if (recentResults.length === 0) return 0;
+// Enhanced Elo calculation with advanced features
+export const calculateAdvancedElo = (
+  config: EloConfig,
+  match: EloMatch,
+  winner: 1 | 2
+): EloResult => {
+  const { k_factor } = config;
   
-  const weights = recentResults.map((_, index) => Math.pow(0.9, recentResults.length - 1 - index));
-  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  // Calculate expected scores
+  const ratingDiff = match.player2_rating - match.player1_rating;
+  const expectedScore1 = 1 / (1 + Math.pow(10, ratingDiff / 400));
+  const expectedScore2 = 1 - expectedScore1;
   
-  const weightedScore = recentResults.reduce((sum, result, index) => {
-    const score = result === 'win' ? 1 : result === 'draw' ? 0.5 : 0;
-    return sum + score * weights[index];
-  }, 0);
+  // Determine actual scores
+  const actualScore1 = winner === 1 ? 1 : 0;
+  const actualScore2 = winner === 2 ? 1 : 0;
   
-  return Math.round(((weightedScore / totalWeight) - 0.5) * 200);
-};
-
-export const calculateConsistencyScore = (ratingHistory: number[]): number => {
-  if (ratingHistory.length < 2) return 50;
+  // Calculate base K-factors
+  let kFactor1 = getKFactor(match.player1_rating, match.player1_matches);
+  let kFactor2 = getKFactor(match.player2_rating, match.player2_matches);
   
-  const mean = ratingHistory.reduce((sum, rating) => sum + rating, 0) / ratingHistory.length;
-  const variance = ratingHistory.reduce((sum, rating) => sum + Math.pow(rating - mean, 2), 0) / ratingHistory.length;
-  const standardDeviation = Math.sqrt(variance);
+  // Apply modifiers based on config
+  if (config.volatility_adjustment) {
+    kFactor1 *= (1 + match.player1_volatility * 0.1);
+    kFactor2 *= (1 + match.player2_volatility * 0.1);
+  }
   
-  const consistencyScore = Math.max(0, Math.min(100, 100 - (standardDeviation / 10)));
-  return Math.round(consistencyScore);
-};
-
-export const calculateEloEfficiency = (currentRating: number, startRating: number, gamesPlayed: number): number => {
-  if (gamesPlayed === 0) return 0;
-  return Math.round((currentRating - startRating) / gamesPlayed);
-};
-
-export const getRankProgression = (currentRating: number) => {
-  const currentRank = getRankFromRating(currentRating);
-  const currentRankRating = getRatingFromRank(currentRank);
-  const nextRankRating = currentRankRating + 200;
-  const nextRank = getRankFromRating(nextRankRating);
+  // Calculate rating changes
+  const ratingChange1 = Math.round(kFactor1 * (actualScore1 - expectedScore1));
+  const ratingChange2 = Math.round(kFactor2 * (actualScore2 - expectedScore2));
   
   return {
-    currentRank,
-    nextRank,
-    pointsToNext: nextRankRating - currentRating,
-    estimatedMatches: Math.ceil((nextRankRating - currentRating) / 16),
+    player1_rating_change: ratingChange1,
+    player2_rating_change: ratingChange2,
+    expected_score_1: expectedScore1,
+    expected_score_2: expectedScore2,
+    k_factor_1: kFactor1,
+    k_factor_2: kFactor2,
   };
+};
+
+// Get K-factor based on rating and experience
+export const getKFactor = (rating: number, matchesPlayed: number): number => {
+  // New players (< 30 matches) get higher K-factor
+  if (matchesPlayed < 30) return 40;
+  
+  // High-rated players get lower K-factor for stability
+  if (rating >= 2400) return 16;
+  if (rating >= 2100) return 24;
+  
+  // Standard K-factor for most players
+  return 32;
+};
+
+// Calculate rating from rank
+export const getRatingFromRank = (rank: string): number => {
+  const rankRatings: { [key: string]: number } = {
+    'K1': 1000,
+    'K2': 1100,
+    'K3': 1200,
+    'D1': 1300,
+    'D2': 1400,
+    'D3': 1500,
+    'D4': 1600,
+    'D5': 1700,
+    'Dan1': 1800,
+    'Dan2': 1900,
+    'Dan3': 2000,
+    'Dan4': 2100,
+    'Dan5': 2200,
+    'Dan6': 2300,
+    'Dan7': 2400,
+  };
+  
+  return rankRatings[rank] || 1000;
+};
+
+// Calculate rank from rating
+export const getRankFromRating = (rating: number): string => {
+  if (rating >= 2400) return 'Dan7';
+  if (rating >= 2300) return 'Dan6';
+  if (rating >= 2200) return 'Dan5';
+  if (rating >= 2100) return 'Dan4';
+  if (rating >= 2000) return 'Dan3';
+  if (rating >= 1900) return 'Dan2';
+  if (rating >= 1800) return 'Dan1';
+  if (rating >= 1700) return 'D5';
+  if (rating >= 1600) return 'D4';
+  if (rating >= 1500) return 'D3';
+  if (rating >= 1400) return 'D2';
+  if (rating >= 1300) return 'D1';
+  if (rating >= 1200) return 'K3';
+  if (rating >= 1100) return 'K2';
+  return 'K1';
+};
+
+// Calculate expected win probability
+export const calculateWinProbability = (rating1: number, rating2: number): number => {
+  return 1 / (1 + Math.pow(10, (rating2 - rating1) / 400));
+};
+
+// Calculate rating volatility
+export const calculateVolatility = (recentResults: number[], timeframe: number = 10): number => {
+  if (recentResults.length < 2) return 0;
+  
+  const recent = recentResults.slice(-timeframe);
+  const mean = recent.reduce((sum, result) => sum + result, 0) / recent.length;
+  const variance = recent.reduce((sum, result) => sum + Math.pow(result - mean, 2), 0) / recent.length;
+  
+  return Math.sqrt(variance);
 };
