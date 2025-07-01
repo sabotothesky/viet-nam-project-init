@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Clock, User, MapPin, Trophy, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -194,7 +195,11 @@ const EnhancedNotificationCard = ({
       {/* Challenge Response Modal */}
       {notification.challenge && (
         <ChallengeResponseModal
-          challenge={notification.challenge}
+          challenge={{
+            ...notification.challenge,
+            challenger_id: notification.challenge.challenger.user_id,
+            challenged_id: '', // Add default value
+          } as Challenge}
           isOpen={showResponseModal}
           onClose={() => setShowResponseModal(false)}
           onRespond={handleRespond}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import {
   getRankFromRating,
+  getRatingFromRank,
   getRankProgression,
   calculateEloEfficiency,
   calculateRecentForm,

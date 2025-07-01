@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email?: string;
@@ -164,4 +163,10 @@ export interface PlayerStats {
   highest_rating?: number;
   lowest_rating?: number;
   average_opponent_rating?: number;
+}
+
+export interface ApiError {
+  message: string;
+  code?: string;
+  details?: any;
 }
