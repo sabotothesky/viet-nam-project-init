@@ -39,7 +39,6 @@ export const useRealtimeSubscriptions = (
         filter: `challenger_id=eq.${user.id}`,
       },
       payload => {
-        // ...removed console.log('Challenge update (as challenger):', payload)
         handleChallengeUpdate(payload, 'challenger');
       }
     );
@@ -54,7 +53,6 @@ export const useRealtimeSubscriptions = (
         filter: `challenged_id=eq.${user.id}`,
       },
       payload => {
-        // ...removed console.log('Challenge update (as challenged):', payload)
         handleChallengeUpdate(payload, 'challenged');
       }
     );
@@ -68,7 +66,6 @@ export const useRealtimeSubscriptions = (
         table: 'club_bookings',
       },
       payload => {
-        // ...removed console.log('Booking update:', payload)
         handleBookingUpdate(payload);
       }
     );
@@ -83,7 +80,6 @@ export const useRealtimeSubscriptions = (
         filter: `user_id=eq.${user.id}`,
       },
       payload => {
-        // ...removed console.log('New notification:', payload)
         handleNotificationReceived(payload);
       }
     );
@@ -124,7 +120,7 @@ export const useRealtimeSubscriptions = (
   }, [user?.id]);
 
   const handleChallengeUpdate = (
-    payload: Challenge,
+    payload: any,
     userRole: 'challenger' | 'challenged'
   ) => {
     const { eventType, new: newRecord, old: oldRecord } = payload;
@@ -149,7 +145,7 @@ export const useRealtimeSubscriptions = (
               },
             },
           });
-          options.onChallengeReceived?.(newRecord);
+          options.onChallengeReceived?.(newRecord as Challenge);
         }
         break;
 
@@ -172,7 +168,7 @@ export const useRealtimeSubscriptions = (
             });
           }
         }
-        options.onChallengeUpdated?.(newRecord);
+        options.onChallengeUpdated?.(newRecord as Challenge);
         break;
     }
   };
@@ -200,8 +196,8 @@ export const useRealtimeSubscriptions = (
     }
   };
 
-  const handleNotificationReceived = (payload: Notification) => {
-    const notification = payload.new;
+  const handleNotificationReceived = (payload: any) => {
+    const notification = payload.new as Notification;
 
     // Invalidate notifications queries
     queryClient.invalidateQueries({ queryKey: ['enhanced-notifications'] });
@@ -209,13 +205,13 @@ export const useRealtimeSubscriptions = (
     // Show appropriate toast based on notification type
     const toastConfig = getToastConfig(notification);
 
-    if (notification.priority === 'urgent') {
+    if (notification.priority === 'high') {
       toast.error(toastConfig.title, {
         description: toastConfig.description,
         duration: 10000,
         action: toastConfig.action,
       });
-    } else if (notification.priority === 'high') {
+    } else if (notification.priority === 'medium') {
       toast.warning(toastConfig.title, {
         description: toastConfig.description,
         duration: 7000,

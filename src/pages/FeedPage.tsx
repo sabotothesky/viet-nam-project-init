@@ -201,8 +201,16 @@ const FeedPage = () => {
                 filteredChallenges.map(challenge => {
                   // Transform the challenge data to match EnhancedChallengeCard expectations
                   const transformedChallenge = {
-                    ...challenge,
+                    id: challenge.id,
+                    challenger_id: challenge.challenger_id,
+                    challenged_id: challenge.challenged_id,
+                    status: challenge.status,
+                    bet_points: challenge.bet_points,
                     proposed_datetime: challenge.proposed_datetime || new Date().toISOString(),
+                    confirmed_datetime: challenge.confirmed_datetime,
+                    message: challenge.message,
+                    proposed_club_id: challenge.proposed_club_id,
+                    confirmed_club_id: challenge.confirmed_club_id,
                     club: challenge.club
                       ? {
                           id: challenge.club_id || 'unknown',
@@ -212,7 +220,7 @@ const FeedPage = () => {
                       : undefined,
                     challenger_profile: challenge.challenger_profile
                       ? {
-                          user_id: challenge.challenger_id,
+                          user_id: challenge.challenger_profile.user_id || challenge.challenger_id,
                           full_name:
                             challenge.challenger_profile.full_name ||
                             'Unknown User',
@@ -220,6 +228,15 @@ const FeedPage = () => {
                           current_rank:
                             challenge.challenger_profile.current_rank || 'K1',
                           ranking_points: challenge.challenger_profile.ranking_points || 0,
+                        }
+                      : undefined,
+                    challenged_profile: challenge.challenged_profile
+                      ? {
+                          user_id: challenge.challenged_profile.user_id || challenge.challenged_id,
+                          full_name: challenge.challenged_profile.full_name || 'Unknown User',
+                          avatar_url: challenge.challenged_profile.avatar_url,
+                          current_rank: challenge.challenged_profile.current_rank || 'K1',
+                          ranking_points: challenge.challenged_profile.ranking_points,
                         }
                       : undefined,
                   };

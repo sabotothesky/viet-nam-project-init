@@ -98,13 +98,8 @@ export const EnhancedAuthFlow: React.FC<EnhancedAuthFlowProps> = ({
     if (!validateForm(true)) return;
 
     try {
-      // Fix: Use correct number of parameters for signUp
-      await signUp(
-        authData.email,
-        authData.password,
-        authData.fullName,
-        authData.phone
-      );
+      // Fixed: Use correct number of parameters for signUp (email, password)
+      await signUp(authData.email, authData.password);
 
       setStep('location');
       toast.success('Đăng ký thành công!');

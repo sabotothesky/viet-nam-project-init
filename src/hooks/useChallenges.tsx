@@ -117,15 +117,18 @@ export const useChallenges = () => {
   };
 
   useEffect(() => {
-    const user = supabase.auth.getUser();
-    if (user) {
-      // Separate received and sent challenges
-      const received = challenges.filter(c => c.challenged_id === user.data?.user?.id);
-      const sent = challenges.filter(c => c.challenger_id === user.data?.user?.id);
-      
-      setReceivedChallenges(received);
-      setSentChallenges(sent);
-    }
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Separate received and sent challenges
+        const received = challenges.filter(c => c.challenged_id === user.id);
+        const sent = challenges.filter(c => c.challenger_id === user.id);
+        
+        setReceivedChallenges(received);
+        setSentChallenges(sent);
+      }
+    };
+    getCurrentUser();
   }, [challenges]);
 
   return {
