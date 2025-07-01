@@ -90,6 +90,19 @@ const EnhancedLeaderboardPage = () => {
     }
   };
 
+  const getRegionalStats = (region: string) => {
+    const regionRankings = rankings.filter(
+      r => r.user_profiles?.provinces && 
+           typeof r.user_profiles.provinces === 'object' &&
+           'region' in r.user_profiles.provinces &&
+           r.user_profiles.provinces.region === region
+    );
+    return {
+      count: regionRankings.length,
+      topPlayer: regionRankings[0],
+    };
+  };
+
   const fetchRankings = async () => {
     setLoading(true);
     try {
@@ -128,7 +141,10 @@ const EnhancedLeaderboardPage = () => {
       let filteredData = data || [];
       if (filters.region) {
         filteredData = filteredData.filter(
-          r => r.provinces?.region === filters.region
+          r => r.provinces && 
+               typeof r.provinces === 'object' &&
+               'region' in r.provinces &&
+               r.provinces.region === filters.region
         );
       }
 
@@ -143,22 +159,16 @@ const EnhancedLeaderboardPage = () => {
           avatar_url: profile.avatar_url,
           nickname: profile.nickname,
           club_id: profile.club_id,
-          clubs:
-            profile.clubs &&
-            typeof profile.clubs === 'object' &&
-            'name' in profile.clubs
-              ? { name: profile.clubs.name }
-              : null,
-          provinces:
-            profile.provinces &&
-            typeof profile.provinces === 'object' &&
-            'name' in profile.provinces
-              ? {
-                  name: profile.provinces.name,
-                  code: profile.provinces.code,
-                  region: profile.provinces.region,
-                }
-              : null,
+          clubs: profile.clubs && typeof profile.clubs === 'object' && 'name' in profile.clubs
+            ? { name: String(profile.clubs.name) }
+            : null,
+          provinces: profile.provinces && typeof profile.provinces === 'object' && 'name' in profile.provinces
+            ? {
+                name: String(profile.provinces.name),
+                code: String((profile.provinces as any).code || ''),
+                region: String((profile.provinces as any).region || ''),
+              }
+            : null,
         },
       }));
 
@@ -178,16 +188,6 @@ const EnhancedLeaderboardPage = () => {
     if (rank.startsWith('A'))
       return 'border-green-200 bg-green-50 text-green-800';
     return 'border-gray-200 bg-gray-50 text-gray-800';
-  };
-
-  const getRegionalStats = (region: string) => {
-    const regionRankings = rankings.filter(
-      r => r.user_profiles?.provinces?.region === region
-    );
-    return {
-      count: regionRankings.length,
-      topPlayer: regionRankings[0],
-    };
   };
 
   return (

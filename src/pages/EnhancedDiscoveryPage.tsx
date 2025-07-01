@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
@@ -99,7 +98,7 @@ const EnhancedDiscoveryPage = () => {
 
     try {
       await sendChallenge.mutateAsync({
-        challengedId: selectedOpponent.user_id || '',
+        challengedId: selectedOpponent.user_id || selectedOpponent.id,
         betPoints: challengeData.betPoints,
         message: challengeData.message,
       });
@@ -129,13 +128,16 @@ const EnhancedDiscoveryPage = () => {
 
   // Transform DiscoveryItem to UserProfile for compatibility
   const transformedPlayers = nearbyPlayers.map(item => ({
+    id: item.id,
     user_id: item.id,
     full_name: item.title,
-    avatar_url: item.image_url || undefined,
+    avatar_url: item.image_url || '',
     current_rank: item.rank || 'K1',
     ranking_points: item.points || 0,
     min_bet_points: 10,
     max_bet_points: 100,
+    matches_played: 0,
+    matches_won: 0,
     // Add other required properties with defaults
     first_name: '',
     last_name: '',
@@ -143,7 +145,7 @@ const EnhancedDiscoveryPage = () => {
     email: '',
     phone: '',
     date_of_birth: '',
-    gender: 'male',
+    gender: 'male' as const,
     address: '',
     bio: '',
     experience_years: 0,

@@ -34,32 +34,43 @@ export interface AuthContextType {
 export interface UserProfile {
   id: string;
   user_id?: string;
-  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  full_name: string;
   nickname?: string;
-  avatar_url?: string;
-  current_rank?: string;
-  club_id?: string;
-  clbVerified?: boolean;
-  elo?: number;
-  experience_years?: number;
-  matches_played?: number;
-  wins?: number;
-  losses?: number;
-  current_streak?: number;
-  ranking_points?: number;
-  created_at?: string;
-  updated_at?: string;
-  min_bet_points?: number;
-  max_bet_points?: number;
-  bio?: string;
-  date_of_birth?: string;
+  email?: string;
   phone?: string;
+  date_of_birth?: string;
+  gender?: 'male' | 'female' | 'other';
   address?: string;
-  province_id?: string;
-  district_id?: string;
-  ward_id?: string;
+  bio?: string;
+  avatar_url?: string;
+  experience_years?: number;
+  favorite_game_types?: string[];
+  achievements?: string[];
+  social_media_links?: Record<string, string>;
+  privacy_settings?: Record<string, boolean>;
+  notification_preferences?: Record<string, boolean>;
+  current_rank: string;
+  ranking_points: number;
+  location?: string;
+  club_id?: string;
+  total_matches: number;
+  wins: number;
+  losses: number;
+  current_streak: number;
+  matches_played?: number;
+  matches_won?: number;
   preferred_play_times?: string[];
-  preferred_club_id?: string;
+  min_bet_points: number;
+  max_bet_points: number;
+  age?: number;
+  preferred_club?: {
+    name: string;
+    address: string;
+  };
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Post {
@@ -208,22 +219,48 @@ export interface ProfileFormData {
 export interface Club {
   id: string;
   name: string;
-  address: string;
-  status: string;
+  address?: string;
+  phone?: string;
+  description?: string;
   created_at: string;
   updated_at: string;
-  logo_url?: string;
-  description?: string;
-  phone?: string;
-  email?: string;
-  table_count?: number;
-  hourly_rate?: number;
-  latitude?: number;
-  longitude?: number;
-  available_tables?: number;
-  monthly_payment?: number;
+  location?: UserLocation;
+  owner_id?: string;
   is_sabo_owned?: boolean;
+  available_tables?: number;
   priority_score?: number;
+  hourly_rate?: number;
+}
+
+export interface DiscoveryItem {
+  id: string;
+  title: string;
+  description?: string;
+  image_url?: string;
+  distance?: number;
+  location?: UserLocation;
+  rank?: string;
+  points?: number;
+  type: 'player' | 'club' | 'tournament';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  user_id: string;
+  full_name: string;
+  nickname?: string;
+  current_rank: string;
+  ranking_points: number;
+  total_matches: number;
+  wins: number;
+  losses: number;
+  location?: string;
+  avatar_url?: string;
+  win_rate?: number;
+  current_streak?: number;
+  club_name?: string;
 }
 
 export interface Tournament {

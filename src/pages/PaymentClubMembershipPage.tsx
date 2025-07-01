@@ -1,249 +1,207 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, CreditCard, Loader2 } from 'lucide-react';
-import { useMembership } from '@/hooks/useMembership';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { List, UserPlus, DollarSign, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { useProfile } from '@/hooks/useProfile';
+import { useClubs } from '@/hooks/useClubs';
 import { usePayment } from '@/hooks/usePayment';
-import { toast } from 'sonner';
+import { Club, UserProfile } from '@/types/common';
 
 const PaymentClubMembershipPage = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const plan = searchParams.get('plan') || '';
-  const price = searchParams.get('price') || '';
-  const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('vnpay');
-  const { clubRegistration, clubLoading } = useMembership();
-  const { createPayment } = usePayment();
-
-  const clubPlanDetails = {
-    club_basic: {
-      name: 'CLB Cơ bản',
-      price: 500000,
-      duration: '1 tháng',
-      features: [
-        'Trang CLB chính thức',
-        'Quản lý thành viên',
-        'Tổ chức giải đấu',
-        'Thống kê cơ bản',
-      ],
-    },
-    club_premium: {
-      name: 'CLB Premium',
-      price: 1200000,
-      duration: '1 tháng',
-      features: [
-        'Tất cả tính năng Cơ bản',
-        'Hệ thống đặt bàn',
-        'Thống kê nâng cao',
-        'Marketing tools',
-        'Hỗ trợ ưu tiên',
-      ],
-    },
-  };
+  const location = useLocation();
+  const { toast } = useToast();
+  const { getProfile } = useProfile();
+  const { clubs } = useClubs();
+  const { initiatePayment } = usePayment();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<{
+    name: string;
+    price: number;
+    type: string;
+  } | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (
-      !clubLoading &&
-      (!clubRegistration || clubRegistration.status !== 'approved')
-    ) {
-      navigate('/membership?tab=club');
-      toast.error('CLB chưa được xác minh');
-    }
-  }, [clubRegistration, clubLoading, navigate]);
+    const fetchProfile = async () => {
+      try {
+        const userProfile = await getProfile();
+        setProfile(userProfile);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        toast({
+          title: 'Lỗi',
+          description: 'Không thể tải thông tin cá nhân.',
+          variant: 'destructive',
+        });
+      }
+    };
+
+    fetchProfile();
+  }, [getProfile, toast]);
 
   const handlePayment = async () => {
-    setLoading(true);
+    if (!selectedPlan || !profile || !selectedClub) return;
+
+    setIsProcessing(true);
     try {
-      await createPayment({
-        membershipType: plan,
-        amount: parseInt(price),
-      });
+      const paymentData = {
+        amount: selectedPlan.price,
+        description: `Membership payment for ${selectedClub.name} - ${selectedPlan.name}`,
+        returnUrl: window.location.origin + '/payment-result',
+        userId: profile.user_id || profile.id,
+      };
+
+      await initiatePayment(paymentData, selectedPlan.type);
     } catch (error) {
-      console.error('Error creating payment:', error);
-      toast.error('Có lỗi xảy ra khi tạo thanh toán');
+      console.error('Payment error:', error);
+      toast({
+        title: 'Lỗi thanh toán',
+        description: 'Có lỗi xảy ra khi xử lý thanh toán.',
+        variant: 'destructive',
+      });
     } finally {
-      setLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const currentPlan = clubPlanDetails[plan as keyof typeof clubPlanDetails];
-
-  if (clubLoading || !currentPlan || !clubRegistration) {
-    return (
-      <div className='min-h-screen flex items-center justify-center'>
-        <div className='text-center'>
-          <Loader2 className='w-8 h-8 animate-spin mx-auto text-blue-600 mb-4' />
-          <p className='text-gray-600'>Đang tải thông tin...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-gray-900'>
-            Thanh toán gói CLB
-          </h1>
-          <p className='mt-2 text-gray-600'>
-            Nâng cấp gói {currentPlan.name} cho {clubRegistration.club_name}
-          </p>
-        </div>
-
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-          {/* Order Summary */}
-          <div className='lg:col-span-1'>
-            <div className='bg-white rounded-lg shadow-sm border p-6'>
-              <h2 className='text-lg font-semibold text-gray-900 mb-4'>
-                Thông tin đơn hàng
-              </h2>
-
-              {/* Club Info */}
-              <div className='mb-4 p-3 bg-gray-50 rounded-md'>
-                <h3 className='font-medium text-gray-900'>
-                  {clubRegistration.club_name}
-                </h3>
-                <p className='text-sm text-gray-600'>
-                  {clubRegistration.address}
-                </p>
-              </div>
-
-              <div className='space-y-4'>
-                <div className='flex justify-between'>
-                  <span className='text-gray-600'>Gói:</span>
-                  <span className='font-medium'>{currentPlan.name}</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-gray-600'>Thời hạn:</span>
-                  <span className='font-medium'>{currentPlan.duration}</span>
-                </div>
-                <div className='border-t pt-4'>
-                  <div className='flex justify-between text-lg font-semibold'>
-                    <span>Tổng cộng:</span>
-                    <span className='text-blue-600'>
-                      {currentPlan.price.toLocaleString('vi-VN')} VNĐ
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className='mt-6'>
-                <h3 className='font-medium text-gray-900 mb-2'>
-                  Tính năng bao gồm:
-                </h3>
-                <ul className='space-y-1'>
-                  {currentPlan.features.map((feature, index) => (
-                    <li
-                      key={index}
-                      className='flex items-center text-sm text-gray-600'
-                    >
-                      <Check className='w-4 h-4 text-green-500 mr-2' />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+    <div className='min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12'>
+      <div className='relative py-3 sm:max-w-xl sm:mx-auto'>
+        <div className='absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl'></div>
+        <div className='relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20'>
+          <div className='max-w-md mx-auto'>
+            <div>
+              <h1 className='text-2xl font-semibold'>
+                Đăng ký thành viên CLB
+              </h1>
             </div>
-          </div>
+            <div className='divide-y divide-gray-200'>
+              <div className='py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7'>
+                <div className='space-y-2'>
+                  <Label htmlFor='club'>Chọn Câu Lạc Bộ</Label>
+                  <Select
+                    onValueChange={value => {
+                      const club = clubs?.find(club => club.id === value);
+                      setSelectedClub(club || null);
+                    }}
+                  >
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Chọn CLB' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clubs?.map(club => (
+                        <SelectItem key={club.id} value={club.id}>
+                          {club.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          {/* Payment Form */}
-          <div className='lg:col-span-2'>
-            <div className='bg-white rounded-lg shadow-sm border p-6'>
-              <h2 className='text-lg font-semibold text-gray-900 mb-6'>
-                Phương thức thanh toán
-              </h2>
+                <div className='space-y-2'>
+                  <Label htmlFor='plan'>Chọn Gói Hội Viên</Label>
+                  <Select
+                    onValueChange={value => {
+                      const [name, price, type] = value.split('||');
+                      setSelectedPlan({
+                        name,
+                        price: parseFloat(price),
+                        type,
+                      });
+                    }}
+                  >
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Chọn gói hội viên' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        value='Basic||100000||basic'
+                      >
+                        Gói Cơ Bản - 100.000 VND
+                      </SelectItem>
+                      <SelectItem
+                        value='Premium||200000||premium'
+                      >
+                        Gói Cao Cấp - 200.000 VND
+                      </SelectItem>
+                      <SelectItem
+                        value='VIP||500000||vip'
+                      >
+                        Gói VIP - 500.000 VND
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className='space-y-4 mb-6'>
-                <label className='flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50'>
-                  <input
-                    type='radio'
-                    name='paymentMethod'
-                    value='vnpay'
-                    checked={paymentMethod === 'vnpay'}
-                    onChange={e => setPaymentMethod(e.target.value)}
-                    className='h-4 w-4 text-blue-600'
-                  />
-                  <div className='ml-3 flex items-center'>
-                    <div className='w-12 h-8 bg-red-600 rounded flex items-center justify-center mr-3'>
-                      <span className='text-white text-xs font-bold'>VNP</span>
-                    </div>
-                    <div>
-                      <p className='font-medium text-gray-900'>VNPay</p>
-                      <p className='text-sm text-gray-500'>
-                        Thanh toán qua VNPay
-                      </p>
-                    </div>
-                  </div>
-                </label>
-
-                <label className='flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50'>
-                  <input
-                    type='radio'
-                    name='paymentMethod'
-                    value='momo'
-                    checked={paymentMethod === 'momo'}
-                    onChange={e => setPaymentMethod(e.target.value)}
-                    className='h-4 w-4 text-blue-600'
-                  />
-                  <div className='ml-3 flex items-center'>
-                    <div className='w-12 h-8 bg-pink-600 rounded flex items-center justify-center mr-3'>
-                      <span className='text-white text-xs font-bold'>MM</span>
-                    </div>
-                    <div>
-                      <p className='font-medium text-gray-900'>MoMo</p>
-                      <p className='text-sm text-gray-500'>Ví điện tử MoMo</p>
-                    </div>
-                  </div>
-                </label>
-
-                <label className='flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50'>
-                  <input
-                    type='radio'
-                    name='paymentMethod'
-                    value='bank_transfer'
-                    checked={paymentMethod === 'bank_transfer'}
-                    onChange={e => setPaymentMethod(e.target.value)}
-                    className='h-4 w-4 text-blue-600'
-                  />
-                  <div className='ml-3 flex items-center'>
-                    <CreditCard className='h-8 w-8 text-gray-400 mr-3' />
-                    <div>
-                      <p className='font-medium text-gray-900'>
-                        Chuyển khoản ngân hàng
-                      </p>
-                      <p className='text-sm text-gray-500'>
-                        Chuyển khoản trực tiếp
-                      </p>
-                    </div>
-                  </div>
-                </label>
+                <div className='space-y-2'>
+                  <Label>Thông tin thanh toán</Label>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Chi tiết</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className='space-y-1'>
+                        <p>
+                          Câu lạc bộ:{' '}
+                          <span className='font-semibold'>
+                            {selectedClub?.name || 'Chưa chọn'}
+                          </span>
+                        </p>
+                        <p>
+                          Gói hội viên:{' '}
+                          <span className='font-semibold'>
+                            {selectedPlan?.name || 'Chưa chọn'}
+                          </span>
+                        </p>
+                        <p>
+                          Tổng tiền:{' '}
+                          <span className='font-semibold'>
+                            {selectedPlan?.price.toLocaleString('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }) || '0 VND'}
+                          </span>
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-
-              <div className='flex space-x-4'>
-                <button
+              <div className='pt-4 flex items-center space-x-4'>
+                <Button
+                  variant='outline'
+                  className='ml-auto w-32'
                   onClick={() => navigate(-1)}
-                  className='flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50'
                 >
                   Quay lại
-                </button>
-                <button
+                </Button>
+                <Button
+                  className='bg-gradient-to-r from-blue-400 to-blue-600 text-white w-32'
                   onClick={handlePayment}
-                  disabled={loading}
-                  className='flex-1 py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center'
+                  disabled={isProcessing || !selectedPlan || !selectedClub}
                 >
-                  {loading ? (
+                  {isProcessing ? (
                     <>
-                      <Loader2 className='w-4 h-4 mr-2 animate-spin' />
                       Đang xử lý...
+                      <Loader2 className='ml-2 h-4 w-4 animate-spin' />
                     </>
                   ) : (
-                    <>
-                      <CreditCard className='w-4 h-4 mr-2' />
-                      Thanh toán ngay
-                    </>
+                    'Thanh toán'
                   )}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

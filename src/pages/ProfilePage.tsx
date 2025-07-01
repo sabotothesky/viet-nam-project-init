@@ -290,67 +290,52 @@ const ProfilePage: React.FC = () => {
                     </p>
                   )}
 
-                  {/* Stats Row */}
-                  <div className='flex items-center gap-6 text-sm'>
-                    <div className='text-center'>
-                      <div className='font-bold text-gray-900'>
-                        {profile.followers_count}
-                      </div>
-                      <div className='text-gray-600'>Người theo dõi</div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='font-bold text-gray-900'>
-                        {profile.following_count}
-                      </div>
-                      <div className='text-gray-600'>Đang theo dõi</div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='font-bold text-gray-900'>
-                        {profile.total_matches}
-                      </div>
-                      <div className='text-gray-600'>Trận đấu</div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='font-bold text-gray-900'>
-                        {profile.achievements_count}
-                      </div>
-                      <div className='text-gray-600'>Thành tích</div>
-                    </div>
+                  {/* Stats Section */}
+                  <ProfileStats 
+                    stats={{
+                      current_rank: profile?.current_rank || 'K1',
+                      ranking_points: profile?.ranking_points || 0,
+                      total_matches: profile?.total_matches || 0,
+                      wins: profile?.wins || 0,
+                      losses: profile?.losses || 0,
+                      win_rate: profile?.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
+                      current_streak: profile?.current_streak || 0,
+                    }} 
+                  />
+
+                  {/* Action Buttons */}
+                  <div className='flex items-center gap-2'>
+                    <Button
+                      variant={profile.is_following ? 'outline' : 'default'}
+                      onClick={handleFollow}
+                      className='flex items-center gap-2'
+                    >
+                      <Users className='h-4 w-4' />
+                      {profile.is_following ? 'Đang theo dõi' : 'Theo dõi'}
+                    </Button>
+
+                    <Button
+                      variant='outline'
+                      onClick={handleMessage}
+                      className='flex items-center gap-2'
+                    >
+                      <MessageCircle className='h-4 w-4' />
+                      Nhắn tin
+                    </Button>
+
+                    <Button
+                      variant='outline'
+                      onClick={handleShare}
+                      className='flex items-center gap-2'
+                    >
+                      <Share2 className='h-4 w-4' />
+                      Chia sẻ
+                    </Button>
+
+                    <Button variant='ghost' size='sm'>
+                      <MoreHorizontal className='h-4 w-4' />
+                    </Button>
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className='flex items-center gap-2'>
-                  <Button
-                    variant={profile.is_following ? 'outline' : 'default'}
-                    onClick={handleFollow}
-                    className='flex items-center gap-2'
-                  >
-                    <Users className='h-4 w-4' />
-                    {profile.is_following ? 'Đang theo dõi' : 'Theo dõi'}
-                  </Button>
-
-                  <Button
-                    variant='outline'
-                    onClick={handleMessage}
-                    className='flex items-center gap-2'
-                  >
-                    <MessageCircle className='h-4 w-4' />
-                    Nhắn tin
-                  </Button>
-
-                  <Button
-                    variant='outline'
-                    onClick={handleShare}
-                    className='flex items-center gap-2'
-                  >
-                    <Share2 className='h-4 w-4' />
-                    Chia sẻ
-                  </Button>
-
-                  <Button variant='ghost' size='sm'>
-                    <MoreHorizontal className='h-4 w-4' />
-                  </Button>
                 </div>
               </div>
             </CardContent>

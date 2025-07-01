@@ -6,14 +6,13 @@ export function initSentry() {
     Sentry.init({
       dsn: import.meta.env.VITE_SENTRY_DSN || 'YOUR_SENTRY_DSN',
       integrations: [
-        new Sentry.BrowserTracing(),
+        // Remove BrowserTracing as it's not compatible with current version
       ],
       tracesSampleRate: 0.1,
       environment: import.meta.env.MODE,
       release: import.meta.env.VITE_APP_VERSION || '1.0.0',
 
-      // Performance monitoring
-      performance: true,
+      // Remove performance option as it's not valid
 
       // Error filtering
       beforeSend(event) {
