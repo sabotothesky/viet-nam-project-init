@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +25,7 @@ const PaymentClubMembershipPage = () => {
   const { toast } = useToast();
   const { getProfile } = useProfile();
   const { clubs } = useClubs();
-  const { initiatePayment } = usePayment();
+  const { depositFunds } = usePayment();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<{
@@ -64,7 +65,12 @@ const PaymentClubMembershipPage = () => {
         userId: profile.user_id || profile.id,
       };
 
-      await initiatePayment(paymentData, selectedPlan.type);
+      await depositFunds(paymentData.amount, paymentData.description);
+      
+      toast({
+        title: 'Thanh toán thành công',
+        description: `Đã đăng ký thành viên ${selectedClub.name}`,
+      });
     } catch (error) {
       console.error('Payment error:', error);
       toast({

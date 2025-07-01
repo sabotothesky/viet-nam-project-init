@@ -292,14 +292,14 @@ const ProfilePage: React.FC = () => {
 
                   {/* Stats Section */}
                   <ProfileStats 
-                    stats={{
-                      current_rank: profile?.current_rank || 'K1',
-                      ranking_points: profile?.ranking_points || 0,
-                      total_matches: profile?.total_matches || 0,
-                      wins: profile?.wins || 0,
-                      losses: profile?.losses || 0,
-                      win_rate: profile?.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
-                      current_streak: profile?.current_streak || 0,
+                    profile={{
+                      current_rank: profile.current_rank,
+                      ranking_points: profile.ranking_points,
+                      total_matches: profile.total_matches,
+                      wins: profile.wins,
+                      losses: profile.losses,
+                      win_rate: profile.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
+                      current_streak: profile.current_streak,
                     }} 
                   />
 
@@ -356,7 +356,15 @@ const ProfilePage: React.FC = () => {
             </TabsList>
 
             <TabsContent value='overview' className='space-y-6'>
-              <ProfileStats profile={profile} />
+              <ProfileStats profile={{
+                current_rank: profile.current_rank,
+                ranking_points: profile.ranking_points,
+                total_matches: profile.total_matches,
+                wins: profile.wins,
+                losses: profile.losses,
+                win_rate: profile.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
+                current_streak: profile.current_streak,
+              }} />
             </TabsContent>
 
             <TabsContent value='timeline' className='space-y-6'>

@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email?: string;
@@ -71,6 +72,9 @@ export interface UserProfile {
   };
   created_at: string;
   updated_at: string;
+  // Add missing properties
+  clbVerified?: boolean;
+  elo?: number;
 }
 
 export interface Post {
@@ -230,6 +234,12 @@ export interface Club {
   available_tables?: number;
   priority_score?: number;
   hourly_rate?: number;
+  // Add missing properties
+  logo_url?: string;
+  email?: string;
+  table_count?: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface DiscoveryItem {

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ListBullet, CheckCircle, Loader2 } from 'lucide-react';
+import { List, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useProfile } from '@/hooks/useProfile';
 import { usePayment } from '@/hooks/usePayment';
@@ -59,7 +60,7 @@ const PaymentMembershipPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { getProfile } = useProfile();
-  const { initiatePayment } = usePayment();
+  const { depositFunds } = usePayment();
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -91,11 +92,15 @@ const PaymentMembershipPage = () => {
         amount: selectedPlan.price,
         description: `Membership upgrade to ${selectedPlan.name}`,
         returnUrl: window.location.origin + '/payment-result',
-        // Add second required parameter
         userId: profile.user_id || profile.id,
       };
 
-      await initiatePayment(paymentData, selectedPlan.type);
+      await depositFunds(paymentData.amount, paymentData.description);
+      
+      toast({
+        title: 'Thanh toán thành công',
+        description: `Đã nâng cấp tài khoản lên ${selectedPlan.name}`,
+      });
     } catch (error) {
       console.error('Payment error:', error);
       toast({
