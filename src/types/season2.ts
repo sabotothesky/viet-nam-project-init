@@ -13,6 +13,7 @@ export interface Season2 {
 }
 
 export interface Season2LeaderboardEntry {
+  id: string;
   rank: number;
   user_id: string;
   nickname: string;
@@ -24,6 +25,15 @@ export interface Season2LeaderboardEntry {
   points: number;
   win_rate: number;
   form: string;
+  total_elo_points: number;
+  tournaments_played: number;
+  user?: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+    current_rank: string;
+    nickname?: string;
+  };
 }
 
 export type Season2Leaderboard = Season2LeaderboardEntry[];

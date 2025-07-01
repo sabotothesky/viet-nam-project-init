@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email?: string;
@@ -6,6 +7,7 @@ export interface User {
     avatar_url?: string;
     first_name?: string;
     last_name?: string;
+    phone?: string;
   };
   email_confirmed_at?: string;
   created_at?: string;
