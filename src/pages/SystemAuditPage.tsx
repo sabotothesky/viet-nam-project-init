@@ -40,6 +40,17 @@ interface SystemStatus {
   passedTests: number;
 }
 
+// Type for Chrome's performance.memory (non-standard)
+interface PerformanceMemory {
+  usedJSHeapSize: number;
+  jsHeapSizeLimit: number;
+  totalJSHeapSize: number;
+}
+
+interface ExtendedPerformance extends Performance {
+  memory?: PerformanceMemory;
+}
+
 const SystemAuditPage = () => {
   const [auditResults, setAuditResults] = useState<AuditResult[]>([]);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
@@ -267,11 +278,15 @@ const SystemAuditPage = () => {
   const checkSystemHealth = async () => {
     console.log('Checking system health...');
     
+    // Safely check for performance.memory (Chrome only)
+    const extendedPerformance = performance as ExtendedPerformance;
+    const memoryInfo = extendedPerformance.memory ? {
+      used: Math.round(extendedPerformance.memory.usedJSHeapSize / 1024 / 1024),
+      limit: Math.round(extendedPerformance.memory.jsHeapSizeLimit / 1024 / 1024)
+    } : null;
+    
     const health = {
-      memory: performance?.memory ? {
-        used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
-        limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
-      } : null,
+      memory: memoryInfo,
       online: navigator.onLine,
       userAgent: navigator.userAgent,
       language: navigator.language,
