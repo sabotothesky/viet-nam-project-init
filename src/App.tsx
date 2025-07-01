@@ -10,22 +10,21 @@ import { Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/hooks/useAuth";
 
-// Lazy load components to prevent blocking errors
-import { lazy } from "react";
+// Import components directly instead of lazy loading to avoid loading issues
+import SimpleDashboard from "./pages/SimpleDashboard";
+import SimpleBookingPage from "./pages/SimpleBookingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
+import SimpleClubHomePage from "./pages/SimpleClubHomePage";
+import SimpleClubBookingPage from "./pages/SimpleClubBookingPage";
+import SimpleClubAboutPage from "./pages/SimpleClubAboutPage";
+import SimpleClubContactPage from "./pages/SimpleClubContactPage";
+import SystemAuditPage from "./pages/SystemAuditPage";
+import TestPage from "./pages/TestPage";
 
-const SimpleDashboard = lazy(() => import("./pages/SimpleDashboard"));
-const SimpleBookingPage = lazy(() => import("./pages/SimpleBookingPage"));
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const RegisterPage = lazy(() => import("./pages/RegisterPage"));
-const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
-const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage"));
-const SimpleClubHomePage = lazy(() => import("./pages/SimpleClubHomePage"));
-const SimpleClubBookingPage = lazy(() => import("./pages/SimpleClubBookingPage"));
-const SimpleClubAboutPage = lazy(() => import("./pages/SimpleClubAboutPage"));
-const SimpleClubContactPage = lazy(() => import("./pages/SimpleClubContactPage"));
-const SystemAuditPage = lazy(() => import("./pages/SystemAuditPage"));
-
-// Fallback component for loading
+// Simple loading fallback
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-green-900">
     <div className="text-center text-white">
@@ -59,6 +58,7 @@ const App = () => {
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
                       <Route path="/" element={<SimpleDashboard />} />
+                      <Route path="/test" element={<TestPage />} />
                       <Route path="/booking" element={<SimpleBookingPage />} />
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/register" element={<RegisterPage />} />
