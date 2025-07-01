@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -30,10 +31,10 @@ import {
   Medal,
   TrendingUpIcon,
   TrendingDownIcon,
+  BarChart3,
 } from 'lucide-react';
 import {
   getRankFromRating,
-  getRankColor,
   type PlayerStats,
 } from '../utils/eloCalculator';
 

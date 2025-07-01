@@ -61,5 +61,8 @@ export interface SeasonComparison {
     points_change: number;
     games_change: number;
   };
-  top_players_change?: number;
+  top_players_change?: Array<{
+    player_name: string;
+    rank_change: number;
+  }>;
 }

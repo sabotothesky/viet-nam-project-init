@@ -1,181 +1,353 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import {
+  Trophy,
   TrendingUp,
   TrendingDown,
-  Minus,
-  Building2,
-  CheckCircle,
+  Crown,
+  Star,
+  Shield,
+  Users,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
 } from 'lucide-react';
-import { ClubStanding } from '../types/tournament';
+
+interface ClubPlayer {
+  id: string;
+  username: string;
+  current_rating: number;
+  matches_played: number;
+  wins: number;
+  losses: number;
+  win_rate: number;
+  current_streak: number;
+  rank: string;
+  avatar_url?: string;
+  club_contribution_points?: number;
+  recent_form?: number;
+  last_active?: Date;
+}
 
 interface ClubLeaderboardProps {
-  standings: ClubStanding[];
-  clubName?: string;
-  loading?: boolean;
-  showVerification?: boolean;
+  clubId: string;
+  players: ClubPlayer[];
+  className?: string;
 }
 
 export const ClubLeaderboard: React.FC<ClubLeaderboardProps> = ({
-  standings,
-  clubName = 'CLB',
-  loading = false,
-  showVerification = true,
+  clubId,
+  players,
+  className,
 }) => {
-  const getRankIcon = (rank: number) => {
+  const [filteredPlayers, setFilteredPlayers] = useState<ClubPlayer[]>(players);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<
+    'rating' | 'matches' | 'win_rate' | 'streak' | 'contribution' | 'form'
+  >('rating');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [rankFilter, setRankFilter] = useState<string>('all');
+
+  useEffect(() => {
+    let filtered = [...players];
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(player =>
+        player.username.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Rank filter
+    if (rankFilter !== 'all') {
+      filtered = filtered.filter(player => player.rank === rankFilter);
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      let aValue: number;
+      let bValue: number;
+
+      switch (sortBy) {
+        case 'rating':
+          aValue = a.current_rating;
+          bValue = b.current_rating;
+          break;
+        case 'matches':
+          aValue = a.matches_played;
+          bValue = b.matches_played;
+          break;
+        case 'win_rate':
+          aValue = a.win_rate;
+          bValue = b.win_rate;
+          break;
+        case 'streak':
+          aValue = a.current_streak;
+          bValue = b.current_streak;
+          break;
+        case 'contribution':
+          aValue = a.club_contribution_points || 0;
+          bValue = b.club_contribution_points || 0;
+          break;
+        case 'form':
+          aValue = a.recent_form || 0;
+          bValue = b.recent_form || 0;
+          break;
+        default:
+          aValue = a.current_rating;
+          bValue = b.current_rating;
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue - bValue;
+      } else {
+        return bValue - aValue;
+      }
+    });
+
+    setFilteredPlayers(filtered);
+  }, [players, searchTerm, sortBy, sortOrder, rankFilter]);
+
+  const getRankColor = (rank: string) => {
     switch (rank) {
-      case 1:
-        return '🥇';
-      case 2:
-        return '🥈';
-      case 3:
-        return '🥉';
+      case 'S+':
+      case 'S':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'G+':
+      case 'G':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'A+':
+      case 'A':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'B+':
+      case 'B':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'C+':
+      case 'C':
+        return 'bg-green-100 text-green-800 border-green-200';
       default:
-        return `#${rank}`;
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const getRankChangeIcon = (change?: number) => {
-    if (!change) return <Minus className='w-4 h-4 text-gray-400' />;
-    if (change > 0) return <TrendingUp className='w-4 h-4 text-green-500' />;
-    return <TrendingDown className='w-4 h-4 text-red-500' />;
+  const getPositionIcon = (position: number) => {
+    switch (position) {
+      case 1:
+        return <Trophy className="h-5 w-5 text-yellow-500" />;
+      case 2:
+        return <Crown className="h-5 w-5 text-gray-400" />;
+      case 3:
+        return <Star className="h-5 w-5 text-orange-500" />;
+      default:
+        return (
+          <span className="text-sm font-medium text-gray-500">#{position}</span>
+        );
+    }
   };
 
-  const getRankChangeText = (change?: number) => {
-    if (!change) return '0';
-    return change > 0 ? `+${change}` : `${change}`;
-  };
-
-  const getRankChangeColor = (change?: number) => {
-    if (!change) return 'text-gray-500';
-    return change > 0 ? 'text-green-600' : 'text-red-600';
-  };
-
-  if (loading) {
-    return (
+  return (
+    <div className={`space-y-6 ${className}`}>
       <Card>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Building2 className='w-5 h-5' />
-            {clubName}
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Club Leaderboard
+            </div>
+            <Badge variant="outline">{filteredPlayers.length} Members</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='space-y-4'>
-            {[...Array(10)].map((_, i) => (
-              <div key={i} className='flex items-center gap-4 animate-pulse'>
-                <div className='w-8 h-8 bg-gray-200 rounded-full'></div>
-                <div className='w-10 h-10 bg-gray-200 rounded-full'></div>
-                <div className='flex-1 space-y-2'>
-                  <div className='h-4 bg-gray-200 rounded w-3/4'></div>
-                  <div className='h-3 bg-gray-200 rounded w-1/2'></div>
-                </div>
-                <div className='w-16 h-4 bg-gray-200 rounded'></div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='flex items-center gap-2'>
-          <Building2 className='w-5 h-5 text-blue-600' />
-          {clubName}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className='space-y-3'>
-          {standings.map((standing, index) => (
-            <div
-              key={standing.id}
-              className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
-                index < 3
-                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200'
-                  : 'hover:bg-gray-50'
-              }`}
-            >
-              {/* Rank */}
-              <div className='flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 font-bold text-sm'>
-                {getRankIcon(standing.current_rank)}
-              </div>
-
-              {/* Avatar */}
-              <Avatar className='w-10 h-10'>
-                <AvatarImage src={standing.user?.avatar_url} />
-                <AvatarFallback>
-                  {standing.user?.full_name?.charAt(0) || 'U'}
-                </AvatarFallback>
-              </Avatar>
-
-              {/* Player Info */}
-              <div className='flex-1 min-w-0'>
-                <div className='flex items-center gap-2'>
-                  <h4 className='font-semibold text-sm truncate'>
-                    {standing.user?.full_name || 'Unknown Player'}
-                  </h4>
-                  {standing.user?.nickname && (
-                    <Badge variant='outline' className='text-xs'>
-                      {standing.user.nickname}
-                    </Badge>
-                  )}
-                  {showVerification && standing.verified_at && (
-                    <CheckCircle
-                      className='w-4 h-4 text-green-500'
-                      title='Đã xác nhận'
-                    />
-                  )}
-                </div>
-                <div className='flex items-center gap-4 text-xs text-gray-600 mt-1'>
-                  <span>Giải đấu: {standing.tournaments_played}</span>
-                  {standing.best_finish && (
-                    <span>Thành tích tốt nhất: #{standing.best_finish}</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className='flex flex-col items-end gap-1'>
-                <div className='flex items-center gap-2'>
-                  <span className='font-bold text-lg text-blue-600'>
-                    {standing.total_elo_points.toLocaleString()}
-                  </span>
-                  <span className='text-xs text-gray-500'>ELO</span>
-                </div>
-
-                {/* Rank Change */}
-                <div className='flex items-center gap-1'>
-                  {getRankChangeIcon(standing.rank_change)}
-                  <span
-                    className={`text-xs font-medium ${getRankChangeColor(standing.rank_change)}`}
-                  >
-                    {getRankChangeText(standing.rank_change)}
-                  </span>
-                </div>
-
-                {/* Verification Status */}
-                {showVerification && !standing.verified_at && (
-                  <Badge variant='outline' className='text-xs text-orange-600'>
-                    Chưa xác nhận
-                  </Badge>
-                )}
+          {/* Filters and Search */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search players..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
-          ))}
+            <div className="flex gap-2">
+              <Select value={rankFilter} onValueChange={setRankFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Ranks</SelectItem>
+                  <SelectItem value="S+">S+</SelectItem>
+                  <SelectItem value="S">S</SelectItem>
+                  <SelectItem value="G+">G+</SelectItem>
+                  <SelectItem value="G">G</SelectItem>
+                  <SelectItem value="A+">A+</SelectItem>
+                  <SelectItem value="A">A</SelectItem>
+                  <SelectItem value="B+">B+</SelectItem>
+                  <SelectItem value="B">B</SelectItem>
+                  <SelectItem value="C+">C+</SelectItem>
+                  <SelectItem value="C">C</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={sortBy}
+                onValueChange={(value: any) => setSortBy(value)}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rating">Rating</SelectItem>
+                  <SelectItem value="matches">Matches</SelectItem>
+                  <SelectItem value="win_rate">Win Rate</SelectItem>
+                  <SelectItem value="streak">Streak</SelectItem>
+                  <SelectItem value="contribution">Contribution</SelectItem>
+                  <SelectItem value="form">Recent Form</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                }
+              >
+                {sortOrder === 'asc' ? (
+                  <SortAsc className="h-4 w-4" />
+                ) : (
+                  <SortDesc className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
 
-          {standings.length === 0 && (
-            <div className='text-center py-8 text-gray-500'>
-              <Building2 className='w-12 h-12 mx-auto mb-4 text-gray-300' />
-              <p>Chưa có dữ liệu xếp hạng</p>
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-3 font-medium">Position</th>
+                  <th className="text-left p-3 font-medium">Player</th>
+                  <th className="text-left p-3 font-medium">Rank</th>
+                  <th className="text-left p-3 font-medium">Rating</th>
+                  <th className="text-left p-3 font-medium">Matches</th>
+                  <th className="text-left p-3 font-medium">Win Rate</th>
+                  <th className="text-left p-3 font-medium">Streak</th>
+                  <th className="text-left p-3 font-medium">Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPlayers.map((player, index) => (
+                  <tr
+                    key={player.id}
+                    className="border-b hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        {getPositionIcon(index + 1)}
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                          {player.avatar_url ? (
+                            <img
+                              src={player.avatar_url}
+                              alt={player.username}
+                              className="w-8 h-8 rounded-full"
+                            />
+                          ) : (
+                            <Users className="h-4 w-4 text-gray-500" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-medium">{player.username}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <Badge className={getRankColor(player.rank)}>
+                        {player.rank}
+                      </Badge>
+                    </td>
+                    <td className="p-3 font-mono font-semibold">
+                      {player.current_rating}
+                    </td>
+                    <td className="p-3">{player.matches_played}</td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {player.win_rate.toFixed(1)}%
+                        </span>
+                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-green-500 h-2 rounded-full"
+                            style={{ width: `${player.win_rate}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-1">
+                        {player.current_streak > 0 ? (
+                          <TrendingUp className="h-4 w-4 text-green-500" />
+                        ) : player.current_streak < 0 ? (
+                          <TrendingDown className="h-4 w-4 text-red-500" />
+                        ) : null}
+                        <span
+                          className={
+                            player.current_streak > 0
+                              ? 'text-green-600'
+                              : player.current_streak < 0
+                                ? 'text-red-600'
+                                : 'text-gray-600'
+                          }
+                        >
+                          {player.current_streak > 0 ? '+' : ''}
+                          {player.current_streak}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <span className="font-medium text-blue-600">
+                        {player.club_contribution_points || 0}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* No Results */}
+          {filteredPlayers.length === 0 && (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No players found
+              </h3>
+              <p className="text-gray-500">
+                Try adjusting your search or filter criteria.
+              </p>
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
+
+export default ClubLeaderboard;

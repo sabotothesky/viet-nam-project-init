@@ -108,6 +108,15 @@ export interface EloMatch {
   opponentRating: number;
   result: 'win' | 'loss' | 'draw';
   kFactor?: number;
+  winner_id?: string;
+  match_type?: string;
+  tournament_tier?: string;
+  challenge_bet?: number;
+  quality_score?: number;
+  upset_factor?: number;
+  is_tournament?: boolean;
+  is_streak_bonus?: boolean;
+  is_quality_match?: boolean;
 }
 
 export interface PlayerStats {
@@ -137,18 +146,40 @@ export interface EloResult {
   newRating: number;
   ratingChange: number;
   expectedScore: number;
+  player1_new_rating?: number;
+  player2_new_rating?: number;
+  player1_rating_change?: number;
+  player2_rating_change?: number;
+  k_factor_player1?: number;
+  k_factor_player2?: number;
+  bonus_player1?: number;
+  bonus_player2?: number;
+  volatility_player1?: number;
+  volatility_player2?: number;
+  player1_expected_score?: number;
+  player2_expected_score?: number;
+  match_quality_score?: number;
+  confidence_interval?: number;
 }
 
 export interface EloConfig {
   defaultRating: number;
   kFactor: number;
   provisionalGames: number;
+  baseKFactor?: number;
+  tournamentMultiplier?: number;
+  upsetMultiplier?: number;
+  qualityMatchBonus?: number;
 }
 
 export const DEFAULT_ELO_CONFIG: EloConfig = {
   defaultRating: 1000,
   kFactor: 32,
   provisionalGames: 10,
+  baseKFactor: 32,
+  tournamentMultiplier: 1.2,
+  upsetMultiplier: 1.5,
+  qualityMatchBonus: 1.1,
 };
 
 export const getDynamicKFactor = (rating: number, gamesPlayed: number): number => {
@@ -158,7 +189,7 @@ export const getDynamicKFactor = (rating: number, gamesPlayed: number): number =
   return 16;
 };
 
-export const predictMatchResult = (playerRating: number, opponentRating: number): {
+export const predictMatchResult = (playerRating: number, opponentRating: number, additionalData?: any): {
   winProbability: number;
   drawProbability: number;
   lossProbability: number;
