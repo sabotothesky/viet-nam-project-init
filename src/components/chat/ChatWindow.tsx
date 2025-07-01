@@ -43,7 +43,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
     setLoading(true);
     try {
-      // Mock message sending - replace with actual implementation
       const message: Message = {
         id: Date.now().toString(),
         content: newMessage,
@@ -85,7 +84,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col space-y-4">
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-2 max-h-64">
           {messages.map((message) => (
             <div
@@ -113,7 +111,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Message Input */}
         <div className="flex space-x-2">
           <Textarea
             placeholder="Type your message..."

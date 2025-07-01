@@ -38,7 +38,9 @@ export interface UserProfile {
   current_rank?: string;
   club_id?: string;
   clbVerified?: boolean;
-  elo?: number; // Add elo property
+  elo?: number;
+  experience_years?: number;
+  matches_played?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -191,7 +193,9 @@ export interface Club {
   logo_url?: string;
   description?: string;
   phone?: string;
+  email?: string;
   table_count?: number;
+  hourly_rate?: number;
 }
 
 export interface Tournament {
@@ -216,6 +220,7 @@ export interface Tournament {
   venue_address?: string;
   rules?: string;
   organizer_id: string;
+  club_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -235,12 +240,14 @@ export interface TournamentFormData {
   venue_name?: string;
   venue_address?: string;
   rules?: string;
+  club_id?: string;
 }
 
 export interface UserLocation {
   latitude: number;
   longitude: number;
   address?: string;
+  max_distance_km?: number;
 }
 
 export interface Match {

@@ -12,7 +12,7 @@ interface QueueItem {
 export const useOfflineQueue = () => {
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const maxRetries = 3; // Define maxRetries here
+  const maxRetries = 3;
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -43,22 +43,18 @@ export const useOfflineQueue = () => {
 
     const item = queue[0];
     try {
-      // Process the queue item
       console.log('Processing queue item:', item);
       
-      // Remove successful item from queue
       setQueue(prev => prev.slice(1));
     } catch (error) {
       console.error('Failed to process queue item:', error);
       
-      // Retry logic
       if (item.retries < maxRetries) {
         setQueue(prev => [
           { ...item, retries: item.retries + 1 },
           ...prev.slice(1)
         ]);
       } else {
-        // Remove failed item after max retries
         setQueue(prev => prev.slice(1));
       }
     }
@@ -73,6 +69,7 @@ export const useOfflineQueue = () => {
   return {
     addToQueue,
     queue,
+    queueSize: queue.length,
     isOnline
   };
 };
