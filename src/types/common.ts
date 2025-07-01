@@ -188,4 +188,71 @@ export interface Club {
   status: string;
   created_at: string;
   updated_at: string;
+  logo_url?: string;
+  description?: string;
+  phone?: string;
+  table_count?: number;
+}
+
+export interface Tournament {
+  id: string;
+  name: string;
+  description?: string;
+  tournament_type: 'single_elimination' | 'double_elimination' | 'round_robin' | 'swiss';
+  game_format: string;
+  max_participants: number;
+  current_participants: number;
+  entry_fee: number;
+  prize_pool: number;
+  first_prize: number;
+  second_prize: number;
+  third_prize: number;
+  status: 'upcoming' | 'registration_open' | 'registration_closed' | 'ongoing' | 'completed' | 'cancelled';
+  tournament_start: string;
+  tournament_end: string;
+  registration_start: string;
+  registration_end: string;
+  venue_name?: string;
+  venue_address?: string;
+  rules?: string;
+  organizer_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TournamentFormData {
+  name: string;
+  description?: string;
+  tournament_type: 'single_elimination' | 'double_elimination' | 'round_robin' | 'swiss';
+  game_format: string;
+  max_participants: number;
+  entry_fee: number;
+  prize_pool: number;
+  tournament_start: string;
+  tournament_end: string;
+  registration_start: string;
+  registration_end: string;
+  venue_name?: string;
+  venue_address?: string;
+  rules?: string;
+}
+
+export interface UserLocation {
+  latitude: number;
+  longitude: number;
+  address?: string;
+}
+
+export interface Match {
+  id: string;
+  player1_id: string;
+  player2_id: string;
+  winner_id?: string;
+  status: 'pending' | 'ongoing' | 'completed' | 'cancelled';
+  scheduled_at?: string;
+  started_at?: string;
+  completed_at?: string;
+  frames: number;
+  created_at: string;
+  updated_at: string;
 }
