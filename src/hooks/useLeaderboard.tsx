@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../integrations/supabase/client';
@@ -5,6 +6,10 @@ import { supabase } from '../integrations/supabase/client';
 export interface LeaderboardEntry {
   id: string;
   username: string;
+  full_name: string;
+  current_rank: string;
+  ranking_points: number;
+  total_matches: number;
   avatar_url: string;
   elo: number;
   wins: number;
@@ -16,6 +21,7 @@ export interface LeaderboardEntry {
   streak: number;
   country: string;
   city: string;
+  location?: string;
   bio: string;
   user_id: string;
 }
