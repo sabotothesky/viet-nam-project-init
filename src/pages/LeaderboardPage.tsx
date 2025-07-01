@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Medal, Award, MapPin, Target, TrendingUp } from 'lucide-react';
@@ -6,7 +7,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 const LeaderboardPage = () => {
-  const { data: players, isLoading } = useLeaderboard();
+  const { leaderboard: players, loading } = useLeaderboard();
 
   const getRankIcon = (position: number) => {
     switch (position) {
@@ -44,7 +45,7 @@ const LeaderboardPage = () => {
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className='min-h-screen bg-gray-50'>
         <Navigation />

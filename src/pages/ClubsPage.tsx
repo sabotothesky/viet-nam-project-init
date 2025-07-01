@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 const ClubsPage = () => {
-  const { data: clubs, isLoading } = useClubs();
+  const { clubs, loading } = useClubs();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -16,7 +17,7 @@ const ClubsPage = () => {
     }).format(price);
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className='min-h-screen bg-gray-50'>
         <Navigation />

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
@@ -15,7 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { useDiscovery } from '@/hooks/useDiscovery';
-import { useEnhancedChallenges } from '@/hooks/useEnhancedChallenges';
 import { useProfile } from '@/hooks/useProfile';
 import MobileLayout from '../components/MobileLayout';
 import EnhancedPlayerCard from '@/components/EnhancedPlayerCard';
@@ -28,8 +28,9 @@ import { UserProfile } from '@/types/common';
 
 const EnhancedDiscoveryPage = () => {
   const navigate = useNavigate();
-  const { nearbyPlayers, isLoading, sendChallenge } = useDiscovery();
-  const { profile } = useProfile();
+  const { items: nearbyPlayers, loading, sendChallenge } = useDiscovery();
+  const { getProfile, updateProfile } = useProfile();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -46,6 +47,18 @@ const EnhancedDiscoveryPage = () => {
 
   const currentPlayer = nearbyPlayers[currentIndex];
   const remainingPlayers = nearbyPlayers.length - currentIndex;
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userProfile = await getProfile();
+        setProfile(userProfile);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+    fetchProfile();
+  }, [getProfile]);
 
   useEffect(() => {
     if (currentIndex >= nearbyPlayers.length && nearbyPlayers.length > 0) {
@@ -86,7 +99,7 @@ const EnhancedDiscoveryPage = () => {
 
     try {
       await sendChallenge.mutateAsync({
-        challengedId: selectedOpponent.user_id,
+        challengedId: selectedOpponent.user_id || '',
         betPoints: challengeData.betPoints,
         message: challengeData.message,
       });
@@ -114,7 +127,42 @@ const EnhancedDiscoveryPage = () => {
     toast.success('Đã làm mới danh sách!');
   };
 
-  if (isLoading) {
+  // Transform DiscoveryItem to UserProfile for compatibility
+  const transformedPlayers = nearbyPlayers.map(item => ({
+    user_id: item.id,
+    full_name: item.title,
+    avatar_url: item.image_url || undefined,
+    current_rank: item.rank || 'K1',
+    ranking_points: item.points || 0,
+    min_bet_points: 10,
+    max_bet_points: 100,
+    // Add other required properties with defaults
+    first_name: '',
+    last_name: '',
+    nickname: '',
+    email: '',
+    phone: '',
+    date_of_birth: '',
+    gender: 'male',
+    address: '',
+    bio: '',
+    experience_years: 0,
+    favorite_game_types: [],
+    achievements: [],
+    social_media_links: {},
+    privacy_settings: {},
+    notification_preferences: {},
+    location: '',
+    club_id: '',
+    total_matches: 0,
+    wins: 0,
+    losses: 0,
+    current_streak: 0,
+    created_at: '',
+    updated_at: '',
+  }));
+
+  if (loading) {
     return (
       <MobileLayout>
         <div className='flex items-center justify-center h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500'>
@@ -176,14 +224,14 @@ const EnhancedDiscoveryPage = () => {
           userPoints={profile?.ranking_points || 0}
           userRank={profile?.current_rank || 'K1'}
           remainingPlayers={remainingPlayers}
-          currentPlayer={currentPlayer}
+          currentPlayer={transformedPlayers[currentIndex]}
         />
 
         {/* Card Stack */}
         <div className='absolute inset-x-4 top-32 bottom-32 z-10'>
           <div className='relative h-full'>
             <AnimatePresence mode='wait'>
-              {nearbyPlayers.length === 0 ? (
+              {transformedPlayers.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -204,7 +252,7 @@ const EnhancedDiscoveryPage = () => {
                   </div>
                 </motion.div>
               ) : (
-                nearbyPlayers
+                transformedPlayers
                   .slice(currentIndex, currentIndex + 3)
                   .map((player, index) => (
                     <motion.div
@@ -260,12 +308,12 @@ const EnhancedDiscoveryPage = () => {
         </div>
 
         {/* Enhanced Action Buttons */}
-        {currentPlayer && (
+        {transformedPlayers[currentIndex] && (
           <div className='absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-6 z-20'>
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => handleSwipe('left', currentPlayer)}
+              onClick={() => handleSwipe('left', transformedPlayers[currentIndex])}
               className='w-14 h-14 bg-red-500 rounded-full shadow-lg flex items-center justify-center hover:bg-red-600 transition-colors'
             >
               <X className='w-6 h-6 text-white' />
@@ -274,7 +322,7 @@ const EnhancedDiscoveryPage = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => handleSwipe('up', currentPlayer)}
+              onClick={() => handleSwipe('up', transformedPlayers[currentIndex])}
               className='w-12 h-12 bg-blue-500 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600 transition-colors'
             >
               <Star className='w-5 h-5 text-white' />
@@ -283,7 +331,7 @@ const EnhancedDiscoveryPage = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
-              onClick={() => handleSwipe('right', currentPlayer)}
+              onClick={() => handleSwipe('right', transformedPlayers[currentIndex])}
               className='w-16 h-16 bg-green-500 rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition-colors'
             >
               <Zap className='w-8 h-8 text-white' />

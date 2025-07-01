@@ -1,11 +1,13 @@
+
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 
 export function initSentry() {
   if (import.meta.env.PROD) {
     Sentry.init({
       dsn: import.meta.env.VITE_SENTRY_DSN || 'YOUR_SENTRY_DSN',
-      integrations: [new BrowserTracing()],
+      integrations: [
+        new Sentry.BrowserTracing(),
+      ],
       tracesSampleRate: 0.1,
       environment: import.meta.env.MODE,
       release: import.meta.env.VITE_APP_VERSION || '1.0.0',
