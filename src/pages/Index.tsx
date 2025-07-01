@@ -1,334 +1,196 @@
+
 import React from 'react';
-import {
-  ArrowRight,
-  Trophy,
-  Users,
-  Star,
-  MapPin,
-  Calendar,
-  Sword,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import HeroSection from '@/components/HeroSection';
-import FeaturesSection from '@/components/FeaturesSection';
-import StatsSection from '@/components/StatsSection';
-import { useTournaments } from '@/hooks/useTournaments';
-import { useLeaderboard } from '@/hooks/useLeaderboard';
-import { usePublicChallenges } from '@/hooks/useChallenges';
-import { usePosts } from '@/hooks/usePosts';
-import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Trophy, Users, Calendar, Star, PlayCircle, Target } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
-  const { tournaments } = useTournaments();
-  const { data: topPlayers } = useLeaderboard();
-  const { data: recentChallenges } = usePublicChallenges();
-  const { data: latestPosts } = usePosts();
-
-  const upcomingTournaments =
-    tournaments?.filter(t => t.status === 'registration_open').slice(0, 3) ||
-    [];
-  const topRankedPlayers = topPlayers?.slice(0, 5) || [];
-  const publicChallenges = recentChallenges?.slice(0, 3) || [];
-  const featuredPosts = latestPosts?.slice(0, 3) || [];
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatPrize = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(amount);
-  };
-
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <Navigation />
+    <>
+      <Helmet>
+        <title>SABO Pool Arena Hub - Nền tảng Billiards Việt Nam</title>
+        <meta 
+          name="description" 
+          content="Nền tảng quản lý arena bi-a hàng đầu Việt Nam với hệ thống xếp hạng ELO, giải đấu trực tuyến và thanh toán VNPay"
+        />
+        <meta name="keywords" content="billiards, pool, vietnam, tournament, ranking, arena" />
+      </Helmet>
 
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Features Section */}
-      <FeaturesSection />
-
-      {/* Stats Section */}
-      <StatsSection />
-
-      {/* Tournaments Section */}
-      <section className='py-16 bg-white'>
-        <div className='container mx-auto px-4'>
-          <div className='flex justify-between items-center mb-8'>
-            <div>
-              <h2 className='text-3xl font-bold text-gray-900 mb-2'>
-                Giải Đấu Sắp Tới
-              </h2>
-              <p className='text-gray-600'>
-                Tham gia các giải đấu hấp dẫn và thể hiện kỹ năng
-              </p>
-            </div>
-            <Link to='/tournaments'>
-              <Button variant='outline' className='gap-2'>
-                Xem Tất Cả <ArrowRight className='w-4 h-4' />
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        {/* Header */}
+        <header className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Target className="h-8 w-8 text-yellow-400" />
+            <h1 className="text-2xl font-bold text-white">SABO Pool Arena</h1>
+          </div>
+          <div className="flex space-x-4">
+            <Link to="/login">
+              <Button variant="outline" className="text-white border-white hover:bg-white hover:text-slate-900">
+                Đăng nhập
+              </Button>
+            </Link>
+            <Link to="/register">
+              <Button className="bg-yellow-400 text-slate-900 hover:bg-yellow-500">
+                Đăng ký
               </Button>
             </Link>
           </div>
+        </header>
 
-          <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-            {upcomingTournaments.map(tournament => (
-              <Card
-                key={tournament.id}
-                className='hover:shadow-lg transition-shadow'
-              >
-                <CardHeader>
-                  <div className='flex justify-between items-start mb-2'>
-                    <CardTitle className='text-xl'>{tournament.name}</CardTitle>
-                    <Badge className='bg-green-100 text-green-800'>
-                      Đang mở đăng ký
-                    </Badge>
-                  </div>
-                  <CardDescription>{tournament.description}</CardDescription>
-                </CardHeader>
-
-                <CardContent className='space-y-4'>
-                  <div className='flex items-center text-sm text-gray-600'>
-                    <Calendar className='w-4 h-4 mr-2' />
-                    {formatDate(tournament.start_date)}
-                  </div>
-
-                  <div className='flex items-center text-sm text-gray-600'>
-                    <Trophy className='w-4 h-4 mr-2' />
-                    {formatPrize(tournament.prize_pool)}
-                  </div>
-
-                  <div className='flex items-center text-sm text-gray-600'>
-                    <Users className='w-4 h-4 mr-2' />
-                    {tournament.current_participants}/
-                    {tournament.max_participants} người tham gia
-                  </div>
-
-                  <Button className='w-full bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black font-bold'>
-                    Đăng Ký Ngay
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Leaderboard Section */}
-      <section className='py-16 bg-gray-50'>
-        <div className='container mx-auto px-4'>
-          <div className='flex justify-between items-center mb-8'>
-            <div>
-              <h2 className='text-3xl font-bold text-gray-900 mb-2'>
-                Bảng Xếp Hạng
-              </h2>
-              <p className='text-gray-600'>
-                Top cao thủ bida hàng đầu Việt Nam
-              </p>
-            </div>
-            <Link to='/leaderboard'>
-              <Button variant='outline' className='gap-2'>
-                Xem Bảng Xếp Hạng <ArrowRight className='w-4 h-4' />
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 py-20 text-center">
+          <Badge className="mb-4 bg-yellow-400 text-slate-900">
+            Nền tảng Billiards #1 Việt Nam
+          </Badge>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            Nơi Hội Tụ
+            <br />
+            <span className="text-yellow-400">Tay Cơ Việt</span>
+          </h1>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Tham gia cộng đồng billiards lớn nhất Việt Nam. Thách đấu, xếp hạng, 
+            và trở thành cao thủ với hệ thống ELO chuyên nghiệp.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/register">
+              <Button size="lg" className="bg-yellow-400 text-slate-900 hover:bg-yellow-500 px-8 py-3 text-lg">
+                <PlayCircle className="mr-2 h-5 w-5" />
+                Bắt đầu ngay
               </Button>
             </Link>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="text-white border-white hover:bg-white hover:text-slate-900 px-8 py-3 text-lg"
+            >
+              Khám phá tính năng
+            </Button>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="container mx-auto px-4 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Tại sao chọn SABO Pool Arena?
+            </h2>
+            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+              Hệ thống quản lý arena billiards toàn diện với công nghệ hiện đại
+            </p>
           </div>
 
-          <div className='bg-white rounded-lg shadow-sm overflow-hidden'>
-            <div className='divide-y'>
-              {topRankedPlayers.map((player, index) => (
-                <div
-                  key={index}
-                  className='p-6 flex items-center justify-between hover:bg-gray-50'
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <Trophy className="h-12 w-12 text-yellow-400 mb-4" />
+                <CardTitle className="text-white">Hệ thống ELO chuyên nghiệp</CardTitle>
+                <CardDescription className="text-gray-300">
+                  Xếp hạng công bằng và chính xác theo tiêu chuẩn quốc tế
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="text-gray-300 space-y-2">
+                  <li>• Tính toán ELO real-time</li>
+                  <li>• Theo dõi thống kê chi tiết</li>
+                  <li>• Lịch sử trận đấu đầy đủ</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <Users className="h-12 w-12 text-blue-400 mb-4" />
+                <CardTitle className="text-white">Cộng đồng sôi động</CardTitle>
+                <CardDescription className="text-gray-300">
+                  Kết nối với hàng nghìn tay cơ trên toàn quốc
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="text-gray-300 space-y-2">
+                  <li>• Thách đấu trực tuyến</li>
+                  <li>• Chat và kết bạn</li>
+                  <li>• Chia sẻ kinh nghiệm</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <Calendar className="h-12 w-12 text-green-400 mb-4" />
+                <CardTitle className="text-white">Giải đấu thường xuyên</CardTitle>
+                <CardDescription className="text-gray-300">
+                  Tham gia các giải đấu với giải thưởng hấp dẫn
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="text-gray-300 space-y-2">
+                  <li>• Giải đấu hàng tuần</li>
+                  <li>• Giải thưởng tiền mặt</li>
+                  <li>• Hệ thống bracket tự động</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section className="container mx-auto px-4 py-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">5,000+</div>
+              <div className="text-gray-300">Người chơi</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">200+</div>
+              <div className="text-gray-300">Arena đối tác</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">1,000+</div>
+              <div className="text-gray-300">Giải đấu</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">50K+</div>
+              <div className="text-gray-300">Trận đấu</div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="container mx-auto px-4 py-20 text-center">
+          <Card className="bg-gradient-to-r from-yellow-400 to-orange-500 border-0 max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-slate-900 mb-4">
+                Sẵn sàng thể hiện kỹ năng?
+              </CardTitle>
+              <CardDescription className="text-slate-800 text-lg">
+                Tham gia ngay hôm nay và bắt đầu hành trình trở thành cao thủ billiards
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/register">
+                <Button 
+                  size="lg" 
+                  className="bg-slate-900 text-white hover:bg-slate-800 px-8 py-3 text-lg"
                 >
-                  <div className='flex items-center space-x-4'>
-                    <div className='w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-black font-bold'>
-                      {index + 1}
-                    </div>
-                    <div>
-                      <h3 className='font-semibold text-gray-900'>
-                        {player.full_name}
-                      </h3>
-                      <p className='text-sm text-gray-600'>{player.location}</p>
-                    </div>
-                  </div>
-                  <div className='text-right'>
-                    <div className='flex items-center gap-2'>
-                      <Badge variant='outline'>{player.current_rank}</Badge>
-                      <span className='font-bold text-yellow-600'>
-                        {player.ranking_points} điểm
-                      </span>
-                    </div>
-                    <p className='text-sm text-gray-600'>
-                      {player.wins}W - {player.losses}L
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  Đăng ký miễn phí
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Footer */}
+        <footer className="container mx-auto px-4 py-8 border-t border-slate-700">
+          <div className="text-center text-gray-400">
+            <p>&copy; 2024 SABO Pool Arena Hub. Tất cả quyền được bảo lưu.</p>
+            <p className="mt-2">Nền tảng billiards hàng đầu Việt Nam</p>
           </div>
-        </div>
-      </section>
-
-      {/* Recent Challenges Section */}
-      <section className='py-16 bg-white'>
-        <div className='container mx-auto px-4'>
-          <div className='flex justify-between items-center mb-8'>
-            <div>
-              <h2 className='text-3xl font-bold text-gray-900 mb-2'>
-                Thách Đấu Gần Đây
-              </h2>
-              <p className='text-gray-600'>
-                Những trận thách đấu hấp dẫn đang diễn ra
-              </p>
-            </div>
-            <Link to='/challenges'>
-              <Button variant='outline' className='gap-2'>
-                Xem Tất Cả <ArrowRight className='w-4 h-4' />
-              </Button>
-            </Link>
-          </div>
-
-          <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-            {publicChallenges.map(challenge => (
-              <Card
-                key={challenge.id}
-                className='hover:shadow-lg transition-shadow'
-              >
-                <CardHeader>
-                  <div className='flex justify-between items-start'>
-                    <CardTitle className='text-lg flex items-center'>
-                      <Sword className='w-4 h-4 mr-2 text-red-500' />
-                      Thách Đấu
-                    </CardTitle>
-                    <Badge variant='outline'>Chờ phản hồi</Badge>
-                  </div>
-                </CardHeader>
-
-                <CardContent className='space-y-3'>
-                  <div className='flex justify-between items-center'>
-                    <span className='font-semibold'>
-                      {challenge.challenger?.full_name}
-                    </span>
-                    <Badge variant='secondary'>
-                      {challenge.challenger?.current_rank}
-                    </Badge>
-                  </div>
-
-                  <div className='text-center py-2'>
-                    <span className='text-2xl'>⚔️</span>
-                  </div>
-
-                  <div className='flex justify-between items-center'>
-                    <span className='font-semibold'>
-                      {challenge.challenged?.full_name}
-                    </span>
-                    <Badge variant='secondary'>
-                      {challenge.challenged?.current_rank}
-                    </Badge>
-                  </div>
-
-                  <div className='flex items-center justify-between pt-2'>
-                    <div className='flex items-center text-yellow-600 font-bold'>
-                      <Star className='w-4 h-4 mr-1' />
-                      {challenge.bet_points} điểm
-                    </div>
-
-                    {challenge.proposed_club && (
-                      <div className='flex items-center text-sm text-gray-600'>
-                        <MapPin className='w-4 h-4 mr-1' />
-                        {challenge.proposed_club.name}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Latest Posts Section */}
-      <section className='py-16 bg-gray-50'>
-        <div className='container mx-auto px-4'>
-          <div className='flex justify-between items-center mb-8'>
-            <div>
-              <h2 className='text-3xl font-bold text-gray-900 mb-2'>
-                Tin Tức & Bài Viết
-              </h2>
-              <p className='text-gray-600'>
-                Cập nhật thông tin mới nhất về thế giới bida
-              </p>
-            </div>
-            <Link to='/blog'>
-              <Button variant='outline' className='gap-2'>
-                Xem Tất Cả <ArrowRight className='w-4 h-4' />
-              </Button>
-            </Link>
-          </div>
-
-          <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-            {featuredPosts.map(post => (
-              <Card
-                key={post.id}
-                className='hover:shadow-lg transition-shadow overflow-hidden'
-              >
-                {post.featured_image && (
-                  <div
-                    className='h-48 bg-cover bg-center'
-                    style={{ backgroundImage: `url(${post.featured_image})` }}
-                  />
-                )}
-                <CardHeader>
-                  <div className='flex justify-between items-start mb-2'>
-                    <Badge variant='outline'>{post.category}</Badge>
-                    <span className='text-sm text-gray-500'>
-                      {formatDate(post.published_at || post.created_at)}
-                    </span>
-                  </div>
-                  <CardTitle className='text-lg line-clamp-2'>
-                    {post.title}
-                  </CardTitle>
-                  <CardDescription className='line-clamp-3'>
-                    {post.excerpt}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-sm text-gray-600'>
-                      Bởi {post.author?.full_name || 'SABO'}
-                    </span>
-                    <Button variant='ghost' size='sm'>
-                      Đọc thêm <ArrowRight className='w-4 h-4 ml-1' />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+        </footer>
+      </div>
+    </>
   );
 };
 
