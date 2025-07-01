@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Calendar, Trophy, Users, Settings, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -61,13 +60,17 @@ const AdminTournaments = () => {
 
   const handleCreateTournament = async () => {
     try {
+      const now = new Date();
+      const threeDaysFromNow = new Date(now.getTime() + 86400000 * 3);
+      const oneDayFromNow = new Date(now.getTime() + 86400000);
+
       await createTournament({
         name: 'Giải đấu mới',
         description: 'Mô tả giải đấu',
-        tournament_start: new Date().toISOString(),
-        tournament_end: new Date(Date.now() + 86400000 * 3).toISOString(),
-        registration_start: new Date().toISOString(),
-        registration_end: new Date(Date.now() + 86400000).toISOString(),
+        tournament_start: now.toISOString(),
+        tournament_end: threeDaysFromNow.toISOString(),
+        registration_start: now.toISOString(),
+        registration_end: oneDayFromNow.toISOString(),
         max_participants: 32,
         entry_fee: 100000,
         prize_pool: 1000000,
