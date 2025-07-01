@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType, UserProfile } from '@/types/common';
-import { emailService } from '@/services/emailService';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -14,83 +13,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("AuthProvider: Setting up auth state...");
+    
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("AuthProvider: Error getting session:", error);
+      }
+      console.log("AuthProvider: Initial session:", session?.user?.email || 'No user');
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
+      setLoading(false);
+    }).catch((error) => {
+      console.error("AuthProvider: Failed to get session:", error);
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("AuthProvider: Auth state changed:", event, session?.user?.email || 'No user');
         setSession(session);
         setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-            
-            // Send welcome email for new signups
-            if (event === 'SIGNED_UP') {
-              handleNewUserWelcome(session.user);
-            }
-          }, 0);
-        } else {
-          setProfile(null);
-        }
         setLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log("AuthProvider: Cleaning up subscription");
+      subscription.unsubscribe();
+    };
   }, []);
-
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
-  };
-
-  const handleNewUserWelcome = async (user: User) => {
-    try {
-      // Send welcome email
-      await emailService.sendWelcomeEmail(
-        user.email || '',
-        user.user_metadata?.full_name || 'Bạn'
-      );
-      console.log('Welcome email sent for new user:', user.email);
-    } catch (error) {
-      console.error('Failed to send welcome email:', error);
-    }
-  };
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("AuthProvider: Attempting sign in for:", email);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       return { error };
     } catch (error: any) {
-      console.error('Sign in error:', error);
+      console.error('AuthProvider: Sign in error:', error);
       return { error };
     }
   };
 
   const signUp = async (email: string, password: string) => {
     try {
+      console.log("AuthProvider: Attempting sign up for:", email);
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -100,16 +71,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       return { error };
     } catch (error: any) {
-      console.error('Sign up error:', error);
+      console.error('AuthProvider: Sign up error:', error);
       return { error };
     }
   };
 
   const signOut = async () => {
     try {
+      console.log("AuthProvider: Signing out");
       await supabase.auth.signOut();
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('AuthProvider: Sign out error:', error);
     }
   };
 

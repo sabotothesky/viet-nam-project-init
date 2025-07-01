@@ -1,141 +1,111 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Users, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 const SimpleDashboard = () => {
-  const { user, profile } = useAuth();
+  console.log("SimpleDashboard: Component is rendering");
 
   return (
     <>
       <Helmet>
-        <title>Trang chủ - SABO Pool Arena</title>
-        <meta name="description" content="Đặt bàn bi-a dễ dàng tại SABO Pool Arena" />
+        <title>CLB Bi-a Sài Gòn - Trang chủ</title>
+        <meta name="description" content="Hệ thống đặt bàn bi-a trực tuyến" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-900">
         {/* Header */}
-        <header className="bg-slate-800 border-b border-slate-700">
+        <header className="bg-green-800 border-b border-green-700">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-yellow-400">🎱 SABO Pool Arena</h1>
-              <div className="flex items-center space-x-4">
-                {user ? (
-                  <span className="text-white">Xin chào, {profile?.full_name || user.email}</span>
-                ) : (
-                  <Link to="/login">
-                    <Button variant="outline" className="text-yellow-400 border-yellow-400">
-                      Đăng nhập
-                    </Button>
-                  </Link>
-                )}
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🎱</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-yellow-400">CLB Bi-a Sài Gòn</h1>
+                  <p className="text-green-200 text-sm">Hệ thống quản lý</p>
+                </div>
               </div>
+              <nav className="hidden md:flex space-x-6">
+                <Link to="/" className="text-green-200 hover:text-yellow-400 transition-colors">
+                  Trang chủ
+                </Link>
+                <Link to="/simple-club" className="text-green-200 hover:text-yellow-400 transition-colors">
+                  Website CLB
+                </Link>
+                <Link to="/login" className="text-green-200 hover:text-yellow-400 transition-colors">
+                  Đăng nhập
+                </Link>
+              </nav>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            {/* Welcome Section */}
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">
-                Câu lạc bộ Bi-a SABO
-              </h2>
-              <p className="text-xl text-gray-300 mb-8">
-                Đặt bàn bi-a dễ dàng, chơi thoải mái
-              </p>
+        <main className="container mx-auto px-4 py-16">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Hệ Thống Quản Lý Bi-a
+            </h2>
+            <p className="text-xl text-green-200 mb-8 max-w-2xl mx-auto">
+              Quản lý đặt bàn, thành viên và hoạt động câu lạc bộ bi-a
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Simple Club Website */}
+              <div className="bg-green-800 border border-green-700 rounded-lg p-6">
+                <h3 className="text-2xl font-bold text-yellow-400 mb-4">Website CLB</h3>
+                <p className="text-green-200 mb-6">
+                  Website đơn giản cho khách hàng đặt bàn và xem thông tin câu lạc bộ
+                </p>
+                <Link 
+                  to="/simple-club"
+                  className="inline-block bg-yellow-400 text-green-900 hover:bg-yellow-500 font-bold px-6 py-3 rounded transition-colors"
+                >
+                  Xem Website CLB
+                </Link>
+              </div>
+
+              {/* Management System */}
+              <div className="bg-green-800 border border-green-700 rounded-lg p-6">
+                <h3 className="text-2xl font-bold text-yellow-400 mb-4">Hệ Thống Quản Lý</h3>
+                <p className="text-green-200 mb-6">
+                  Hệ thống quản lý nâng cao cho quản trị viên và nhân viên
+                </p>
+                <Link 
+                  to="/login"
+                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded transition-colors"
+                >
+                  Đăng nhập quản lý
+                </Link>
+              </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader className="text-center">
-                  <Calendar className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
-                  <CardTitle className="text-white">Đặt bàn</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Link to="/booking">
-                    <Button className="w-full bg-yellow-400 text-slate-900 hover:bg-yellow-500">
-                      Đặt ngay
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader className="text-center">
-                  <Clock className="h-8 w-8 text-blue-400 mx-auto mb-2" />
-                  <CardTitle className="text-white">Giờ mở cửa</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-gray-300 text-sm">
-                    Thứ 2 - CN<br />
-                    8:00 - 23:00
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader className="text-center">
-                  <Users className="h-8 w-8 text-green-400 mx-auto mb-2" />
-                  <CardTitle className="text-white">Bàn trống</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-2xl font-bold text-green-400">8/12</p>
-                  <p className="text-gray-300 text-sm">bàn có sẵn</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-slate-800 border-slate-700">
-                <CardHeader className="text-center">
-                  <Phone className="h-8 w-8 text-purple-400 mx-auto mb-2" />
-                  <CardTitle className="text-white">Liên hệ</CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-gray-300 text-sm">
-                    📞 0901 234 567<br />
-                    🏠 123 Đường ABC, HCM
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Price Information */}
-            <Card className="bg-slate-800 border-slate-700 mb-8">
-              <CardHeader>
-                <CardTitle className="text-white text-center">💰 Bảng giá</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <h3 className="text-yellow-400 font-semibold mb-2">Giờ vàng (8h-17h)</h3>
-                    <p className="text-2xl font-bold text-white">25.000đ</p>
-                    <p className="text-gray-300 text-sm">mỗi giờ</p>
-                  </div>
-                  <div className="text-center">
-                    <h3 className="text-yellow-400 font-semibold mb-2">Giờ cao điểm (17h-23h)</h3>
-                    <p className="text-2xl font-bold text-white">35.000đ</p>
-                    <p className="text-gray-300 text-sm">mỗi giờ</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Call to Action */}
-            <div className="text-center mb-8">
-              <Link to="/booking">
-                <Button size="lg" className="bg-yellow-400 text-slate-900 hover:bg-yellow-500 px-8 py-3 text-lg">
-                  🎯 Đặt bàn ngay bây giờ
-                </Button>
+            {/* Quick Links */}
+            <div className="mt-12 flex flex-wrap justify-center gap-4">
+              <Link 
+                to="/simple-booking"
+                className="bg-yellow-400 text-green-900 hover:bg-yellow-500 font-bold px-6 py-3 rounded transition-colors"
+              >
+                📅 Đặt bàn nhanh
+              </Link>
+              <Link 
+                to="/register"
+                className="border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-green-900 font-bold px-6 py-3 rounded transition-colors"
+              >
+                📝 Đăng ký tài khoản
               </Link>
             </div>
           </div>
         </main>
+
+        {/* Footer */}
+        <footer className="bg-green-900 border-t border-green-700 py-8 px-4 mt-16">
+          <div className="container mx-auto text-center">
+            <p className="text-green-300 text-sm">© 2024 CLB Bi-a Sài Gòn. Website đang hoạt động bình thường.</p>
+          </div>
+        </footer>
       </div>
     </>
   );

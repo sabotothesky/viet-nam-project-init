@@ -1,24 +1,84 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sabo-pool-arena-hub</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <title>CLB Bi-a Sài Gòn - Hệ thống đặt bàn trực tuyến</title>
+    <meta name="description" content="Hệ thống đặt bàn bi-a trực tuyến cho CLB Bi-a Sài Gòn" />
+    <meta name="author" content="CLB Bi-a Sài Gòn" />
 
-    <meta property="og:title" content="sabo-pool-arena-hub" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="CLB Bi-a Sài Gòn" />
+    <meta property="og:description" content="Hệ thống đặt bàn bi-a trực tuyến" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Preload critical CSS -->
+    <style>
+      /* Critical CSS for loading state */
+      #root {
+        min-height: 100vh;
+      }
+      
+      .loading-fallback {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a5d4a, #166534, #1a5d4a);
+        color: white;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      
+      .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 2px solid transparent;
+        border-top: 2px solid #fbbf24;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback loading state -->
+      <div class="loading-fallback">
+        <div style="text-align: center;">
+          <div class="loading-spinner"></div>
+          <p>Đang tải trang web...</p>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback script if module loading fails -->
+    <script>
+      // Timeout to show error if app doesn't load within 10 seconds
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && root.innerHTML.includes('Đang tải trang web...')) {
+          root.innerHTML = `
+            <div class="loading-fallback">
+              <div style="text-align: center;">
+                <h1>Lỗi tải trang</h1>
+                <p>Trang web không thể tải. Vui lòng thử lại.</p>
+                <button onclick="location.reload()" style="background: #fbbf24; color: #1a5d4a; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 16px;">
+                  Tải lại trang
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }, 10000);
+    </script>
   </body>
 </html>
