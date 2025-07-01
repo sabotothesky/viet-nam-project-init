@@ -122,6 +122,12 @@ export interface Challenge {
     avatar_url?: string;
     current_rank: string;
   };
+  challenged?: {
+    user_id: string;
+    full_name: string;
+    avatar_url?: string;
+    current_rank: string;
+  };
 }
 
 export interface CreateChallengeData {
@@ -131,14 +137,31 @@ export interface CreateChallengeData {
   proposed_datetime?: string;
 }
 
+export interface ChallengeProposal {
+  proposed_datetime?: string;
+  club_id?: string;
+  message?: string;
+}
+
 export interface PlayerStats {
+  id: string;
+  user_id: string;
+  username: string;
+  current_rating: number;
   wins: number;
   losses: number;
   draws: number;
   total_games: number;
+  matches_played: number;
   win_rate: number;
   current_streak: number;
   best_streak: number;
   elo_rating: number;
   rank: string;
+  recent_form?: number;
+  consistency_score?: number;
+  rating_volatility?: number;
+  highest_rating?: number;
+  lowest_rating?: number;
+  average_opponent_rating?: number;
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface User {
-  id: string;
+  id?: string;
   name: string;
   avatar?: string;
   rank?: string;

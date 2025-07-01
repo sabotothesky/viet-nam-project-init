@@ -1,256 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin } from 'lucide-react';
+
+import React, { useState } from 'react';
+import { Calendar, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import UserAvatar from './UserAvatar';
-import { supabase } from '@/integrations/supabase/client';
+import { Challenge, ChallengeProposal } from '@/types/common';
 
 interface ChallengeResponseModalProps {
-  challenge: {
-    id: string;
-    bet_points: number;
-    message?: string;
-    challenger: {
-      user_id: string;
-      full_name: string;
-      avatar_url?: string;
-      current_rank: string;
-    };
-  } | null;
-  suggestedClubs?: Array<{
-    id: string;
-    name: string;
-    address: string;
-    phone?: string;
-    available_tables: number;
-    is_sabo_owned: boolean;
-    monthly_payment: number;
-  }>;
+  challenge: Challenge | null;
+  suggestedClubs: Array<{ id: string; name: string; address: string }>;
   isOpen: boolean;
   onClose: () => void;
   onRespond: (
     status: 'accepted' | 'declined',
-    proposalData?: {
-      clubId: string;
-      datetime: string;
-    }
+    proposalData?: ChallengeProposal
   ) => void;
 }
 
 const ChallengeResponseModal = ({
   challenge,
-  suggestedClubs: propSuggestedClubs,
+  suggestedClubs,
   isOpen,
   onClose,
   onRespond,
 }: ChallengeResponseModalProps) => {
-  const [selectedClub, setSelectedClub] = useState<string>('');
-  const [selectedDateTime, setSelectedDateTime] = useState('');
-  const [suggestedClubs, setSuggestedClubs] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (isOpen) {
-      if (propSuggestedClubs?.length) {
-        setSuggestedClubs(propSuggestedClubs);
-        setSelectedClub(propSuggestedClubs[0].id);
-      } else {
-        loadSuggestedClubs();
-      }
-    }
-  }, [isOpen, propSuggestedClubs]);
-
-  const loadSuggestedClubs = async () => {
-    try {
-      const { data: clubs } = await supabase
-        .from('clubs')
-        .select('*')
-        .order('is_sabo_owned', { ascending: false })
-        .order('monthly_payment', { ascending: false })
-        .order('priority_score', { ascending: false })
-        .limit(5);
-
-      setSuggestedClubs(clubs || []);
-      if (clubs?.length > 0) {
-        setSelectedClub(clubs[0].id);
-      }
-    } catch (error) {
-      console.error('Error loading suggested clubs:', error);
-    }
-  };
+  const [proposedDate, setProposedDate] = useState('');
+  const [proposedTime, setProposedTime] = useState('');
+  const [selectedClub, setSelectedClub] = useState('');
+  const [responseMessage, setResponseMessage] = useState('');
 
   if (!challenge) return null;
 
-  const getAvailableTimeSlots = () => {
-    const slots = [];
-    const today = new Date();
+  const handleAccept = () => {
+    const proposalData: ChallengeProposal = {
+      proposed_datetime: proposedDate && proposedTime
+        ? `${proposedDate}T${proposedTime}`
+        : undefined,
+      club_id: selectedClub || undefined,
+      message: responseMessage || undefined,
+    };
 
-    for (let i = 1; i <= 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-
-      ['14:00', '16:00', '18:00', '20:00'].forEach(time => {
-        const datetime = new Date(date);
-        const [hours, minutes] = time.split(':');
-        datetime.setHours(parseInt(hours), parseInt(minutes));
-
-        slots.push({
-          value: datetime.toISOString().slice(0, 16),
-          label: date.toLocaleDateString('vi-VN', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-          }),
-          time: time,
-        });
-      });
-    }
-
-    return slots.slice(0, 8);
+    onRespond('accepted', proposalData);
+    resetForm();
   };
 
-  const handleAccept = () => {
-    if (selectedClub && selectedDateTime) {
-      onRespond('accepted', {
-        clubId: selectedClub,
-        datetime: selectedDateTime,
-      });
-    }
+  const handleDecline = () => {
+    onRespond('declined', { message: responseMessage });
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setProposedDate('');
+    setProposedTime('');
+    setSelectedClub('');
+    setResponseMessage('');
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-lg max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='sm:max-w-lg'>
         <DialogHeader>
           <DialogTitle>Phản hồi thách đấu</DialogTitle>
         </DialogHeader>
 
         <div className='space-y-6'>
           {/* Challenge Info */}
-          <div className='bg-blue-50 rounded-lg p-4'>
-            <div className='flex items-center space-x-3 mb-3'>
-              <UserAvatar
-                user={{
-                  name: challenge.challenger.full_name,
-                  avatar: challenge.challenger.avatar_url || '/placeholder.svg',
-                  rank: challenge.challenger.current_rank,
-                }}
-                size='md'
-              />
-              <div>
-                <h3 className='font-semibold'>
-                  {challenge.challenger.full_name}
-                </h3>
-                <p className='text-sm text-gray-600'>
-                  {challenge.challenger.current_rank}
-                </p>
-              </div>
-            </div>
-            <div className='bg-white rounded-lg p-3'>
-              <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm text-gray-600'>Mức cược:</span>
-                <span className='font-bold text-blue-600'>
-                  {challenge.bet_points} điểm
-                </span>
-              </div>
+          <div className='flex items-center space-x-3 p-3 bg-blue-50 rounded-lg'>
+            <UserAvatar
+              user={{
+                id: challenge.challenger?.user_id || '',
+                name: challenge.challenger?.full_name || 'Unknown',
+                avatar: challenge.challenger?.avatar_url || '/placeholder.svg',
+                rank: challenge.challenger?.current_rank || 'Unranked',
+              }}
+              size='md'
+            />
+            <div>
+              <h3 className='font-semibold'>
+                {challenge.challenger?.full_name}
+              </h3>
+              <p className='text-sm text-gray-600'>
+                Cược: {challenge.bet_points} điểm
+              </p>
               {challenge.message && (
-                <div>
-                  <span className='text-sm text-gray-600'>Lời nhắn:</span>
-                  <p className='text-sm mt-1 italic'>"{challenge.message}"</p>
-                </div>
+                <p className='text-sm italic mt-1'>"{challenge.message}"</p>
               )}
             </div>
           </div>
 
-          {/* Club Selection */}
-          <div>
-            <h3 className='font-semibold mb-3'>Chọn CLB diễn ra trận đấu</h3>
-            <div className='space-y-3 max-h-48 overflow-y-auto'>
-              {suggestedClubs.map(club => (
-                <div
-                  key={club.id}
-                  onClick={() => setSelectedClub(club.id)}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    selectedClub === club.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className='flex items-center justify-between mb-2'>
-                    <h4 className='font-semibold'>{club.name}</h4>
-                    <div className='flex items-center space-x-2'>
-                      {club.is_sabo_owned && (
-                        <Badge className='bg-yellow-500 text-yellow-900 text-xs font-bold'>
-                          SABO
-                        </Badge>
-                      )}
-                      {club.monthly_payment > 0 && (
-                        <Badge className='bg-green-500 text-green-900 text-xs'>
-                          Premium
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <p className='text-sm text-gray-600 mb-2'>{club.address}</p>
-                  <div className='flex items-center space-x-4 text-xs text-gray-500'>
-                    {club.phone && <span>📞 {club.phone}</span>}
-                    <span>🎱 {club.available_tables} bàn</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Match Proposal Form */}
+          <div className='space-y-4'>
+            <h4 className='font-medium flex items-center gap-2'>
+              <Calendar className='w-4 h-4' />
+              Đề xuất lịch thi đấu
+            </h4>
 
-          {/* DateTime Selection */}
-          <div>
-            <h3 className='font-semibold mb-3'>Đề xuất thời gian</h3>
-            <div className='grid grid-cols-2 gap-3 mb-3'>
-              {getAvailableTimeSlots().map(slot => (
-                <Button
-                  key={slot.value}
-                  variant={
-                    selectedDateTime === slot.value ? 'default' : 'outline'
-                  }
-                  onClick={() => setSelectedDateTime(slot.value)}
-                  className='p-3 h-auto text-left'
-                >
-                  <div>
-                    <div className='font-semibold text-sm'>{slot.label}</div>
-                    <div className='text-xs opacity-80'>{slot.time}</div>
-                  </div>
-                </Button>
-              ))}
+            <div className='grid grid-cols-2 gap-3'>
+              <div>
+                <Label htmlFor='date'>Ngày</Label>
+                <Input
+                  id='date'
+                  type='date'
+                  value={proposedDate}
+                  onChange={e => setProposedDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              <div>
+                <Label htmlFor='time'>Giờ</Label>
+                <Input
+                  id='time'
+                  type='time'
+                  value={proposedTime}
+                  onChange={e => setProposedTime(e.target.value)}
+                />
+              </div>
             </div>
-            <Input
-              type='datetime-local'
-              value={selectedDateTime}
-              onChange={e => setSelectedDateTime(e.target.value)}
-              min={new Date().toISOString().slice(0, 16)}
-              className='w-full'
-            />
+
+            <div>
+              <Label htmlFor='club'>Câu lạc bộ (tùy chọn)</Label>
+              <Select value={selectedClub} onValueChange={setSelectedClub}>
+                <SelectTrigger>
+                  <SelectValue placeholder='Chọn câu lạc bộ' />
+                </SelectTrigger>
+                <SelectContent>
+                  {suggestedClubs.map(club => (
+                    <SelectItem key={club.id} value={club.id}>
+                      <div>
+                        <div className='font-medium'>{club.name}</div>
+                        <div className='text-sm text-gray-500'>
+                          {club.address}
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor='message'>Lời nhắn (tùy chọn)</Label>
+              <Textarea
+                id='message'
+                value={responseMessage}
+                onChange={e => setResponseMessage(e.target.value)}
+                placeholder='Gửi lời nhắn phản hồi...'
+                rows={3}
+              />
+            </div>
           </div>
 
           {/* Action Buttons */}
           <div className='flex space-x-3'>
             <Button
-              onClick={() => onRespond('declined')}
-              variant='destructive'
-              className='flex-1'
+              variant='outline'
+              onClick={handleDecline}
+              className='flex-1 text-red-600 border-red-300 hover:bg-red-50'
             >
-              Từ chối ❌
+              Từ chối
             </Button>
             <Button
               onClick={handleAccept}
-              disabled={!selectedClub || !selectedDateTime}
               className='flex-1 bg-green-500 hover:bg-green-600'
             >
-              Chấp nhận ✅
+              Chấp nhận
             </Button>
           </div>
         </div>

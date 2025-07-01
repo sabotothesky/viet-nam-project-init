@@ -20,6 +20,7 @@ export interface CurrentSeason {
   start_date: string;
   end_date: string;
   status: 'ongoing' | 'completed' | 'upcoming';
+  days_remaining?: number;
 }
 
 export interface SeasonProgress {
@@ -30,6 +31,8 @@ export interface SeasonProgress {
   losses: number;
   win_rate: number;
   progress_percentage: number;
+  days_elapsed?: number;
+  days_remaining?: number;
 }
 
 export interface SeasonComparison {
@@ -37,15 +40,26 @@ export interface SeasonComparison {
     rank: number;
     points: number;
     games: number;
+    season_name?: string;
+    season_year?: number;
+    total_players?: number;
+    highest_points?: number;
+    average_points?: number;
   };
   previous_season: {
     rank: number;
     points: number;
     games: number;
+    season_name?: string;
+    season_year?: number;
+    total_players?: number;
+    highest_points?: number;
+    average_points?: number;
   };
   improvement: {
     rank_change: number;
     points_change: number;
     games_change: number;
   };
+  top_players_change?: number;
 }
