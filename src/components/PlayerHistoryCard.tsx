@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSeasonHistory } from '../hooks/useSeasonHistory';
 import { SeasonHistory, UserBestSeason } from '../types/seasonHistory';
@@ -27,15 +28,15 @@ export const PlayerHistoryCard: React.FC<PlayerHistoryCardProps> = ({
     if (!searchTerm.trim()) return;
 
     setSearched(true);
-    const history = await searchPlayerHistory(searchTerm);
-    setPlayerHistory(history);
+    const historyResponse = await searchPlayerHistory(searchTerm);
+    setPlayerHistory(historyResponse.player_history);
 
     const best = await getUserBestSeason(searchTerm);
     if (best) {
       setBestSeason(best);
-    } else if (history.length > 0) {
+    } else if (historyResponse.player_history.length > 0) {
       // Convert the best season from history if getUserBestSeason returns null
-      const bestFromHistory = history.reduce((prev, current) => 
+      const bestFromHistory = historyResponse.player_history.reduce((prev, current) => 
         (prev.ranking_points > current.ranking_points) ? prev : current
       );
       setBestSeason({
