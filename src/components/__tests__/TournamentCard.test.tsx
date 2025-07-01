@@ -17,7 +17,7 @@ const mockTournament = {
   registration_start: '2024-11-01T00:00:00Z',
   registration_end: '2024-11-30T00:00:00Z',
   tournament_type: 'single_elimination' as const,
-  game_format: 'standard' as const,
+  game_format: '8_ball' as const,
   entry_fee: 100000,
   first_prize: 500000,
   second_prize: 300000,

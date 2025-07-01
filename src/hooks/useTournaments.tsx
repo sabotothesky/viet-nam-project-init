@@ -3,9 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
-import { TournamentFormData } from '@/types/common';
 import {
   Tournament,
+  TournamentFormData,
+} from '../types/common';
+import {
   TournamentRegistration,
   TournamentMatch,
   TournamentResult,
@@ -13,38 +15,6 @@ import {
   TournamentTier,
   TOURNAMENT_TIERS,
 } from '../types/tournament';
-
-export interface Tournament {
-  id: string;
-  name: string;
-  description: string;
-  organizer_id: string;
-  organizer: {
-    id: string;
-    username: string;
-    avatar_url?: string;
-  };
-  status: 'upcoming' | 'registration' | 'active' | 'completed' | 'cancelled';
-  tournament_type:
-    | 'single_elimination'
-    | 'double_elimination'
-    | 'round_robin'
-    | 'swiss';
-  match_type: '8-ball' | '9-ball' | '10-ball' | 'straight-pool';
-  entry_fee: number;
-  prize_pool: number;
-  max_participants: number;
-  current_participants: number;
-  venue: string;
-  start_date: Date;
-  end_date: Date;
-  registration_deadline: Date;
-  rules: string;
-  created_at: Date;
-  updated_at: Date;
-  participants?: TournamentParticipant[];
-  brackets?: TournamentBracket[];
-}
 
 export interface TournamentParticipant {
   id: string;
@@ -79,15 +49,17 @@ export interface CreateTournamentData {
   name: string;
   description: string;
   tournament_type: Tournament['tournament_type'];
-  match_type: Tournament['match_type'];
+  game_format: Tournament['game_format'];
   entry_fee: number;
   prize_pool: number;
   max_participants: number;
-  venue: string;
-  start_date: Date;
-  end_date: Date;
-  registration_deadline: Date;
+  venue_name: string;
+  tournament_start: Date;
+  tournament_end: Date;
+  registration_start: Date;
+  registration_end: Date;
   rules: string;
+  venue_address?: string;
 }
 
 export const useTournaments = (userId?: string) => {
@@ -141,11 +113,11 @@ export const useTournaments = (userId?: string) => {
           .insert([
             {
               ...data,
-              organizer_id: user.id,
+              organizer_id: user?.id,
               status: 'upcoming',
               current_participants: 0,
-              created_at: new Date(),
-              updated_at: new Date(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             },
           ])
           .select()
@@ -164,7 +136,7 @@ export const useTournaments = (userId?: string) => {
         setLoading(false);
       }
     },
-    [user.id]
+    [user?.id]
   );
 
   const updateTournament = useCallback(
@@ -230,7 +202,7 @@ export const useTournaments = (userId?: string) => {
           .insert([
             {
               tournament_id: tournamentId,
-              user_id: user.id,
+              user_id: user?.id,
               status: 'registered',
             },
           ])
@@ -267,7 +239,7 @@ export const useTournaments = (userId?: string) => {
         setLoading(false);
       }
     },
-    [user.id]
+    [user?.id]
   );
 
   const cancelRegistration = useCallback(
@@ -280,7 +252,7 @@ export const useTournaments = (userId?: string) => {
           .from('tournament_registrations')
           .update({ status: 'cancelled' })
           .eq('tournament_id', tournamentId)
-          .eq('user_id', user.id);
+          .eq('user_id', user?.id);
 
         if (error) throw error;
 
@@ -311,7 +283,7 @@ export const useTournaments = (userId?: string) => {
         setLoading(false);
       }
     },
-    [user.id]
+    [user?.id]
   );
 
   const getTournamentRegistrations = useCallback(
@@ -553,11 +525,11 @@ export const useTournaments = (userId?: string) => {
   );
 
   const getMyTournaments = useCallback(() => {
-    if (!user.id) return [];
+    if (!user?.id) return [];
     return tournaments.filter(
       tournament => tournament.organizer_id === user.id
     );
-  }, [tournaments, user.id]);
+  }, [tournaments, user?.id]);
 
   const searchTournaments = useCallback(
     (query: string) => {
@@ -565,8 +537,8 @@ export const useTournaments = (userId?: string) => {
       return tournaments.filter(
         tournament =>
           tournament.name.toLowerCase().includes(lowercaseQuery) ||
-          tournament.description.toLowerCase().includes(lowercaseQuery) ||
-          tournament.venue.toLowerCase().includes(lowercaseQuery)
+          tournament.description?.toLowerCase().includes(lowercaseQuery) ||
+          tournament.venue_name?.toLowerCase().includes(lowercaseQuery)
       );
     },
     [tournaments]

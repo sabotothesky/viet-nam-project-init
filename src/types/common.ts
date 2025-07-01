@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email?: string;
@@ -33,7 +34,9 @@ export interface AuthContextType {
 
 export interface UserProfile {
   id: string;
+  user_id?: string;
   full_name?: string;
+  nickname?: string;
   avatar_url?: string;
   current_rank?: string;
   club_id?: string;
@@ -41,6 +44,10 @@ export interface UserProfile {
   elo?: number;
   experience_years?: number;
   matches_played?: number;
+  wins?: number;
+  losses?: number;
+  current_streak?: number;
+  ranking_points?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -196,6 +203,12 @@ export interface Club {
   email?: string;
   table_count?: number;
   hourly_rate?: number;
+  latitude?: number;
+  longitude?: number;
+  available_tables?: number;
+  monthly_payment?: number;
+  is_sabo_owned?: boolean;
+  priority_score?: number;
 }
 
 export interface Tournament {
@@ -203,7 +216,7 @@ export interface Tournament {
   name: string;
   description?: string;
   tournament_type: 'single_elimination' | 'double_elimination' | 'round_robin' | 'swiss';
-  game_format: string;
+  game_format: '8_ball' | '9_ball' | '10_ball' | 'straight_pool';
   max_participants: number;
   current_participants: number;
   entry_fee: number;
@@ -223,13 +236,18 @@ export interface Tournament {
   club_id: string;
   created_at: string;
   updated_at: string;
+  club?: Club;
+  distance_km?: number;
+  total_prize_pool?: number;
+  venue?: string;
+  match_type?: string;
 }
 
 export interface TournamentFormData {
   name: string;
   description?: string;
   tournament_type: 'single_elimination' | 'double_elimination' | 'round_robin' | 'swiss';
-  game_format: string;
+  game_format: '8_ball' | '9_ball' | '10_ball' | 'straight_pool';
   max_participants: number;
   entry_fee: number;
   prize_pool: number;
@@ -262,4 +280,18 @@ export interface Match {
   frames: number;
   created_at: string;
   updated_at: string;
+  player1?: {
+    id: string;
+    username: string;
+    avatar_url?: string;
+    rank: string;
+    elo_rating: number;
+  };
+  player2?: {
+    id: string;
+    username: string;
+    avatar_url?: string;
+    rank: string;
+    elo_rating: number;
+  };
 }
