@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface SchemaValidationResult {
@@ -241,7 +242,7 @@ class DatabaseSchemaValidator {
         .eq('table_name', tableName);
 
       if (error) throw error;
-      return data.map((policy: any) => policy.policy_name);
+      return (data as Array<{ policy_name: string }>).map((policy) => policy.policy_name);
     } catch (error) {
       console.error(`Error getting policies for ${tableName}:`, error);
       return [];
@@ -258,7 +259,7 @@ class DatabaseSchemaValidator {
         .not('index_name', 'like', '%_pkey');
 
       if (error) throw error;
-      return [...new Set(data.map((index: any) => index.index_name))];
+      return [...new Set((data as Array<{ index_name: string }>).map((index) => index.index_name))];
     } catch (error) {
       console.error(`Error getting indexes for ${tableName}:`, error);
       return [];
@@ -275,7 +276,7 @@ class DatabaseSchemaValidator {
         .single();
 
       if (error) throw error;
-      return data.row_security === 'YES';
+      return (data as { row_security: string }).row_security === 'YES';
     } catch (error) {
       console.error(`Error checking RLS for ${tableName}:`, error);
       return false;
@@ -304,7 +305,7 @@ class DatabaseSchemaValidator {
       }
 
       result.exists = true;
-      result.columns = tableInfo.map((col: any) => col.column_name);
+      result.columns = (tableInfo as Array<{ column_name: string }>).map((col) => col.column_name);
 
       // Check RLS
       result.hasRLS = await this.checkRLS(tableName);

@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import TournamentCard from '../TournamentCard';
 
@@ -37,35 +38,35 @@ const renderWithRouter = (component: React.ReactElement) => {
 
 describe('TournamentCard', () => {
   test('renders tournament information correctly', () => {
-    renderWithRouter(<TournamentCard tournament={mockTournament} />);
+    const { getByText } = renderWithRouter(<TournamentCard tournament={mockTournament} />);
 
-    expect(screen.getByText('Test Tournament')).toBeInTheDocument();
-    expect(screen.getByText('Test tournament description')).toBeInTheDocument();
-    expect(screen.getByText('1,000,000 VND')).toBeInTheDocument();
-    expect(screen.getByText('16/32 participants')).toBeInTheDocument();
+    expect(getByText('Test Tournament')).toBeInTheDocument();
+    expect(getByText('Test tournament description')).toBeInTheDocument();
+    expect(getByText('1,000,000 VND')).toBeInTheDocument();
+    expect(getByText('16/32 participants')).toBeInTheDocument();
   });
 
   test('shows registration open status', () => {
-    renderWithRouter(<TournamentCard tournament={mockTournament} />);
+    const { getByText } = renderWithRouter(<TournamentCard tournament={mockTournament} />);
 
-    expect(screen.getByText('Registration Open')).toBeInTheDocument();
+    expect(getByText('Registration Open')).toBeInTheDocument();
   });
 
   test('handles join tournament click', () => {
     const mockOnJoin = jest.fn();
-    renderWithRouter(
+    const { getByText } = renderWithRouter(
       <TournamentCard tournament={mockTournament} onRegister={mockOnJoin} />
     );
 
-    const joinButton = screen.getByText('Join Tournament');
-    fireEvent.click(joinButton);
+    const joinButton = getByText('Join Tournament');
+    joinButton.click();
 
     expect(mockOnJoin).toHaveBeenCalledWith('tournament-1');
   });
 
   test('displays correct date format', () => {
-    renderWithRouter(<TournamentCard tournament={mockTournament} />);
+    const { getByText } = renderWithRouter(<TournamentCard tournament={mockTournament} />);
 
-    expect(screen.getByText(/Dec 1, 2024/)).toBeInTheDocument();
+    expect(getByText(/Dec 1, 2024/)).toBeInTheDocument();
   });
 });
