@@ -100,7 +100,6 @@ const ProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
-  // ...existing code...
 
   // Mock data - replace with actual API call
   useEffect(() => {
@@ -202,6 +201,16 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  const statsData = {
+    current_rank: profile.rank || 'K1',
+    ranking_points: profile.rating || 0,
+    total_matches: profile.total_matches,
+    wins: profile.wins,
+    losses: profile.losses,
+    win_rate: profile.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
+    current_streak: 0, // Default value since it's not in the profile
+  };
+
   return (
     <div className='min-h-screen bg-gray-50'>
       {/* Cover Image */}
@@ -291,17 +300,7 @@ const ProfilePage: React.FC = () => {
                   )}
 
                   {/* Stats Section */}
-                  <ProfileStats 
-                    profile={{
-                      current_rank: profile.current_rank,
-                      ranking_points: profile.ranking_points,
-                      total_matches: profile.total_matches,
-                      wins: profile.wins,
-                      losses: profile.losses,
-                      win_rate: profile.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
-                      current_streak: profile.current_streak,
-                    }} 
-                  />
+                  <ProfileStats profile={statsData} />
 
                   {/* Action Buttons */}
                   <div className='flex items-center gap-2'>
@@ -356,15 +355,7 @@ const ProfilePage: React.FC = () => {
             </TabsList>
 
             <TabsContent value='overview' className='space-y-6'>
-              <ProfileStats profile={{
-                current_rank: profile.current_rank,
-                ranking_points: profile.ranking_points,
-                total_matches: profile.total_matches,
-                wins: profile.wins,
-                losses: profile.losses,
-                win_rate: profile.total_matches ? (profile.wins / profile.total_matches) * 100 : 0,
-                current_streak: profile.current_streak,
-              }} />
+              <ProfileStats profile={statsData} />
             </TabsContent>
 
             <TabsContent value='timeline' className='space-y-6'>

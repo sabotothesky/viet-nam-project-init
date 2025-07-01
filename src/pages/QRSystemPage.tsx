@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -261,7 +262,7 @@ export const QRSystemPage: React.FC = () => {
                     <div key={club.id} className='border rounded-lg p-4'>
                       <h3 className='font-medium mb-2'>{club.name}</h3>
                       <p className='text-sm text-gray-600 mb-3'>
-                        {club.address}
+                        {club.address || 'Địa chỉ chưa cập nhật'}
                       </p>
 
                       <div className='space-y-2'>

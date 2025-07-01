@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/common';
+import { useProfile } from '@/hooks/useProfile';
 
 interface MatchingCriteria {
   skillLevel: string;
@@ -33,6 +34,7 @@ interface MatchingSuggestion {
 
 export const useSmartMatching = () => {
   const { user } = useAuth();
+  const { getProfile } = useProfile();
   const [suggestions, setSuggestions] = useState<MatchingSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [criteria, setCriteria] = useState<MatchingCriteria>({
@@ -203,8 +205,15 @@ export const useSmartMatching = () => {
 
   const loadSuggestions = async () => {
     if (user) {
-      const matches = await getMatchingSuggestions(user);
-      setSuggestions(matches);
+      try {
+        const userProfile = await getProfile();
+        if (userProfile) {
+          const matches = await getMatchingSuggestions(userProfile);
+          setSuggestions(matches);
+        }
+      } catch (error) {
+        console.error('Error loading suggestions:', error);
+      }
     }
   };
 

@@ -32,6 +32,60 @@ export const useQRSystem = () => {
     }
   };
 
+  const createQRCode = async (qrData: any) => {
+    setLoading(true);
+    try {
+      const newQR: QRCode = {
+        id: Date.now().toString(),
+        type: qrData.type,
+        data: qrData.data,
+        created_at: new Date().toISOString(),
+        is_active: true,
+        scan_count: 0,
+      };
+      setQrCodes(prev => [...prev, newQR]);
+      return newQR;
+    } catch (err) {
+      setError('Failed to create QR code');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateQRCode = async (id: string, data: any) => {
+    try {
+      setQrCodes(prev => 
+        prev.map(qr => 
+          qr.id === id ? { ...qr, ...data } : qr
+        )
+      );
+    } catch (err) {
+      setError('Failed to update QR code');
+    }
+  };
+
+  const scanQRCode = async (qrCode: string) => {
+    setLoading(true);
+    try {
+      // Mock implementation
+      const scanRecord: QRScanHistory = {
+        id: Date.now().toString(),
+        qr_code_id: qrCode,
+        scanned_by: 'current_user',
+        scanned_at: new Date().toISOString(),
+        scan_data: { result: 'success' },
+      };
+      setScanHistory(prev => [...prev, scanRecord]);
+      return scanRecord;
+    } catch (err) {
+      setError('Failed to scan QR code');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const scanTableQR = async (qrCode: string): Promise<TableQRCode | null> => {
     setLoading(true);
     try {
@@ -165,6 +219,9 @@ export const useQRSystem = () => {
     error,
     fetchQRCodes,
     fetchScanHistory,
+    createQRCode,
+    updateQRCode,
+    scanQRCode,
     scanTableQR,
     scanPlayerQR,
     createQuickMatch,
