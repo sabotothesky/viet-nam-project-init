@@ -1,3 +1,4 @@
+
 export interface EloConfig {
   k_factor: number;
   rating_floor: number;
@@ -46,6 +47,32 @@ export const calculateElo = (
     newRating2: player2Rating - ratingChange,
     ratingChange: Math.abs(ratingChange)
   };
+};
+
+// Alternative name for backward compatibility
+export const calculateEloRating = (
+  rating: number,
+  opponentRating: number,
+  result: 'win' | 'loss' | 'draw',
+  kFactor: number = 32
+): number => {
+  const expectedScore = getExpectedScore(rating, opponentRating);
+  let actualScore: number;
+  
+  switch (result) {
+    case 'win':
+      actualScore = 1;
+      break;
+    case 'loss':
+      actualScore = 0;
+      break;
+    case 'draw':
+      actualScore = 0.5;
+      break;
+  }
+  
+  const ratingChange = Math.round(kFactor * (actualScore - expectedScore));
+  return rating + ratingChange;
 };
 
 // Enhanced Elo calculation with advanced features
@@ -144,9 +171,22 @@ export const getRankFromRating = (rating: number): string => {
   return 'K1';
 };
 
+// Get rank color for UI
+export const getRankColor = (rank: string): string => {
+  if (rank.startsWith('Dan')) return 'bg-purple-100 text-purple-800 border-purple-200';
+  if (rank.startsWith('D')) return 'bg-blue-100 text-blue-800 border-blue-200';
+  if (rank.startsWith('K')) return 'bg-green-100 text-green-800 border-green-200';
+  return 'bg-gray-100 text-gray-800 border-gray-200';
+};
+
 // Calculate expected win probability
 export const calculateWinProbability = (rating1: number, rating2: number): number => {
   return 1 / (1 + Math.pow(10, (rating2 - rating1) / 400));
+};
+
+// Get expected score (alias for win probability)
+export const getExpectedScore = (rating1: number, rating2: number): number => {
+  return calculateWinProbability(rating1, rating2);
 };
 
 // Calculate rating volatility
@@ -158,4 +198,35 @@ export const calculateVolatility = (recentResults: number[], timeframe: number =
   const variance = recent.reduce((sum, result) => sum + Math.pow(result - mean, 2), 0) / recent.length;
   
   return Math.sqrt(variance);
+};
+
+// Additional utility functions for statistics
+export const getRankProgression = (currentRank: string): string[] => {
+  const ranks = ['K1', 'K2', 'K3', 'D1', 'D2', 'D3', 'D4', 'D5', 'Dan1', 'Dan2', 'Dan3', 'Dan4', 'Dan5', 'Dan6', 'Dan7'];
+  const currentIndex = ranks.indexOf(currentRank);
+  return ranks.slice(currentIndex + 1);
+};
+
+export const calculateEloEfficiency = (ratingGained: number, matchesPlayed: number): number => {
+  if (matchesPlayed === 0) return 0;
+  return ratingGained / matchesPlayed;
+};
+
+export const calculateRecentForm = (recentResults: boolean[]): number => {
+  if (recentResults.length === 0) return 0;
+  const wins = recentResults.filter(result => result).length;
+  return (wins / recentResults.length) * 100;
+};
+
+export const calculateConsistencyScore = (ratingHistory: number[]): number => {
+  if (ratingHistory.length < 2) return 100;
+  
+  const mean = ratingHistory.reduce((sum, rating) => sum + rating, 0) / ratingHistory.length;
+  const variance = ratingHistory.reduce((sum, rating) => sum + Math.pow(rating - mean, 2), 0) / ratingHistory.length;
+  const standardDeviation = Math.sqrt(variance);
+  
+  // Lower standard deviation = higher consistency
+  // Normalize to 0-100 scale
+  const consistencyScore = Math.max(0, 100 - (standardDeviation / mean) * 100);
+  return Math.round(consistencyScore);
 };

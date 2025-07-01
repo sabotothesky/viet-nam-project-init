@@ -1,689 +1,430 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Progress } from './ui/progress';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Badge } from './ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import {
   TrendingUp,
   TrendingDown,
-  Trophy,
   Target,
-  BarChart3,
+  Trophy,
   Activity,
-  Crown,
-  Shield,
-  Flame,
-  Zap,
-  Star,
+  BarChart3,
+  Calculator,
   Users,
-  Award,
-  Calendar,
-  Clock,
-  Target as TargetIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
 } from 'lucide-react';
 import {
+  calculateElo,
   getRankFromRating,
   getRatingFromRank,
   getRankProgression,
   calculateEloEfficiency,
   calculateRecentForm,
   calculateConsistencyScore,
-  type PlayerStats,
 } from '../utils/eloCalculator';
+import { PlayerStats } from '../types/common';
 
 interface EloStatisticsProps {
-  player: PlayerStats;
+  playerStats?: PlayerStats;
   className?: string;
 }
 
-export const EloStatistics: React.FC<EloStatisticsProps> = ({
-  player,
+const EloStatistics: React.FC<EloStatisticsProps> = ({
+  playerStats,
   className,
 }) => {
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'progression' | 'performance' | 'comparison'
-  >('overview');
+  const [customRating, setCustomRating] = useState(1500);
+  const [opponentRating, setOpponentRating] = useState(1500);
+  const [ratingHistory, setRatingHistory] = useState<number[]>([]);
+  const [recentResults, setRecentResults] = useState<boolean[]>([]);
 
-  const getRankColor = (rating: number) => {
-    if (rating >= 2800)
-      return 'bg-purple-100 text-purple-800 border-purple-200';
-    if (rating >= 2600)
-      return 'bg-purple-100 text-purple-800 border-purple-200';
-    if (rating >= 2400) return 'bg-red-100 text-red-800 border-red-200';
-    if (rating >= 2200) return 'bg-red-100 text-red-800 border-red-200';
-    if (rating >= 2000)
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    if (rating >= 1800)
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    if (rating >= 1600) return 'bg-blue-100 text-blue-800 border-blue-200';
-    if (rating >= 1400) return 'bg-blue-100 text-blue-800 border-blue-200';
-    if (rating >= 1200) return 'bg-green-100 text-green-800 border-green-200';
-    if (rating >= 1000) return 'bg-green-100 text-green-800 border-green-200';
-    if (rating >= 800) return 'bg-gray-100 text-gray-800 border-gray-200';
-    if (rating >= 600) return 'bg-gray-100 text-gray-800 border-gray-200';
-    if (rating >= 400) return 'bg-gray-100 text-gray-800 border-gray-200';
-    return 'bg-gray-100 text-gray-800 border-gray-200';
+  // Mock data for demonstration
+  const mockRatingHistory = [
+    { date: '2024-01', rating: 1400, matches: 15 },
+    { date: '2024-02', rating: 1450, matches: 18 },
+    { date: '2024-03', rating: 1420, matches: 12 },
+    { date: '2024-04', rating: 1480, matches: 20 },
+    { date: '2024-05', rating: 1520, matches: 16 },
+    { date: '2024-06', rating: 1550, matches: 14 },
+  ];
+
+  const mockMatchResults = [
+    { date: '2024-06-01', result: 'Win', ratingChange: +15, opponent: 'Player A' },
+    { date: '2024-06-03', result: 'Loss', ratingChange: -12, opponent: 'Player B' },
+    { date: '2024-06-05', result: 'Win', ratingChange: +18, opponent: 'Player C' },
+    { date: '2024-06-07', result: 'Win', ratingChange: +14, opponent: 'Player D' },
+    { date: '2024-06-10', result: 'Loss', ratingChange: -16, opponent: 'Player E' },
+  ];
+
+  useEffect(() => {
+    // Initialize with mock data or player stats
+    if (playerStats) {
+      setCustomRating(playerStats.elo_rating);
+    }
+    
+    // Mock recent results for demonstration
+    setRecentResults([true, false, true, true, false, true, true, false, true, true]);
+    setRatingHistory([1400, 1420, 1380, 1450, 1480, 1460, 1520, 1500, 1550, 1520]);
+  }, [playerStats]);
+
+  const calculateWinProbability = (rating1: number, rating2: number): number => {
+    return 1 / (1 + Math.pow(10, (rating2 - rating1) / 400));
   };
 
-  const getRankName = (rating: number) => {
-    const rank = getRankFromRating(rating);
-    const names: { [key: string]: string } = {
-      'S+': 'Legendary',
-      S: 'Master',
-      'G+': 'Elite',
-      G: 'Expert',
-      'A+': 'Advanced',
-      A: 'Intermediate+',
-      'B+': 'Intermediate',
-      B: 'Beginner+',
-      'C+': 'Beginner',
-      C: 'Novice+',
-      'D+': 'Novice',
-      D: 'Rookie+',
-      'E+': 'Rookie',
-      E: 'Newcomer',
-    };
-    return `${rank} (${names[rank]})`;
+  const getRequiredWinsForRank = (currentRating: number, targetRank: string): number => {
+    const targetRating = getRatingFromRank(targetRank);
+    const ratingDifference = targetRating - currentRating;
+    
+    if (ratingDifference <= 0) return 0;
+    
+    // Assume average rating gain of 15 points per win
+    return Math.ceil(ratingDifference / 15);
   };
 
-  const getFormColor = (form: number) => {
-    if (form > 50) return 'text-green-600';
-    if (form > 20) return 'text-blue-600';
-    if (form > -20) return 'text-yellow-600';
-    if (form > -50) return 'text-orange-600';
-    return 'text-red-600';
+  const getRankDistribution = () => {
+    const ranks = ['K1', 'K2', 'K3', 'D1', 'D2', 'D3', 'D4', 'D5', 'Dan1', 'Dan2', 'Dan3', 'Dan4', 'Dan5', 'Dan6', 'Dan7'];
+    const distribution = ranks.map(rank => ({
+      rank,
+      count: Math.floor(Math.random() * 100) + 10, // Mock data
+      percentage: Math.floor(Math.random() * 15) + 5,
+    }));
+    return distribution;
   };
 
-  const getConsistencyColor = (score: number) => {
-    if (score > 80) return 'text-green-600';
-    if (score > 60) return 'text-blue-600';
-    if (score > 40) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+  const currentRank = getRankFromRating(customRating);
+  const winProbability = calculateWinProbability(customRating, opponentRating);
+  const nextRanks = getRankProgression(currentRank).slice(0, 3);
+  const eloEfficiency = calculateEloEfficiency(ratingHistory.length > 0 ? ratingHistory[ratingHistory.length - 1] - ratingHistory[0] : 0, ratingHistory.length);
+  const recentForm = calculateRecentForm(recentResults);
+  const consistencyScore = calculateConsistencyScore(ratingHistory);
 
-  const getVolatilityColor = (volatility: number) => {
-    if (volatility < 30) return 'text-green-600';
-    if (volatility < 60) return 'text-blue-600';
-    if (volatility < 100) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getFormIcon = (form: number) => {
-    if (form > 50) return <Flame className='h-4 w-4 text-red-500' />;
-    if (form > 20) return <TrendingUpIcon className='h-4 w-4 text-green-500' />;
-    if (form > -20) return <Activity className='h-4 w-4 text-yellow-500' />;
-    if (form > -50)
-      return <TrendingDownIcon className='h-4 w-4 text-orange-500' />;
-    return <TrendingDown className='h-4 w-4 text-red-500' />;
-  };
-
-  const getConsistencyIcon = (score: number) => {
-    if (score > 80) return <Shield className='h-4 w-4 text-green-500' />;
-    if (score > 60) return <Shield className='h-4 w-4 text-blue-500' />;
-    if (score > 40) return <BarChart3 className='h-4 w-4 text-yellow-500' />;
-    return <BarChart3 className='h-4 w-4 text-red-500' />;
-  };
-
-  const getVolatilityIcon = (volatility: number) => {
-    if (volatility < 30)
-      return <TargetIcon className='h-4 w-4 text-green-500' />;
-    if (volatility < 60) return <Activity className='h-4 w-4 text-blue-500' />;
-    if (volatility < 100) return <Zap className='h-4 w-4 text-yellow-500' />;
-    return <Zap className='h-4 w-4 text-red-500' />;
-  };
-
-  const progression = getRankProgression(player.current_rating);
-  const efficiency = calculateEloEfficiency(
-    player.current_rating,
-    1000,
-    player.matches_played
-  );
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <BarChart3 className='h-5 w-5' />
-            ELO Statistics Dashboard
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* Tab Navigation */}
-          <div className='flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg'>
-            <Button
-              variant={activeTab === 'overview' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('overview')}
-            >
-              Overview
-            </Button>
-            <Button
-              variant={activeTab === 'progression' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('progression')}
-            >
-              Progression
-            </Button>
-            <Button
-              variant={activeTab === 'performance' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('performance')}
-            >
-              Performance
-            </Button>
-            <Button
-              variant={activeTab === 'comparison' ? 'default' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('comparison')}
-            >
-              Comparison
-            </Button>
-          </div>
-
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className='space-y-6'>
-              {/* Current Status */}
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                <Card className='border-blue-200 bg-blue-50'>
-                  <CardContent className='p-4'>
-                    <div className='flex items-center gap-2 mb-2'>
-                      <Crown className='h-4 w-4 text-blue-600' />
-                      <span className='font-medium text-blue-800'>
-                        Current Rank
-                      </span>
-                    </div>
-                    <Badge className={getRankColor(player.current_rating)}>
-                      {getRankName(player.current_rating)}
-                    </Badge>
-                    <div className='text-sm text-blue-600 mt-1'>
-                      Rating: {player.current_rating}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className='border-green-200 bg-green-50'>
-                  <CardContent className='p-4'>
-                    <div className='flex items-center gap-2 mb-2'>
-                      <Target className='h-4 w-4 text-green-600' />
-                      <span className='font-medium text-green-800'>
-                        Win Rate
-                      </span>
-                    </div>
-                    <div className='text-2xl font-bold text-green-600'>
-                      {player.win_rate?.toFixed(1)}%
-                    </div>
-                    <div className='text-sm text-green-600'>
-                      {player.wins || 0} wins / {player.matches_played} matches
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className='border-purple-200 bg-purple-50'>
-                  <CardContent className='p-4'>
-                    <div className='flex items-center gap-2 mb-2'>
-                      <Flame className='h-4 w-4 text-purple-600' />
-                      <span className='font-medium text-purple-800'>
-                        Current Streak
-                      </span>
-                    </div>
-                    <div className='text-2xl font-bold text-purple-600'>
-                      {player.current_streak}
-                    </div>
-                    <div className='text-sm text-purple-600'>
-                      {player.current_streak > 0
-                        ? 'Winning streak'
-                        : 'No active streak'}
-                    </div>
-                  </CardContent>
-                </Card>
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Current Rating</p>
+                <p className="text-2xl font-bold">{customRating}</p>
+                <Badge className="mt-1">{currentRank}</Badge>
               </div>
-
-              {/* Advanced Metrics */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className='text-lg'>
-                      Performance Metrics
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-2'>
-                        {getFormIcon(player.recent_form || 0)}
-                        <span>Recent Form</span>
-                      </div>
-                      <div
-                        className={`font-semibold ${getFormColor(player.recent_form || 0)}`}
-                      >
-                        {player.recent_form || 0}
-                      </div>
-                    </div>
-                    <Progress
-                      value={Math.abs(player.recent_form || 0)}
-                      className='h-2'
-                    />
-
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-2'>
-                        {getConsistencyIcon(player.consistency_score || 50)}
-                        <span>Consistency</span>
-                      </div>
-                      <div
-                        className={`font-semibold ${getConsistencyColor(player.consistency_score || 50)}`}
-                      >
-                        {player.consistency_score || 50}%
-                      </div>
-                    </div>
-                    <Progress
-                      value={player.consistency_score || 50}
-                      className='h-2'
-                    />
-
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-2'>
-                        {getVolatilityIcon(player.rating_volatility || 0)}
-                        <span>Volatility</span>
-                      </div>
-                      <div
-                        className={`font-semibold ${getVolatilityColor(player.rating_volatility || 0)}`}
-                      >
-                        {player.rating_volatility || 0}
-                      </div>
-                    </div>
-                    <Progress
-                      value={Math.min(100, (player.rating_volatility || 0) / 2)}
-                      className='h-2'
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className='text-lg'>Rating History</CardTitle>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex justify-between'>
-                      <span>Highest Rating:</span>
-                      <span className='font-semibold text-green-600'>
-                        {player.highest_rating || player.current_rating}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Lowest Rating:</span>
-                      <span className='font-semibold text-red-600'>
-                        {player.lowest_rating || player.current_rating}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Rating Range:</span>
-                      <span className='font-semibold'>
-                        {(player.highest_rating || player.current_rating) -
-                          (player.lowest_rating || player.current_rating)}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>ELO Efficiency:</span>
-                      <span className='font-semibold text-blue-600'>
-                        {efficiency > 0 ? '+' : ''}
-                        {efficiency} pts/match
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Avg Opponent Rating:</span>
-                      <span className='font-semibold'>
-                        {player.average_opponent_rating || 'N/A'}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <Trophy className="h-8 w-8 text-yellow-500" />
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          {/* Progression Tab */}
-          {activeTab === 'progression' && (
-            <div className='space-y-6'>
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <TrendingUp className='h-5 w-5' />
-                    Rank Progression
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                    <div className='text-center p-4 bg-blue-50 rounded-lg'>
-                      <div className='text-sm text-blue-600 mb-1'>
-                        Current Rank
-                      </div>
-                      <Badge className={getRankColor(player.current_rating)}>
-                        {progression.currentRank}
-                      </Badge>
-                      <div className='text-sm text-gray-600 mt-1'>
-                        Rating: {player.current_rating}
-                      </div>
-                    </div>
-                    <div className='text-center p-4 bg-green-50 rounded-lg'>
-                      <div className='text-sm text-green-600 mb-1'>
-                        Next Rank
-                      </div>
-                      <Badge
-                        className={getRankColor(
-                          getRatingFromRank(progression.nextRank)
-                        )}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Recent Form</p>
+                <p className="text-2xl font-bold">{recentForm.toFixed(1)}%</p>
+                <div className="flex items-center mt-1">
+                  {recentForm >= 60 ? (
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
+                  )}
+                  <span className="text-xs text-gray-500">
+                    {recentResults.filter(r => r).length}/{recentResults.length} wins
+                  </span>
+                </div>
+              </div>
+              <Activity className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Consistency</p>
+                <p className="text-2xl font-bold">{consistencyScore}%</p>
+                <div className="flex items-center mt-1">
+                  <Target className="h-4 w-4 text-purple-500 mr-1" />
+                  <span className="text-xs text-gray-500">
+                    {consistencyScore >= 80 ? 'Very Stable' : consistencyScore >= 60 ? 'Stable' : 'Variable'}
+                  </span>
+                </div>
+              </div>
+              <BarChart3 className="h-8 w-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">ELO Efficiency</p>
+                <p className="text-2xl font-bold">{eloEfficiency.toFixed(1)}</p>
+                <div className="flex items-center mt-1">
+                  <Calculator className="h-4 w-4 text-orange-500 mr-1" />
+                  <span className="text-xs text-gray-500">pts/match</span>
+                </div>
+              </div>
+              <Users className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="analysis" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="analysis">Analysis</TabsTrigger>
+          <TabsTrigger value="progression">Progression</TabsTrigger>
+          <TabsTrigger value="calculator">Calculator</TabsTrigger>
+          <TabsTrigger value="distribution">Distribution</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="analysis" className="space-y-4">
+          {/* Rating History Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Rating History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={mockRatingHistory}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="rating" 
+                    stroke="#8884d8" 
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Recent Match Results */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Match Results</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {mockMatchResults.map((match, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <Badge 
+                        variant={match.result === 'Win' ? 'default' : 'destructive'}
+                        className="w-12 justify-center"
                       >
-                        {progression.nextRank}
+                        {match.result}
                       </Badge>
-                      <div className='text-sm text-gray-600 mt-1'>
-                        {progression.pointsToNext} points needed
+                      <div>
+                        <p className="font-medium">vs {match.opponent}</p>
+                        <p className="text-sm text-gray-500">{match.date}</p>
                       </div>
                     </div>
-                  </div>
-
-                  <div className='space-y-3'>
-                    <div className='flex justify-between items-center'>
-                      <span>Progress to next rank:</span>
-                      <span className='font-semibold'>
-                        {Math.round(
-                          ((player.current_rating -
-                            getRatingFromRank(progression.currentRank)) /
-                            200) *
-                            100
-                        )}
-                        %
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        ((player.current_rating -
-                          getRatingFromRank(progression.currentRank)) /
-                          200) *
-                        100
-                      }
-                      className='h-3'
-                    />
-                    <div className='text-sm text-gray-600'>
-                      Estimated {progression.estimatedMatches} matches to reach{' '}
-                      {progression.nextRank}
+                    <div className={`font-bold ${match.ratingChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {match.ratingChange > 0 ? '+' : ''}{match.ratingChange}
                     </div>
                   </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-                  {/* Rank Tiers */}
-                  <div className='space-y-2'>
-                    <h4 className='font-medium'>All Rank Tiers</h4>
-                    <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-                      {[
-                        'E',
-                        'E+',
-                        'D',
-                        'D+',
-                        'C',
-                        'C+',
-                        'B',
-                        'B+',
-                        'A',
-                        'A+',
-                        'G',
-                        'G+',
-                        'S',
-                        'S+',
-                      ].map(rank => {
-                        const rankRating = getRatingFromRank(rank);
-                        const isCurrent = rank === progression.currentRank;
-                        const isAchieved = player.current_rating >= rankRating;
-                        return (
-                          <div
-                            key={rank}
-                            className={`p-2 rounded text-center text-sm border ${
-                              isCurrent
-                                ? 'bg-blue-100 border-blue-300 text-blue-800'
-                                : isAchieved
-                                  ? 'bg-green-100 border-green-300 text-green-800'
-                                  : 'bg-gray-100 border-gray-300 text-gray-600'
-                            }`}
-                          >
-                            <div className='font-medium'>{rank}</div>
-                            <div className='text-xs'>{rankRating}</div>
+        <TabsContent value="progression" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rank Progression Path</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                  <div>
+                    <p className="font-semibold">Current Rank</p>
+                    <Badge className="mt-1">{currentRank}</Badge>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-blue-600">{customRating}</p>
+                    <p className="text-sm text-gray-500">ELO Rating</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-medium">Next Rank Targets:</h4>
+                  {nextRanks.map(rank => {
+                    const targetRating = getRatingFromRank(rank);
+                    const requiredWins = getRequiredWinsForRank(customRating, rank);
+                    const progress = Math.max(0, ((customRating - getRatingFromRank(currentRank)) / (targetRating - getRatingFromRank(currentRank))) * 100);
+
+                    return (
+                      <div key={rank} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Badge variant="outline">{rank}</Badge>
+                          <div>
+                            <p className="font-medium">{targetRating} ELO</p>
+                            <p className="text-sm text-gray-500">
+                              {targetRating - customRating} points needed
+                            </p>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* Performance Tab */}
-          {activeTab === 'performance' && (
-            <div className='space-y-6'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className='flex items-center gap-2'>
-                      <Activity className='h-5 w-5' />
-                      Match Performance
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex justify-between'>
-                      <span>Total Matches:</span>
-                      <span className='font-semibold'>
-                        {player.matches_played}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Wins:</span>
-                      <span className='font-semibold text-green-600'>
-                        {player.wins || 0}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Losses:</span>
-                      <span className='font-semibold text-red-600'>
-                        {player.matches_played - (player.wins || 0)}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Win Rate:</span>
-                      <span className='font-semibold text-blue-600'>
-                        {player.win_rate?.toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span>Current Streak:</span>
-                      <span className='font-semibold'>
-                        {player.current_streak > 0 ? '+' : ''}
-                        {player.current_streak}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className='flex items-center gap-2'>
-                      <Star className='h-5 w-5' />
-                      Quality Metrics
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='space-y-2'>
-                      <div className='flex justify-between'>
-                        <span>Recent Form:</span>
-                        <span
-                          className={`font-semibold ${getFormColor(player.recent_form || 0)}`}
-                        >
-                          {player.recent_form || 0}
-                        </span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-blue-600">
+                            ~{requiredWins} wins
+                          </p>
+                          <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full transition-all"
+                              style={{ width: `${Math.min(progress, 100)}%` }}
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className='text-xs text-gray-600'>
-                        {player.recent_form > 50
-                          ? '🔥 Excellent form'
-                          : player.recent_form > 20
-                            ? '📈 Good form'
-                            : player.recent_form > -20
-                              ? '➡️ Stable form'
-                              : player.recent_form > -50
-                                ? '📉 Poor form'
-                                : '❄️ Cold streak'}
-                      </div>
-                    </div>
-
-                    <div className='space-y-2'>
-                      <div className='flex justify-between'>
-                        <span>Consistency:</span>
-                        <span
-                          className={`font-semibold ${getConsistencyColor(player.consistency_score || 50)}`}
-                        >
-                          {player.consistency_score || 50}%
-                        </span>
-                      </div>
-                      <div className='text-xs text-gray-600'>
-                        {player.consistency_score > 80
-                          ? '🛡️ Very stable performance'
-                          : player.consistency_score > 60
-                            ? '📊 Stable performance'
-                            : player.consistency_score > 40
-                              ? '📈 Variable performance'
-                              : '📉 Volatile performance'}
-                      </div>
-                    </div>
-
-                    <div className='space-y-2'>
-                      <div className='flex justify-between'>
-                        <span>Rating Volatility:</span>
-                        <span
-                          className={`font-semibold ${getVolatilityColor(player.rating_volatility || 0)}`}
-                        >
-                          {player.rating_volatility || 0}
-                        </span>
-                      </div>
-                      <div className='text-xs text-gray-600'>
-                        {player.rating_volatility < 30
-                          ? '🎯 Very predictable'
-                          : player.rating_volatility < 60
-                            ? '📊 Moderately predictable'
-                            : player.rating_volatility < 100
-                              ? '⚡ Somewhat unpredictable'
-                              : '🎲 Highly unpredictable'}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Comparison Tab */}
-          {activeTab === 'comparison' && (
-            <div className='space-y-6'>
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <Users className='h-5 w-5' />
-                    Rating Comparison
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                    <div className='text-center p-4 bg-green-50 rounded-lg'>
-                      <div className='text-sm text-green-600 mb-1'>
-                        Your Rating
-                      </div>
-                      <div className='text-2xl font-bold text-green-600'>
-                        {player.current_rating}
-                      </div>
-                      <Badge className={getRankColor(player.current_rating)}>
-                        {getRankName(player.current_rating)}
-                      </Badge>
+        <TabsContent value="calculator" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Match Outcome Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="your-rating">Your Rating</Label>
+                  <Input
+                    id="your-rating"
+                    type="number"
+                    value={customRating}
+                    onChange={(e) => setCustomRating(Number(e.target.value))}
+                  />
+                  <Badge className="mt-2">{getRankFromRating(customRating)}</Badge>
+                </div>
+                <div>
+                  <Label htmlFor="opponent-rating">Opponent Rating</Label>
+                  <Input
+                    id="opponent-rating"
+                    type="number"
+                    value={opponentRating}
+                    onChange={(e) => setOpponentRating(Number(e.target.value))}
+                  />
+                  <Badge className="mt-2">{getRankFromRating(opponentRating)}</Badge>
+                </div>
+              </div>
+
+              <Card className="bg-gray-50">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <p className="text-lg font-bold text-green-600">
+                        {(winProbability * 100).toFixed(1)}%
+                      </p>
+                      <p className="text-sm text-gray-600">Win Probability</p>
                     </div>
-                    <div className='text-center p-4 bg-blue-50 rounded-lg'>
-                      <div className='text-sm text-blue-600 mb-1'>
-                        Average Opponent
-                      </div>
-                      <div className='text-2xl font-bold text-blue-600'>
-                        {player.average_opponent_rating || 'N/A'}
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        {player.average_opponent_rating
-                          ? player.current_rating >
-                            player.average_opponent_rating
-                            ? 'You are stronger'
-                            : 'You are weaker'
-                          : 'No data'}
-                      </div>
-                    </div>
-                    <div className='text-center p-4 bg-purple-50 rounded-lg'>
-                      <div className='text-sm text-purple-600 mb-1'>
-                        Rating Difference
-                      </div>
-                      <div className='text-2xl font-bold text-purple-600'>
-                        {player.average_opponent_rating
-                          ? (player.current_rating -
-                              player.average_opponent_rating >
-                            0
-                              ? '+'
-                              : '') +
-                            (player.current_rating -
-                              player.average_opponent_rating)
-                          : 'N/A'}
-                      </div>
-                      <div className='text-sm text-gray-600'>
-                        {player.average_opponent_rating
-                          ? Math.abs(
-                              player.current_rating -
-                                player.average_opponent_rating
-                            ) + ' points'
-                          : 'No data'}
-                      </div>
+                    <div>
+                      <p className="text-lg font-bold text-red-600">
+                        {((1 - winProbability) * 100).toFixed(1)}%
+                      </p>
+                      <p className="text-sm text-gray-600">Loss Probability</p>
                     </div>
                   </div>
 
-                  <div className='space-y-3'>
-                    <h4 className='font-medium'>Performance Analysis</h4>
-                    <div className='space-y-2'>
-                      <div className='flex justify-between'>
-                        <span>ELO Efficiency:</span>
-                        <span
-                          className={`font-semibold ${efficiency > 0 ? 'text-green-600' : 'text-red-600'}`}
-                        >
-                          {efficiency > 0 ? '+' : ''}
-                          {efficiency} pts/match
-                        </span>
-                      </div>
-                      <div className='flex justify-between'>
-                        <span>Rating Growth Rate:</span>
-                        <span className='font-semibold'>
-                          {player.matches_played > 0
-                            ? (
-                                (player.current_rating - 1000) /
-                                player.matches_played
-                              ).toFixed(1) + ' pts/match'
-                            : 'N/A'}
-                        </span>
-                      </div>
-                      <div className='flex justify-between'>
-                        <span>Performance vs Expected:</span>
-                        <span className='font-semibold'>
-                          {player.win_rate && player.win_rate > 50
-                            ? 'Above average'
-                            : 'Below average'}
-                        </span>
-                      </div>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">If you win:</span>
+                      <span className="font-medium text-green-600">
+                        +{Math.round(32 * (1 - winProbability))} ELO
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">If you lose:</span>
+                      <span className="font-medium text-red-600">
+                        -{Math.round(32 * winProbability)} ELO
+                      </span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="distribution" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rank Distribution</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={getRankDistribution()}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="rank" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Player Distribution by Rank</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={getRankDistribution().slice(0, 5)}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ rank, percentage }) => `${rank} (${percentage}%)`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="percentage"
+                  >
+                    {getRankDistribution().slice(0, 5).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
+
+export default EloStatistics;
