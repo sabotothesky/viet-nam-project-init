@@ -1,17 +1,8 @@
-export interface User {
-  id: string;
-  email?: string;
-  user_metadata?: {
-    full_name?: string;
-    avatar_url?: string;
-    first_name?: string;
-    last_name?: string;
-    phone?: string;
-  };
-  email_confirmed_at?: string;
-  created_at?: string;
-  updated_at: string;
-}
+
+import { User as SupabaseUser, Session as SupabaseSession } from '@supabase/supabase-js';
+
+// Use Supabase's User type directly to avoid conflicts
+export type User = SupabaseUser;
 
 export interface Session {
   access_token: string;
@@ -24,7 +15,7 @@ export interface Session {
 
 export interface AuthContextType {
   user: User | null;
-  session: Session | null;
+  session: SupabaseSession | null;
   profile: UserProfile | null;
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
   signUp: (email: string, password: string) => Promise<{ error?: any }>;
