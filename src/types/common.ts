@@ -34,7 +34,7 @@ export interface AuthContextType {
 
 export interface UserProfile {
   id: string;
-  user_id?: string;
+  user_id: string; // Make this required instead of optional
   first_name?: string;
   last_name?: string;
   full_name: string;
@@ -60,8 +60,8 @@ export interface UserProfile {
   wins: number;
   losses: number;
   current_streak: number;
-  matches_played?: number;
-  matches_won?: number;
+  matches_played: number;
+  matches_won: number;
   preferred_play_times?: string[];
   min_bet_points: number;
   max_bet_points: number;
@@ -223,7 +223,7 @@ export interface ProfileFormData {
 export interface Club {
   id: string;
   name: string;
-  address?: string;
+  address: string; // Make this required instead of optional
   phone?: string;
   description?: string;
   created_at: string;

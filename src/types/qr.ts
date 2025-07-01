@@ -277,4 +277,5 @@ export interface QRScanHistory {
   scanned_by: string;
   scanned_at: string;
   location?: string;
+  scan_data?: any;
 }

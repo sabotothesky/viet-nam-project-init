@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -101,7 +100,18 @@ const PaymentClubMembershipPage = () => {
                   <Select
                     onValueChange={value => {
                       const club = clubs?.find(club => club.id === value);
-                      setSelectedClub(club || null);
+                      if (club) {
+                        // Convert the club to match the expected type
+                        const normalizedClub = {
+                          ...club,
+                          address: club.address || '',
+                          created_at: typeof club.created_at === 'string' ? club.created_at : club.created_at?.toISOString() || new Date().toISOString(),
+                          updated_at: typeof club.updated_at === 'string' ? club.updated_at : club.updated_at?.toISOString() || new Date().toISOString(),
+                        };
+                        setSelectedClub(normalizedClub);
+                      } else {
+                        setSelectedClub(null);
+                      }
                     }}
                   >
                     <SelectTrigger className='w-full'>
