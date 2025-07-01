@@ -7,19 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
-import Index from "./pages/Index";
+import SimpleDashboard from "./pages/SimpleDashboard";
+import SimpleBookingPage from "./pages/SimpleBookingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import Dashboard from "./pages/Dashboard";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminTournaments from "./pages/admin/AdminTournaments";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminClubs from "./pages/admin/AdminClubs";
-import AdminTransactions from "./pages/admin/AdminTransactions";
-import AdminAnalytics from "./pages/admin/AdminAnalytics";
-import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,21 +31,12 @@ const App = () => (
           <AuthProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<SimpleDashboard />} />
+                <Route path="/booking" element={<SimpleBookingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                
-                {/* Admin Routes */}
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/tournaments" element={<AdminTournaments />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/clubs" element={<AdminClubs />} />
-                <Route path="/admin/transactions" element={<AdminTransactions />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                <Route path="/admin/settings" element={<AdminSettings />} />
               </Routes>
               <Toaster />
               <Sonner />
