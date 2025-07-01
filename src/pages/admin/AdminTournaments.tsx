@@ -77,6 +77,8 @@ const AdminTournaments = () => {
         prize_pool: 1000000,
         tournament_type: 'single_elimination',
         game_format: '8_ball',
+        venue_name: 'Sảnh thi đấu chính',
+        rules: 'Quy định thi đấu theo luật quốc tế',
       });
     } catch (error) {
       console.error('Error creating tournament:', error);
