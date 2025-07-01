@@ -270,6 +270,15 @@ export interface LeaderboardEntry {
   win_rate?: number;
   current_streak?: number;
   club_name?: string;
+  username?: string;
+  elo?: number;
+  matches_played?: number;
+  rank?: number;
+  last_played?: string;
+  streak?: number;
+  country?: string;
+  city?: string;
+  bio?: string;
 }
 
 export interface Tournament {
