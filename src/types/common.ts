@@ -1,4 +1,3 @@
-
 import { User as SupabaseUser, Session as SupabaseSession } from '@supabase/supabase-js';
 
 // Use Supabase's User type directly to avoid conflicts
@@ -65,6 +64,7 @@ export interface UserProfile {
   updated_at: string;
   clbVerified?: boolean;
   elo?: number;
+  welcome_email_sent?: boolean;
 }
 
 export interface Post {
