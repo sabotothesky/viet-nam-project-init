@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -75,9 +76,7 @@ export const useFileUpload = () => {
         filePath = `${userId}/${filePath}`;
       }
 
-      // ...removed console.log(...)
-        `Uploading file to bucket: ${options.bucket}, path: ${filePath}`
-      );
+      console.log(`Uploading file to bucket: ${options.bucket}, path: ${filePath}`);
 
       // Upload file
       const { data, error } = await supabase.storage
@@ -93,7 +92,7 @@ export const useFileUpload = () => {
         return { error: error.message };
       }
 
-      // ...removed console.log('Upload successful:', data)
+      console.log('Upload successful:', data);
 
       // Get public URL
       const { data: urlData } = supabase.storage
