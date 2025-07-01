@@ -8,6 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from "next-themes";
 import { Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { AuthProvider } from "@/hooks/useAuth";
 
 // Lazy load components to prevent blocking errors
 import { lazy } from "react";
@@ -22,6 +23,7 @@ const SimpleClubHomePage = lazy(() => import("./pages/SimpleClubHomePage"));
 const SimpleClubBookingPage = lazy(() => import("./pages/SimpleClubBookingPage"));
 const SimpleClubAboutPage = lazy(() => import("./pages/SimpleClubAboutPage"));
 const SimpleClubContactPage = lazy(() => import("./pages/SimpleClubContactPage"));
+const SystemAuditPage = lazy(() => import("./pages/SystemAuditPage"));
 
 // Fallback component for loading
 const LoadingFallback = () => (
@@ -52,33 +54,36 @@ const App = () => {
         <HelmetProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             <TooltipProvider>
-              <BrowserRouter>
-                <Suspense fallback={<LoadingFallback />}>
-                  <Routes>
-                    <Route path="/" element={<SimpleDashboard />} />
-                    <Route path="/booking" element={<SimpleBookingPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                    <Route path="/simple-club" element={<SimpleClubHomePage />} />
-                    <Route path="/simple-booking" element={<SimpleClubBookingPage />} />
-                    <Route path="/simple-about" element={<SimpleClubAboutPage />} />
-                    <Route path="/simple-contact" element={<SimpleClubContactPage />} />
-                    
-                    <Route path="*" element={
-                      <div className="min-h-screen flex items-center justify-center bg-green-900 text-white">
-                        <div className="text-center">
-                          <h1 className="text-2xl mb-4">Trang không tìm thấy</h1>
-                          <a href="/" className="text-yellow-400 hover:underline">Về trang chủ</a>
+              <AuthProvider>
+                <BrowserRouter>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Routes>
+                      <Route path="/" element={<SimpleDashboard />} />
+                      <Route path="/booking" element={<SimpleBookingPage />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                      <Route path="/simple-club" element={<SimpleClubHomePage />} />
+                      <Route path="/simple-booking" element={<SimpleClubBookingPage />} />
+                      <Route path="/simple-about" element={<SimpleClubAboutPage />} />
+                      <Route path="/simple-contact" element={<SimpleClubContactPage />} />
+                      <Route path="/system-audit" element={<SystemAuditPage />} />
+                      
+                      <Route path="*" element={
+                        <div className="min-h-screen flex items-center justify-center bg-green-900 text-white">
+                          <div className="text-center">
+                            <h1 className="text-2xl mb-4">Trang không tìm thấy</h1>
+                            <a href="/" className="text-yellow-400 hover:underline">Về trang chủ</a>
+                          </div>
                         </div>
-                      </div>
-                    } />
-                  </Routes>
-                </Suspense>
-                <Toaster />
-                <Sonner />
-              </BrowserRouter>
+                      } />
+                    </Routes>
+                  </Suspense>
+                  <Toaster />
+                  <Sonner />
+                </BrowserRouter>
+              </AuthProvider>
             </TooltipProvider>
           </ThemeProvider>
         </HelmetProvider>
