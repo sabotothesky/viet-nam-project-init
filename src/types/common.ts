@@ -1,4 +1,5 @@
 
+
 export interface User {
   id: string;
   email?: string;
@@ -402,3 +403,4 @@ export interface Match {
     elo_rating: number;
   };
 }
+
