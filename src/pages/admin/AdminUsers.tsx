@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -22,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
-interface UserProfile {
+interface AdminUserProfile {
   user_id: string;
   full_name: string;
   nickname: string;
@@ -45,10 +46,10 @@ interface UserProfile {
 }
 
 const AdminUsers = () => {
-  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [users, setUsers] = useState<AdminUserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<AdminUserProfile[]>([]);
 
   useEffect(() => {
     loadUsers();
@@ -102,7 +103,7 @@ const AdminUsers = () => {
         .select('user_id, membership_type, status');
 
       // Transform and merge the data
-      const transformedUsers =
+      const transformedUsers: AdminUserProfile[] =
         profilesData?.map(profile => {
           const membership = membershipsData?.find(
             m => m.user_id === profile.user_id
@@ -131,7 +132,7 @@ const AdminUsers = () => {
               profile.clubs &&
               typeof profile.clubs === 'object' &&
               'name' in profile.clubs
-                ? { name: profile.clubs.name }
+                ? { name: String(profile.clubs.name) }
                 : undefined,
           };
         }) || [];
