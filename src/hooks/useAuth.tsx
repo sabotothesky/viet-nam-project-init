@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType, UserProfile } from '@/types/common';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -16,18 +17,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("AuthProvider: Setting up auth state...");
     
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error("AuthProvider: Error getting session:", error);
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("AuthProvider: Error getting session:", error);
+        }
+        console.log("AuthProvider: Initial session:", session?.user?.email || 'No user');
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      } catch (error) {
+        console.error("AuthProvider: Failed to get session:", error);
+        setLoading(false);
       }
-      console.log("AuthProvider: Initial session:", session?.user?.email || 'No user');
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    }).catch((error) => {
-      console.error("AuthProvider: Failed to get session:", error);
-      setLoading(false);
-    });
+    };
+
+    getInitialSession();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

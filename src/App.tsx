@@ -36,9 +36,9 @@ const LoadingFallback = () => (
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
       retry: 1,
-      refetchOnWindowFocus: false, // Prevent unnecessary refetches
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -55,21 +55,17 @@ const App = () => {
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
-                    {/* Main Complex Platform Routes */}
                     <Route path="/" element={<SimpleDashboard />} />
                     <Route path="/booking" element={<SimpleBookingPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                    
-                    {/* Simple Club Website Routes */}
                     <Route path="/simple-club" element={<SimpleClubHomePage />} />
                     <Route path="/simple-booking" element={<SimpleClubBookingPage />} />
                     <Route path="/simple-about" element={<SimpleClubAboutPage />} />
                     <Route path="/simple-contact" element={<SimpleClubContactPage />} />
                     
-                    {/* Fallback route */}
                     <Route path="*" element={
                       <div className="min-h-screen flex items-center justify-center bg-green-900 text-white">
                         <div className="text-center">
