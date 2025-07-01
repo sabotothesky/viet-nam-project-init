@@ -12,6 +12,13 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminTournaments from "./pages/admin/AdminTournaments";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminClubs from "./pages/admin/AdminClubs";
+import AdminTransactions from "./pages/admin/AdminTransactions";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +42,15 @@ const App = () => (
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/tournaments" element={<AdminTournaments />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/clubs" element={<AdminClubs />} />
+                <Route path="/admin/transactions" element={<AdminTransactions />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                <Route path="/admin/settings" element={<AdminSettings />} />
               </Routes>
               <Toaster />
               <Sonner />

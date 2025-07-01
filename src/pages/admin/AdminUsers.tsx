@@ -1,19 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import React, { useState } from 'react';
+import { Search, Filter, MoreHorizontal, UserCheck, UserX, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -21,184 +19,184 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-
-interface AdminUserProfile {
-  user_id: string;
-  full_name: string;
-  nickname: string;
-  email?: string;
-  phone?: string;
-  address: string | null;
-  avatar_url: string | null;
-  bio: string | null;
-  date_of_birth: string | null;
-  gender: string | null;
-  current_rank: string | null;
-  ranking_points: number | null;
-  experience_years: number | null;
-  club_id: string | null;
-  created_at: string;
-  updated_at: string;
-  membership_type: string;
-  membership_status: string;
-  clubs?: { name: string };
-}
+import AdminLayout from '@/components/AdminLayout';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 
 const AdminUsers = () => {
-  const [users, setUsers] = useState<AdminUserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState<AdminUserProfile[]>([]);
+  const { data: isAdmin, isLoading: adminLoading } = useAdminCheck();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  // Mock users data
+  const users = [
+    {
+      id: '1',
+      full_name: 'Nguyễn Văn A',
+      email: 'nguyenvana@email.com',
+      phone: '0901234567',
+      current_rank: 'A+',
+      ranking_points: 2500,
+      status: 'active',
+      role: 'user',
+      created_at: '2024-01-15T00:00:00Z',
+      last_active: '2024-01-20T10:30:00Z',
+    },
+    {
+      id: '2',
+      full_name: 'Trần Thị B',
+      email: 'tranthib@email.com',
+      phone: '0987654321',
+      current_rank: 'B+',
+      ranking_points: 1800,
+      status: 'active',
+      role: 'premium',
+      created_at: '2024-01-10T00:00:00Z',
+      last_active: '2024-01-20T09:15:00Z',
+    },
+  ];
 
-  useEffect(() => {
-    const filtered = users.filter(
-      user =>
-        (user.nickname &&
-          user.nickname.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.full_name &&
-          user.full_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.email &&
-          user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  if (adminLoading) {
+    return (
+      <AdminLayout>
+        <div className='flex items-center justify-center h-64'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500'></div>
+        </div>
+      </AdminLayout>
     );
-    setFilteredUsers(filtered);
-  }, [searchTerm, users]);
+  }
 
-  const loadUsers = async () => {
-    try {
-      // Get profiles with club information
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select(
-          `
-          user_id,
-          full_name,
-          nickname,
-          phone,
-          address,
-          avatar_url,
-          bio,
-          date_of_birth,
-          gender,
-          current_rank,
-          ranking_points,
-          experience_years,
-          club_id,
-          created_at,
-          updated_at,
-          clubs!profiles_club_id_fkey(name, phone)
-        `
-        )
-        .order('created_at', { ascending: false });
+  if (!isAdmin) {
+    return (
+      <AdminLayout>
+        <div className='flex items-center justify-center h-64'>
+          <div className='text-center'>
+            <h2 className='text-2xl font-bold text-gray-900 mb-4'>Access Denied</h2>
+            <p className='text-gray-600'>You don't have permission to access this page.</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
-      if (profilesError) throw profilesError;
-
-      // Get memberships data
-      const { data: membershipsData, error: membershipsError } = await supabase
-        .from('memberships')
-        .select('user_id, membership_type, status');
-
-      // Transform and merge the data
-      const transformedUsers: AdminUserProfile[] =
-        profilesData?.map(profile => {
-          const membership = membershipsData?.find(
-            m => m.user_id === profile.user_id
-          );
-
-          return {
-            user_id: profile.user_id,
-            full_name: profile.full_name || 'Unknown',
-            nickname: profile.nickname || profile.full_name || 'Unknown',
-            email: undefined, // Email not available through profiles table
-            phone: profile.phone || undefined,
-            address: profile.address,
-            avatar_url: profile.avatar_url,
-            bio: profile.bio,
-            date_of_birth: profile.date_of_birth,
-            gender: profile.gender,
-            current_rank: profile.current_rank,
-            ranking_points: profile.ranking_points,
-            experience_years: profile.experience_years,
-            club_id: profile.club_id,
-            created_at: profile.created_at,
-            updated_at: profile.updated_at,
-            membership_type: membership?.membership_type || 'free',
-            membership_status: membership?.status || 'inactive',
-            clubs:
-              profile.clubs &&
-              typeof profile.clubs === 'object' &&
-              'name' in profile.clubs
-                ? { name: String(profile.clubs.name) }
-                : undefined,
-          };
-        }) || [];
-
-      setUsers(transformedUsers);
-    } catch (error) {
-      console.error('Error loading users:', error);
-      toast.error('Không thể tải danh sách người dùng');
-    } finally {
-      setLoading(false);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800';
+      case 'banned':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const getRoleIcon = (role: string) => {
+    return role === 'premium' ? <Crown className='w-4 h-4' /> : null;
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN');
   };
 
   return (
-    <div>
-      <div className='mb-4'>
-        <Input
-          type='text'
-          placeholder='Tìm kiếm người dùng...'
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      </div>
+    <AdminLayout>
+      <div className='space-y-6'>
+        <div className='flex justify-between items-center'>
+          <div>
+            <h1 className='text-3xl font-bold text-gray-900'>Quản Lý Người Dùng</h1>
+            <p className='text-gray-600'>Quản lý thông tin và trạng thái người dùng</p>
+          </div>
+        </div>
 
-      {loading ? (
-        <p>Đang tải người dùng...</p>
-      ) : (
-        <Table>
-          <TableCaption>Danh sách người dùng</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nickname</TableHead>
-              <TableHead>Họ tên</TableHead>
-              <TableHead>SĐT</TableHead>
-              <TableHead>Địa chỉ</TableHead>
-              <TableHead>Hạng</TableHead>
-              <TableHead>Câu lạc bộ</TableHead>
-              <TableHead>Loại thành viên</TableHead>
-              <TableHead>Trạng thái thành viên</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.map(user => (
-              <TableRow key={user.user_id}>
-                <TableCell className='font-medium'>{user.nickname}</TableCell>
-                <TableCell>{user.full_name}</TableCell>
-                <TableCell>{user.phone || 'Không có'}</TableCell>
-                <TableCell>{user.address || 'Không có'}</TableCell>
-                <TableCell>{user.current_rank || 'Chưa có'}</TableCell>
-                <TableCell>{user.clubs?.name || 'Chưa có'}</TableCell>
-                <TableCell>
-                  <Badge>{user.membership_type}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge>{user.membership_status}</Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </div>
+        <div className='flex gap-4'>
+          <div className='flex-1 relative'>
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4' />
+            <Input
+              placeholder='Tìm kiếm người dùng...'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className='pl-10'
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className='w-48'>
+              <SelectValue placeholder='Trạng thái' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='all'>Tất cả</SelectItem>
+              <SelectItem value='active'>Hoạt động</SelectItem>
+              <SelectItem value='inactive'>Không hoạt động</SelectItem>
+              <SelectItem value='banned'>Đã khóa</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Danh sách người dùng</CardTitle>
+            <CardDescription>Tổng cộng {users.length} người dùng</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-4'>
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className='flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50'
+                >
+                  <div className='flex items-center space-x-4'>
+                    <Avatar>
+                      <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.full_name}`} />
+                      <AvatarFallback>{user.full_name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className='flex items-center space-x-2'>
+                        <h3 className='font-medium'>{user.full_name}</h3>
+                        {getRoleIcon(user.role)}
+                      </div>
+                      <p className='text-sm text-gray-500'>{user.email}</p>
+                      <p className='text-sm text-gray-500'>{user.phone}</p>
+                    </div>
+                  </div>
+
+                  <div className='flex items-center space-x-4'>
+                    <div className='text-right'>
+                      <Badge className='mb-1'>{user.current_rank}</Badge>
+                      <p className='text-sm text-gray-500'>{user.ranking_points} điểm</p>
+                    </div>
+                    <Badge className={getStatusColor(user.status)}>
+                      {user.status === 'active' ? 'Hoạt động' : 
+                       user.status === 'inactive' ? 'Không hoạt động' : 'Đã khóa'}
+                    </Badge>
+                    <div className='text-right text-sm text-gray-500'>
+                      <p>Tham gia: {formatDate(user.created_at)}</p>
+                      <p>Hoạt động: {formatDate(user.last_active)}</p>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant='ghost' size='sm'>
+                          <MoreHorizontal className='w-4 h-4' />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <UserCheck className='w-4 h-4 mr-2' />
+                          Xem chi tiết
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <UserX className='w-4 h-4 mr-2' />
+                          Khóa tài khoản
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AdminLayout>
   );
 };
 
