@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -102,11 +103,24 @@ const PaymentClubMembershipPage = () => {
                       const club = clubs?.find(club => club.id === value);
                       if (club) {
                         // Convert the club to match the expected type
-                        const normalizedClub = {
-                          ...club,
+                        const normalizedClub: Club = {
+                          id: club.id,
+                          name: club.name,
                           address: club.address || '',
+                          phone: club.phone,
+                          description: club.description,
                           created_at: typeof club.created_at === 'string' ? club.created_at : club.created_at?.toISOString() || new Date().toISOString(),
                           updated_at: typeof club.updated_at === 'string' ? club.updated_at : club.updated_at?.toISOString() || new Date().toISOString(),
+                          owner_id: club.owner_id,
+                          is_sabo_owned: club.is_sabo_owned,
+                          available_tables: club.available_tables,
+                          priority_score: club.priority_score,
+                          hourly_rate: club.hourly_rate,
+                          logo_url: club.logo_url,
+                          email: club.email,
+                          table_count: club.table_count,
+                          latitude: club.latitude,
+                          longitude: club.longitude,
                         };
                         setSelectedClub(normalizedClub);
                       } else {
