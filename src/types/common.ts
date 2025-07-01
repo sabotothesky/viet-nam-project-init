@@ -171,3 +171,21 @@ export interface ApiError {
   code?: string;
   details?: any;
 }
+
+export interface ProfileFormData {
+  full_name: string;
+  nickname?: string;
+  phone?: string;
+  avatar_url?: string;
+  bio?: string;
+  club_id?: string;
+}
+
+export interface Club {
+  id: string;
+  name: string;
+  address: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}

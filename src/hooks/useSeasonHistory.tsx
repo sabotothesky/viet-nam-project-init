@@ -77,7 +77,7 @@ export const useSeasonHistory = () => {
         season_year: 2024,
         start_date: '2024-01-01',
         end_date: '2024-12-31',
-        status: 'active',
+        status: 'ongoing',
         total_participants: 150
       };
     } catch (err) {
@@ -90,8 +90,6 @@ export const useSeasonHistory = () => {
     try {
       // Mock implementation
       return {
-        season_name: seasonName,
-        season_year: seasonYear,
         user_rank: 1,
         total_participants: 150,
         matches_played: 10,
