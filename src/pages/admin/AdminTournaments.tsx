@@ -64,12 +64,15 @@ const AdminTournaments = () => {
       await createTournament({
         name: 'Giải đấu mới',
         description: 'Mô tả giải đấu',
-        start_date: new Date().toISOString(),
-        end_date: new Date(Date.now() + 86400000 * 3).toISOString(),
+        tournament_start: new Date().toISOString(),
+        tournament_end: new Date(Date.now() + 86400000 * 3).toISOString(),
+        registration_start: new Date().toISOString(),
+        registration_end: new Date(Date.now() + 86400000).toISOString(),
         max_participants: 32,
         entry_fee: 100000,
         prize_pool: 1000000,
-        status: 'upcoming',
+        tournament_type: 'single_elimination',
+        game_format: '8_ball',
       });
     } catch (error) {
       console.error('Error creating tournament:', error);
